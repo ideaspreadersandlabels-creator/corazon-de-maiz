@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Silkscreen&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#17131c;font-family:'Pixelify Sans',monospace;color:#f1e3c2}a{color:#f2c94c}a:hover{color:#fff1b8}canvas{image-rendering:pixelated;display:block}</style>
+</helmet>
+<section style="padding:64px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:Silkscreen;font-size:14px;color:#c9a46a;letter-spacing:2px">TURNO 1 · LOGO + PANTALLA DE INICIO</div>
+    <div style="font-size:40px;font-weight:700">Tlaxcallan — tres direcciones</div>
+    <div style="font-size:18px;color:#bfb2a0;max-width:760px;text-wrap:pretty">Misma paleta y paneles crema de tu juego. Elige una y sigo con HUD, personajes, cartas, póster y página de tienda en ese estilo.</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:48px">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:center"><span style="font-family:Silkscreen;background:#f2c94c;color:#2a140e;padding:4px 10px;font-size:16px">1a</span><span style="font-size:20px">Amanecer en la Malinche</span></div>
+      <div style="position:relative;width:960px;height:540px;overflow:hidden;border:4px solid #4a2e1e">
+        <canvas ref="{{ refA }}" width="240" height="135" style="position:absolute;inset:0;width:960px;height:540px"></canvas>
+        <div style="position:absolute;top:36px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="font-size:96px;font-weight:700;line-height:1;color:#fff1d6;letter-spacing:2px;text-shadow:4px 4px 0 #b8432f,8px 8px 0 #4a1e18">TLAXCALLAN</div>
+          <div style="font-family:Silkscreen;font-size:18px;color:#fff1d6;letter-spacing:4px;text-shadow:2px 2px 0 #4a1e18">TIERRA DEL MAÍZ</div>
+        </div>
+        <div style="position:absolute;bottom:36px;left:50%;transform:translateX(-50%);width:300px;background:#f1e3c2;border:4px solid #4a2e1e;box-shadow:inset 0 0 0 3px #d9c49a;padding:14px;display:flex;flex-direction:column;gap:6px;color:#3a2418">
+          <div style="background:#fff8e4;border:3px solid #2f5fa8;padding:6px 10px;font-size:20px;font-weight:600">▸ Nueva partida</div>
+          <div style="background:#e8d3a4;padding:6px 10px;font-size:20px">Continuar</div>
+          <div style="background:#e8d3a4;padding:6px 10px;font-size:20px">Opciones</div>
+          <div style="font-size:13px;text-align:center;color:#7a5a40;padding-top:4px">▲▼ + Enter</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:center"><span style="font-family:Silkscreen;background:#f2c94c;color:#2a140e;padding:4px 10px;font-size:16px">1b</span><span style="font-size:20px">Ceremonia de los dioses</span></div>
+      <div style="position:relative;width:960px;height:540px;overflow:hidden;border:4px solid #4a2e1e">
+        <canvas ref="{{ refB }}" width="240" height="135" style="position:absolute;inset:0;width:960px;height:540px"></canvas>
+        <div style="position:absolute;top:150px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="font-family:Silkscreen;font-size:16px;color:#7fb0e8;letter-spacing:6px">✦ CRÓNICAS DE ✦</div>
+          <div style="font-size:104px;font-weight:700;line-height:1;color:#f2c94c;letter-spacing:3px;text-shadow:0 4px 0 #b07a1e,0 8px 0 #5a3a10,0 0 40px #f2c94c55">TLAXCALLAN</div>
+          <div style="font-size:20px;color:#e8dff0">siembra · cosecha · honra a los dioses</div>
+        </div>
+        <div style="position:absolute;bottom:28px;left:0;right:0;display:flex;justify-content:center;gap:12px">
+          <div style="background:#f1e3c2;border:4px solid #4a2e1e;outline:3px solid #2f5fa8;padding:8px 18px;font-size:20px;font-weight:600;color:#3a2418">Nueva partida</div>
+          <div style="background:#e8d3a4;border:4px solid #4a2e1e;padding:8px 18px;font-size:20px;color:#3a2418">Continuar</div>
+          <div style="background:#e8d3a4;border:4px solid #4a2e1e;padding:8px 18px;font-size:20px;color:#3a2418">Opciones</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:center"><span style="font-family:Silkscreen;background:#f2c94c;color:#2a140e;padding:4px 10px;font-size:16px">1c</span><span style="font-size:20px">Códice</span></div>
+      <div style="position:relative;width:960px;height:540px;overflow:hidden;border:4px solid #4a2e1e">
+        <canvas ref="{{ refC }}" width="240" height="135" style="position:absolute;inset:0;width:960px;height:540px"></canvas>
+        <div style="position:absolute;top:64px;left:72px;display:flex;flex-direction:column;gap:20px;width:420px">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:84px;font-weight:700;line-height:.95;color:#f1e3c2;text-shadow:4px 4px 0 #3a1d16">TLAX<br>CALLAN</div>
+            <div style="font-family:Silkscreen;font-size:16px;color:#f2c94c;letter-spacing:3px">EL LUGAR DEL MAÍZ</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;width:280px">
+            <div style="background:#f1e3c2;border:4px solid #3a1d16;padding:8px 12px;font-size:20px;font-weight:600;color:#3a1d16">● Nueva partida</div>
+            <div style="border:4px solid #f1e3c2;padding:8px 12px;font-size:20px;color:#f1e3c2">Continuar</div>
+            <div style="border:4px solid #f1e3c2;padding:8px 12px;font-size:20px;color:#f1e3c2">Opciones</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  refA = React.createRef(); refB = React.createRef(); refC = React.createRef();
+  componentDidMount() { this.drawA(); this.drawB(); this.drawC(); }
+  rnd(seed) { let s = seed; return () => (s = (s * 9301 + 49297) % 233280) / 233280; }
+  r(c, x, y, w, h, col) { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), w, h); }
+  circle(c, cx, cy, rad, col) { for (let y = -rad; y <= rad; y++) for (let x = -rad; x <= rad; x++) if (x*x + y*y <= rad*rad) this.r(c, cx + x, cy + y, 1, 1, col); }
+  volcano(c, cx, top, base, slope, col, snow) {
+    for (let y = top; y < base; y++) { const hw = Math.floor((y - top) * slope) + 3 + (y % 3 === 0 ? 1 : 0); this.r(c, cx - hw, y, hw * 2, 1, y < top + 7 && snow ? snow : col); }
+  }
+  maize(c, x, y, rand) {
+    const h = 8 + Math.floor(rand() * 4);
+    this.r(c, x, y - h, 1, h, '#5f9e3a');
+    for (let i = 2; i < h; i += 3) { this.r(c, x - 2, y - i, 2, 1, '#7cc04a'); this.r(c, x + 1, y - i - 1, 2, 1, '#7cc04a'); }
+    this.r(c, x + 1, y - h + 3, 1, 2, '#f2c94c'); this.r(c, x, y - h - 1, 1, 1, '#e8d38a');
+  }
+  drawA() {
+    const c = this.refA.current?.getContext('2d'); if (!c) return;
+    ['#2b2350','#4a2f5e','#7a3a5e','#b8504f','#e07a48','#f0a24a','#f7cf7a'].forEach((col, i) => this.r(c, 0, i * 11, 240, 11, col));
+    this.circle(c, 172, 66, 13, '#fff1b8'); this.circle(c, 172, 66, 10, '#fffbe6');
+    this.volcano(c, 60, 58, 100, 1.4, '#6a4a78');
+    this.volcano(c, 120, 48, 100, 1.9, '#3c2f5a', '#e8dff0');
+    this.r(c, 0, 92, 240, 43, '#3f8a3a');
+    for (let y = 96; y < 135; y += 5) this.r(c, 0, y, 240, 2, '#357a32');
+    const rand = this.rnd(7);
+    for (let row = 0; row < 3; row++) for (let x = 4 + row * 3; x < 240; x += 9) this.maize(c, x, 104 + row * 13, rand);
+    for (let i = 0; i < 6; i++) { const x = 20 + rand() * 200, y = 14 + rand() * 30; this.r(c, x, y, 3, 1, '#1d1838'); this.r(c, x - 1, y - 1, 1, 1, '#1d1838'); this.r(c, x + 3, y - 1, 1, 1, '#1d1838'); }
+  }
+  drawB() {
+    const c = this.refB.current?.getContext('2d'); if (!c) return;
+    this.r(c, 0, 0, 240, 135, '#1d1726');
+    const cols = ['#2a2140','#3b2a3a','#2a2a48','#4a3a2a','#3a2440','#24304a'];
+    const cx = 120, cy = 70, n = 18;
+    for (let i = 0; i < n; i++) {
+      if (i % 2) continue;
+      const a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2;
+      c.fillStyle = cols[(i / 2) % cols.length]; c.beginPath(); c.moveTo(cx, cy);
+      c.lineTo(cx + Math.cos(a0) * 300, cy + Math.sin(a0) * 300); c.lineTo(cx + Math.cos(a1) * 300, cy + Math.sin(a1) * 300); c.fill();
+    }
+    c.strokeStyle = '#6a5a6a'; c.lineWidth = 1;
+    [30, 48, 70].forEach(rad => { c.beginPath(); c.arc(cx, cy, rad, 0, Math.PI * 2); c.stroke(); });
+    const rand = this.rnd(3);
+    for (let i = 0; i < 60; i++) this.r(c, rand() * 240, rand() * 135, 1, 3, '#5b7fb5');
+    this.circle(c, 120, 22, 9, '#2f5fa8'); this.circle(c, 120, 22, 6, '#f1e3c2'); this.circle(c, 120, 22, 3, '#2f5fa8');
+    [[60,124],[76,118],[92,112]].forEach(([w, y]) => this.r(c, 120 - w, y, w * 2, 135 - y, '#141019'));
+    [[60,124],[76,118],[92,112]].forEach(([w, y]) => { for (let x = 120 - w + 3; x < 120 + w - 3; x += 6) this.r(c, x, y + 2, 3, 2, '#2f5fa8'); });
+  }
+  drawC() {
+    const c = this.refC.current?.getContext('2d'); if (!c) return;
+    this.r(c, 0, 0, 240, 135, '#b8432f');
+    const tile = ['11111111','10000001','10111101','10100101','10101101','10100001','10111111','10000000'];
+    const band = y0 => { this.r(c, 0, y0, 240, 12, '#3a1d16'); for (let x = 0; x < 240; x += 8) tile.forEach((row, ty) => [...row].forEach((v, tx) => v === '1' && this.r(c, x + tx, y0 + 2 + ty, 1, 1, '#f1e3c2'))); };
+    band(0); band(123);
+    const cx = 176, cy = 66;
+    this.circle(c, cx, cy, 40, '#3a1d16'); this.circle(c, cx, cy, 37, '#f2c94c'); this.circle(c, cx, cy, 30, '#b8432f');
+    this.circle(c, cx, cy, 22, '#f1e3c2'); this.circle(c, cx, cy, 16, '#2f5fa8'); this.circle(c, cx, cy, 8, '#f2c94c');
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; this.r(c, cx + Math.cos(a) * 34 - 1, cy + Math.sin(a) * 34 - 1, 3, 3, '#3a1d16'); }
+    for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4; this.circle(c, cx + Math.cos(a) * 19, cy + Math.sin(a) * 19, 2, '#3a1d16'); }
+    const rand = this.rnd(11);
+    for (let x = 6; x < 240; x += 8) this.maize(c, x, 122, rand);
+  }
+  renderVals() { return { refA: this.refA, refB: this.refB, refC: this.refC }; }
+}
+</script>
+</body>
+</html>
