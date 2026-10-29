@@ -1,0 +1,84 @@
+/* Final screens: HUD, dialogue, Oficios, Amoxtli, Mapa (extends propuestas-v4/style4.css). */
+.gbg--sharp { inset: 0; filter: none; }
+.sun { width: 40px; height: 40px; flex: none; }
+.nd--in { display: inline-block; width: 14px; vertical-align: middle; }
+.nd--lv { width: 30px; }
+
+/* HUD */
+.clock { right: 14px; top: 10px; display: flex; gap: 8px; align-items: center; padding: 14px 16px; }
+.clock b { display: block; font: 700 20px/1 'Cinzel', serif; }
+.clock small { display: block; font: italic 600 12px 'Alegreya', serif; color: #7a3a1e; }
+.clock em { display: block; font: 700 13px 'Alegreya Sans', sans-serif; font-style: normal; margin-top: 2px; }
+.tut { left: 200px; top: 10px; width: 420px; padding: 14px 18px; font-size: 14px; }
+.tut b { display: block; font: italic 800 15px 'Alegreya', serif; color: var(--red); }
+.vbs { position: absolute; right: 18px; bottom: 22px; display: flex; gap: 8px; }
+.vb { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 14px; color: #fff; text-shadow: 0 1px 2px #000; }
+.vb__t { position: relative; width: 22px; height: 150px; border-radius: 11px; background: #f6edd6; box-shadow: inset 0 0 0 2.5px var(--ink), 0 2px 0 var(--ink); overflow: hidden; }
+.vb__t i { position: absolute; left: 3px; right: 3px; bottom: 3px; border-radius: 8px; }
+.hot { left: 50%; bottom: 8px; transform: translateX(-50%); width: 560px; padding: 12px 16px; }
+.hot__n { position: absolute; top: -40px; left: 0; font: italic 700 15px 'Alegreya', serif; color: #fff; text-shadow: 0 1px 3px #000; }
+.sls--hot { gap: 5px; }
+
+/* Diálogo */
+.dim--soft { background: linear-gradient(transparent 40%, rgba(30,20,10,.55)); }
+.dlg-fig { position: absolute; left: 34px; bottom: 30px; }
+.cf--dlg { width: 220px; height: 260px; }
+.dlg { left: 270px; right: 30px; bottom: 30px; padding: 18px 22px; }
+.dlg__h { display: flex; align-items: baseline; gap: 10px; }
+.dlg__h b { font: 700 26px 'Cinzel', serif; }
+.dlg__h small { font: italic 700 14px 'Alegreya', serif; color: var(--red); flex: 1; }
+.dlg p { margin: 6px 0 10px; font-size: 18px; line-height: 1.35; text-wrap: pretty; }
+.dlg__o { display: flex; flex-direction: column; gap: 6px; }
+.dlg__o .cb { font-size: 16px; padding: 5px 14px; }
+
+/* Oficios */
+.ofi { left: 26px; right: 26px; top: 54px; bottom: 30px; display: flex; flex-direction: column; gap: 8px; }
+.ofi__h { display: flex; justify-content: space-between; align-items: baseline; }
+.ofi__h b { font: 700 24px 'Cinzel', serif; }
+.ofi__h span { font-size: 13px; color: var(--soft); }
+.sks { display: flex; flex-direction: column; gap: 7px; }
+.sk { display: grid; grid-template-columns: 46px minmax(0, 1fr) 70px 200px; gap: 14px; align-items: center; padding: 6px 12px 6px 6px; border-radius: 10px; cursor: pointer; background: rgba(255,250,236,.75); box-shadow: inset 0 0 0 2px var(--ink); }
+.sk__t b { font: italic 800 18px 'Alegreya', serif; }
+.sk__t small { display: block; font-size: 13px; color: var(--soft); margin-bottom: 4px; }
+.sk__lv { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: var(--soft); }
+.sk__p { font: italic 600 14px 'Alegreya', serif; color: #2f6f6a; }
+
+/* Amoxtli */
+.amo { left: 26px; right: 26px; top: 54px; bottom: 30px; display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; }
+.amo__l { display: flex; flex-direction: column; gap: 7px; border-right: 2px solid var(--red); padding-right: 16px; }
+.amo__h { font: 700 20px 'Cinzel', serif; }
+.qe { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; padding: 6px 10px 6px 6px; border-radius: 10px; cursor: pointer; background: rgba(255,250,236,.75); box-shadow: inset 0 0 0 2px var(--ink); }
+.qe .ic { width: 36px; height: 36px; }
+.qe b { display: block; font: italic 800 16px 'Alegreya', serif; line-height: 1.1; }
+.qe small { font-size: 12.5px; color: var(--soft); }
+.amo__r { display: flex; flex-direction: column; gap: 8px; }
+.amo__glyph { width: 74px; height: 74px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f6edd6; box-shadow: inset 0 0 0 2.5px var(--ink), inset 0 0 0 6px #f6edd6, inset 0 0 0 8px var(--red); }
+.amo__glyph .ic { width: 50px; height: 50px; }
+.amo__r h4 { margin: 0; font: 700 26px 'Cinzel', serif; }
+.amo__r p { margin: 0; font-size: 17px; line-height: 1.35; color: var(--soft); text-wrap: pretty; }
+.amo__step { display: flex; flex-direction: column; gap: 4px; font: italic 700 15px 'Alegreya', serif; }
+.amo__rw { display: flex; gap: 14px; align-items: center; font-size: 15px; padding: 6px 0; border-top: 2px solid var(--red); border-bottom: 2px solid var(--red); }
+.amo__rw span { color: var(--soft); }
+.amo__f { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font: italic 600 15px 'Alegreya', serif; }
+
+/* Mapa */
+.mapa { left: 26px; right: 26px; top: 54px; bottom: 30px; display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; }
+.map { width: 100%; height: 100%; }
+.map text { font-family: 'Alegreya', serif; }
+.map .gl { font-style: italic; font-size: 13px; fill: #5a3418; }
+.map .gl--war { fill: #b8402e; font-weight: 700; }
+.map .pln, .map .pl text { font-weight: 800; font-size: 14px; fill: var(--ink); font-style: italic; }
+.pl--home circle { }
+.pl--you text { fill: #2f5fa8; }
+.pl--war text { fill: #b8402e; }
+.mapa__s { display: flex; flex-direction: column; gap: 8px; border-left: 2px solid var(--red); padding-left: 14px; }
+.mapa__s b { font: 700 22px 'Cinzel', serif; }
+.mapa__s p { margin: 0; font-size: 14.5px; line-height: 1.35; color: var(--soft); text-wrap: pretty; }
+.leg { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--ink); vertical-align: -1px; }
+.dot--you { background: #2f5fa8; }
+.dot--war { background: #b8402e; }
+.mapa__s .cb { margin-top: auto; text-align: center; font-size: 15px; }
+.exp { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+.exp a { display: block; text-align: center; color: #f3e6cf; font-size: 13px; text-decoration: none; }
+.exp img { width: 100%; height: 150px; object-fit: contain; background: #f4ead2; border-radius: 4px; }

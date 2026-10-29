@@ -1,0 +1,77 @@
+/* Final look: every panel matches the chosen title screen — glazed white Talavera
+   tiles inside a decorated-tile frame, cobalt titles, cobalt-tile selection with a
+   gold rim. Loaded after style4.css + style5.css and restyles their codex pages. */
+body { --cob: #1b3a8a; --och: #d39a26; --navy: #16306e; --soft: #4d5a80; }
+
+/* Panels (.cx): Talavera frame + white glazed tiles, wood molding outside. */
+.cx { border: 22px solid transparent; border-radius: 4px; padding: 12px 14px; color: var(--navy);
+  background: linear-gradient(rgba(255,252,245,.8), rgba(255,250,240,.86)) padding-box, var(--plain) 0 0 / 120px padding-box, var(--deco) -1px -1px / 22px border-box;
+  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 5px #f8f2e4, inset 0 0 0 7px var(--och), 0 16px 26px rgba(0,0,0,.55); }
+
+/* Tile buttons (.cb): white tile, cobalt + gold rim; selected = cobalt tile. */
+.cb { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 80px;
+  box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fbf6ea, inset 0 0 0 5px rgba(211,154,38,.8), 0 3px 0 #9a8a6e, 0 4px 6px rgba(0,0,0,.25); }
+.cb:hover { background: var(--plain) 0 0 / 80px; filter: brightness(1.04); box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fbf6ea, inset 0 0 0 5px var(--och), 0 3px 0 #9a8a6e, 0 0 0 3px rgba(211,154,38,.45); }
+.cb--on, .cb--on:hover { background: var(--cobalt) 0 0 / 120px; color: #fff; filter: none; text-shadow: 0 1px 2px rgba(0,0,0,.5);
+  box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 4px 8px rgba(0,0,0,.35); }
+.cb--x { color: #b8402e; }
+
+/* Cobalt titles, ochre glosses. */
+.ph__t, .shop__h b, .vec__n, .ofi__h b, .amo__h, .amo__r h4, .mapa__s b, .dlg__h b, .clock b { color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
+.ph__d, .clock small { color: #8a5a14; }
+.vec__r, .dlg__h small, .item__t small { color: #b8402e; }
+.who b, .item__t b, .sh b, .sk__t b, .qe b, .talk__n, .set { color: var(--navy); }
+.item__t p, .pr__t small, .sk__t small, .qe small, .vec__l, .facts span, .amo__r p, .mapa__s p, .sh, .ofi__h span, .amo__rw span, .who span { color: var(--soft); }
+
+/* Rules: cobalt dotted instead of codex red. */
+.sh, .shop__f, .facts, .amo__rw { border-top: 1.5px dotted rgba(27,58,138,.5); }
+.amo__rw { border-bottom: 1.5px dotted rgba(27,58,138,.5); }
+.amo__l { border-right: 1.5px dotted rgba(27,58,138,.5); }
+.mapa__s { border-left: 1.5px dotted rgba(27,58,138,.5); }
+
+/* Rows and cards: glazed white with a cobalt line; selected = cream with gold rim. */
+.item, .pr, .vc, .sk, .qe { border-radius: 3px; background: rgba(255,255,255,.72); box-shadow: inset 0 0 0 1.5px rgba(27,58,138,.7), 0 2px 0 rgba(140,120,90,.5); }
+.item { box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fff, inset 0 0 0 5px rgba(211,154,38,.7); }
+.pr:hover, .vc:hover, .sk:hover, .qe:hover { background: #fff; }
+.pr--on, .vc--on { background: #fff7e0; box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 5px var(--och), 0 2px 0 rgba(140,120,90,.5); }
+.item__ic, .pr__ic, .amo__glyph { background: radial-gradient(circle, #fff 30%, #f1e2c0); box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fff, inset 0 0 0 5px rgba(211,154,38,.7); }
+
+/* Inventory slots: one glazed tile each. */
+.sl { border-radius: 3px; background: var(--plain) 0 0 / 100px; box-shadow: inset 0 0 0 2px rgba(27,58,138,.85), inset 0 0 1px 4px rgba(255,255,255,.7), 0 2px 0 #a8987a, 0 3px 4px rgba(0,0,0,.2); }
+.sl:hover { box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px var(--och), 0 2px 0 #a8987a; }
+.sl--e { opacity: .75; background: var(--plain) 0 0 / 100px; box-shadow: inset 0 0 0 1.5px rgba(27,58,138,.6), 0 2px 0 #a8987a; }
+.sl--on { box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 5px var(--och), 0 0 0 3px rgba(211,154,38,.55), 0 2px 0 #a8987a; }
+
+/* Dots-and-bars numerals painted in cobalt. */
+.nd circle, .nd rect { fill: var(--cob); }
+.cb--on .nd circle, .cb--on .nd rect { fill: #fff; }
+
+/* Glazed bars and sliders. */
+.m, .sld { border-radius: 6px; background: #e9e2d2; box-shadow: inset 0 0 0 1.5px var(--cob), inset 0 2px 3px rgba(0,0,0,.2); }
+.m i { left: 0; top: 0; bottom: 0; border-radius: 6px; box-shadow: inset 0 2px 0 rgba(255,255,255,.4); }
+.sld i { background: var(--cobalt) 0 0 / 60px; box-shadow: none; }
+.sld b { background: radial-gradient(circle at 35% 30%, #fff6d8, #d39a26 55%, #8a5a14); box-shadow: 0 0 0 2px var(--cob), 0 2px 4px rgba(0,0,0,.4); }
+.vb__t { background: #e9e2d2; box-shadow: inset 0 0 0 1.5px var(--cob), inset 0 2px 3px rgba(0,0,0,.2), 0 2px 0 #9a8a6e; }
+.cyc b, .purse { background: var(--plain) 0 0 / 80px; box-shadow: inset 0 0 0 1.5px var(--cob); border-radius: 3px; color: var(--navy); }
+.purse { background: var(--cobalt) 0 0 / 120px; color: #fff3d2; box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px var(--och); }
+.qty u { border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #9a8a6e; }
+kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #8a7a60; }
+
+/* Character frames: arched Talavera niche. */
+.cf { border-radius: 50% 50% 6px 6px / 26% 26% 6px 6px; border: 10px solid transparent;
+  background: radial-gradient(circle at 50% 30%, #fbe8b8, #e6c48a 60%, #c99a5a) padding-box, var(--deco) 0 0 / 20px border-box;
+  box-shadow: 0 0 0 2px #6a4a2e, 0 6px 12px rgba(0,0,0,.35), inset 0 0 0 2px var(--cob); }
+.cf .fig { height: 86%; margin-bottom: 2%; }
+
+/* Map: painted on a cream inset inside the white tiles. */
+.map { background: #f6edd6; border-radius: 3px; box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fff, inset 0 0 0 5px rgba(211,154,38,.7); }
+
+/* ---------- Inicio: exactly the approved title screen ---------- */
+.ti-logo { left: 50%; top: 14px; transform: translateX(-50%); width: 560px; border-width: 20px; background-size: auto, 120px, 20px; padding: 6px 14px; display: flex; gap: 12px; align-items: center; }
+.ti-logo .glyph { width: 62px; flex: none; }
+.ti-logo__n { font: 700 36px/1 'Cinzel', serif; color: var(--cob); letter-spacing: 1px; text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
+.ti-logo__t { font: italic 600 14px 'Alegreya', serif; color: #8a5a14; margin-top: 4px; }
+.ti-menu { left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; gap: 6px; border-width: 16px; background-size: auto, 120px, 16px; padding: 4px; }
+.ti-menu .cb { width: 196px; padding: 5px 10px; display: flex; flex-direction: column; font: italic 700 17px 'Alegreya', serif; }
+.ti-menu .cb small { font: 500 11.5px 'Alegreya Sans', sans-serif; font-style: normal; }
+.ti-foot { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font: italic 500 13px 'Alegreya', serif; color: #fbeed6; text-shadow: 0 1px 3px #000; }

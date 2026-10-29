@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tlaxcallan Opciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500;1,600;1,700;1,800&family=Alegreya+Sans:wght@400;500;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Tlaxcallan v2 · Talavera de Tlaxcala. Tile textures come from textures.js as
+   CSS variables: --deco (decorated tile), --plain (white tiles), --cobalt. */
+:root { --ink: #16306e; --soft: #4d5a80; --cob: #1b3a8a; --och: #d39a26; --red: #b8402e; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #14110f; color: #f3e6cf; font-family: 'Alegreya Sans', system-ui, sans-serif; }
+.page { max-width: 1640px; margin: 0 auto; padding: 44px 16px 80px; }
+.intro { max-width: 820px; margin: 0 auto 36px; text-align: center; }
+.intro h1 { font: 700 46px/1.05 'Cinzel', serif; margin: 0 0 12px; letter-spacing: 2px; }
+.intro p { font-size: 18px; color: #c9b89a; margin: 0; text-wrap: pretty; }
+.sec { margin: 0 0 56px; }
+.sec h2 { font: italic 800 30px 'Alegreya', serif; margin: 0 0 4px; }
+.sec > p { margin: 0 0 20px; color: #c9b89a; font-size: 17px; max-width: 820px; text-wrap: pretty; }
+.boards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 700px), 1fr)); gap: 28px; }
+.board { margin: 0; }
+.board figcaption { margin-top: 10px; font-size: 15px; color: #c9b89a; }
+.board figcaption b { color: #f3e6cf; }
+.fit { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; box-shadow: 0 12px 34px rgba(0,0,0,.5); }
+.fit > .ab { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--k, .5)); }
+.fit--hero { max-width: 1280px; margin: 0 auto; }
+
+/* ---------- Artboard ---------- */
+.ab { width: 960px; height: 540px; overflow: hidden; color: var(--ink); font-size: 15px; background: #1a1410; }
+.land { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.gbg { position: absolute; inset: -20px; background: center / cover; filter: blur(5px) saturate(.9); }
+.dim { position: absolute; inset: 0; background: linear-gradient(rgba(12,18,40,.35), rgba(12,18,40,.6)); }
+.dim--deep { background: rgba(10,14,32,.45); }
+
+/* Talavera panel: decorated tiles as the frame, white glazed tiles inside, wooden molding outside. */
+.pnl { position: absolute; border: 30px solid transparent; border-radius: 4px; color: var(--ink);
+  background: linear-gradient(rgba(255,252,245,.8), rgba(255,250,240,.86)) padding-box, var(--plain) 0 0 / 120px padding-box, var(--deco) -1px -1px / 30px border-box;
+  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 5px #f8f2e4, inset 0 0 0 7px var(--och), 0 16px 26px rgba(0,0,0,.55); }
+.pnl--thin, .tmenu, .talk, .ph, .plist { border-width: 20px; background-size: auto, 120px, 20px; }
+.sarape { height: 8px; margin: 2px 0; border-radius: 2px; background: linear-gradient(90deg, #b8402e 0 12%, #e07a28 12% 20%, #f2c94c 20% 30%, #1a1410 30% 31%, #3d7a46 31% 46%, #f6efe0 46% 49%, #1b3a8a 49% 66%, #1a1410 66% 67%, #7a3a8a 67% 80%, #e05a7a 80% 90%, #b8402e 90%); box-shadow: inset 0 -2px 0 rgba(0,0,0,.15); }
+
+.ic { display: block; filter: drop-shadow(0 2px 1px rgba(40,25,10,.35)); }
+.mini { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; }
+.keys { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 18px; font-size: 14px; color: #f6efe0; text-shadow: 0 1px 3px #000; }
+.pnl .keys { position: static; justify-content: center; color: var(--soft); text-shadow: none; font-size: 13px; margin-top: 2px; }
+kbd { display: inline-block; min-width: 22px; padding: 1px 6px; margin-right: 5px; font: 700 12px 'Alegreya Sans', sans-serif; color: var(--ink); text-align: center; border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #8a7a60; }
+
+/* Tile buttons. */
+.btn, .tm, .tab, .chip { cursor: pointer; background: var(--plain) 0 0 / 80px; box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fbf6ea, inset 0 0 0 5px rgba(211,154,38,.8), 0 3px 0 #9a8a6e, 0 4px 6px rgba(0,0,0,.25); border-radius: 3px; color: var(--ink); }
+.btn:hover, .tm:hover, .tab:hover, .chip:hover { filter: brightness(1.04); box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fbf6ea, inset 0 0 0 5px var(--och), 0 3px 0 #9a8a6e, 0 0 0 3px rgba(211,154,38,.45); }
+.btn--main, .tm--on, .tab--on, .chip--on, .btn--main:hover, .tm--on:hover, .tab--on:hover, .chip--on:hover { background: var(--cobalt) 0 0 / 120px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 4px 8px rgba(0,0,0,.35); }
+.btn { text-align: center; padding: 7px 14px; font: 700 15px 'Alegreya Sans', sans-serif; }
+.row2 { display: flex; gap: 8px; }
+.row2 .btn { flex: 1; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { padding: 4px 12px; font: italic 700 15px 'Alegreya', serif; }
+
+/* Glazed bars. */
+.m { height: 12px; border-radius: 6px; background: #e9e2d2; box-shadow: inset 0 0 0 1.5px var(--cob), inset 0 2px 3px rgba(0,0,0,.2); position: relative; overflow: hidden; }
+.m i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; box-shadow: inset 0 2px 0 rgba(255,255,255,.4); }
+.m--s { height: 9px; }
+.sld { position: relative; height: 12px; border-radius: 6px; background: #e9e2d2; box-shadow: inset 0 0 0 1.5px var(--cob), inset 0 2px 3px rgba(0,0,0,.2); }
+.sld i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--cobalt) 0 0 / 60px; }
+.sld b { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6d8, #d39a26 55%, #8a5a14); box-shadow: 0 0 0 2px var(--cob), 0 2px 4px rgba(0,0,0,.4); }
+
+/* Nicho: arched Talavera niche for characters. */
+.niche { position: relative; display: flex; align-items: flex-end; justify-content: center; border-radius: 50% 50% 6px 6px / 26% 26% 6px 6px; border: 10px solid transparent; overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #fbe8b8, #e6c48a 60%, #c99a5a) padding-box, var(--deco) 0 0 / 20px border-box; box-shadow: 0 0 0 2px #6a4a2e, 0 6px 12px rgba(0,0,0,.35), inset 0 0 0 2px var(--cob); }
+.niche .chibi { width: 82%; margin-bottom: -6%; }
+.niche--tall { width: 190px; height: 210px; }
+.niche--big { width: 200px; height: 200px; }
+
+/* ---------- Inicio ---------- */
+.logo { left: 36px; top: 30px; width: 452px; padding: 12px 16px 10px; display: flex; gap: 14px; align-items: center; }
+.glyph { width: 74px; flex: none; }
+.logo__n { font: 700 40px/1 'Cinzel', serif; color: var(--cob); letter-spacing: 1px; text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
+.logo__t { font: italic 600 15px 'Alegreya', serif; color: #8a5a14; margin-top: 4px; }
+.tmenu { left: 56px; top: 226px; width: 340px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.tm { padding: 8px 14px; display: flex; flex-direction: column; font: italic 700 20px 'Alegreya', serif; }
+.tm small { font: 500 13px 'Alegreya Sans', sans-serif; opacity: .85; font-style: normal; }
+.tm .mini { width: 14px; height: 14px; }
+.tm--x { color: var(--red); }
+.foot { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font: italic 500 13px 'Alegreya', serif; color: #fbeed6; text-shadow: 0 1px 3px #000; }
+
+/* ---------- Tabs ---------- */
+.tabs { position: absolute; left: 60px; top: 14px; display: flex; gap: 8px; z-index: 2; }
+.tab { padding: 6px 16px; font: italic 700 17px 'Alegreya', serif; }
+
+/* ---------- Bolsa ---------- */
+.bag { left: 30px; right: 30px; top: 56px; bottom: 30px; padding: 6px 8px; display: grid; grid-template-columns: 196px minmax(0, 1fr); gap: 18px; }
+.bag__l { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.who { width: 100%; display: flex; justify-content: space-between; align-items: baseline; }
+.who b { font: italic 800 21px 'Alegreya', serif; }
+.who span { font-size: 13px; color: #2f8f8a; font-weight: 700; }
+.ms { width: 100%; display: grid; grid-template-columns: 56px 1fr 26px; gap: 6px 8px; align-items: center; font-size: 14px; }
+.ms em { font-style: normal; font-weight: 800; text-align: right; }
+.bag__r { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.item { display: grid; grid-template-columns: 70px minmax(0, 1fr) 160px; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 4px; background: rgba(255,255,255,.65); box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px #fff, inset 0 0 0 5px rgba(211,154,38,.7); }
+.item__ic { width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: radial-gradient(circle, #fff 30%, #f1e2c0); box-shadow: inset 0 0 0 2px var(--cob); }
+.item__ic .ic { width: 52px; height: 52px; }
+.item__t b { font: italic 800 21px 'Alegreya', serif; display: block; line-height: 1.1; }
+.item__t small { font: 800 11px 'Alegreya Sans', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); }
+.item__t p { margin: 3px 0 0; font-size: 14px; line-height: 1.25; color: var(--soft); text-wrap: pretty; }
+.item__s { display: flex; flex-direction: column; gap: 6px; }
+.kv { display: flex; justify-content: space-between; font-size: 14px; }
+.sh { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--soft); }
+.sh b { font: italic 800 16px 'Alegreya', serif; color: var(--ink); }
+.sls { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; }
+/* Each slot is a single glazed tile with a hand-painted cobalt rim. */
+.sl { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 3px; background: var(--plain) 0 0 / 100px;
+  box-shadow: inset 0 0 0 2px rgba(27,58,138,.85), inset 0 0 1px 4px rgba(255,255,255,.7), 0 2px 0 #a8987a, 0 3px 4px rgba(0,0,0,.2); }
+.sl:hover { box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 4px var(--och), 0 2px 0 #a8987a; }
+.sl--e { opacity: .75; }
+.sl--on { box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 5px var(--och), 0 0 0 3px rgba(211,154,38,.55), 0 2px 0 #a8987a; }
+.sl .ic { width: 70%; height: 70%; }
+.sl__k { position: absolute; left: 5px; top: 2px; font: italic 800 12px 'Alegreya', serif; color: var(--cob); }
+.sl__n { position: absolute; right: 4px; bottom: 1px; font-weight: 800; font-size: 12px; color: #1a1410; text-shadow: 0 0 3px #fff, 0 0 3px #fff; }
+
+/* ---------- Tianguis ---------- */
+.seller { position: absolute; left: 30px; top: 20px; bottom: 34px; width: 250px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.seller .niche { width: 220px; height: 230px; flex: none; }
+.talk { position: relative; width: 250px; padding: 4px 6px; }
+.talk__n { font: italic 800 18px 'Alegreya', serif; display: flex; justify-content: space-between; align-items: baseline; }
+.talk__n small { font: 700 12px 'Alegreya Sans', sans-serif; color: #2f8f8a; }
+.talk p { margin: 4px 0 6px; font-size: 15px; line-height: 1.3; text-wrap: pretty; }
+.talk__f { display: flex; justify-content: space-between; align-items: center; color: var(--soft); }
+.hearts { display: inline-flex; gap: 2px; }
+.hearts svg { width: 15px; height: 14px; }
+.hearts path { fill: #e0d6c2; stroke: #8a7a60; stroke-width: 1.4; }
+.hearts path.on { fill: #d94a3a; stroke: #8f2a24; }
+.shop { left: 300px; right: 30px; top: 20px; bottom: 34px; padding: 4px 8px; display: flex; flex-direction: column; gap: 8px; }
+.shop__h { display: flex; justify-content: space-between; align-items: center; }
+.shop__h b { font: 700 24px 'Cinzel', serif; color: var(--cob); }
+.purse { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 17px; padding: 3px 12px; border-radius: 3px; color: #fff3d2; background: var(--cobalt) 0 0 / 120px; box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px var(--och); }
+.prs { display: flex; flex-direction: column; gap: 6px; }
+.pr { display: grid; grid-template-columns: 46px minmax(0, 1fr) 70px 98px; gap: 10px; align-items: center; padding: 4px 10px 4px 5px; cursor: pointer; border-radius: 3px; background: rgba(255,255,255,.72); box-shadow: inset 0 0 0 1.5px rgba(27,58,138,.7), 0 2px 0 rgba(140,120,90,.5); }
+.pr:hover { background: #fff; }
+.pr--on { background: #fff7e0; box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 5px var(--och), 0 2px 0 rgba(140,120,90,.5); }
+.pr__ic { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #fff 30%, #f1e2c0); box-shadow: inset 0 0 0 1.5px var(--cob); }
+.pr__ic .ic { width: 32px; height: 32px; }
+.pr__t b { display: block; font-size: 16px; line-height: 1.15; }
+.pr__t small { font-size: 13px; color: var(--soft); }
+.pr__p { font-weight: 800; text-align: right; }
+.qty { display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
+.qty u { text-decoration: none; cursor: pointer; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #9a8a6e; }
+.shop__f { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 17px; }
+.shop__f .btn { padding: 7px 22px; font-size: 16px; }
+
+/* ---------- Vecinos ---------- */
+.vec { left: 30px; right: 30px; top: 56px; bottom: 30px; padding: 4px 6px; display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 16px; }
+.vec__g { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; align-content: start; }
+.vc { cursor: pointer; display: flex; flex-direction: column; align-items: center; border-radius: 3px; padding: 2px 0 3px; background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1.5px rgba(27,58,138,.6); }
+.vc:hover { background: #fff; }
+.vc--on { background: #fff7e0; box-shadow: inset 0 0 0 2px var(--cob), inset 0 0 0 5px var(--och); }
+.vc__a { width: 70px; height: 92px; overflow: hidden; display: flex; justify-content: center; }
+.vc__a .chibi { width: 76px; height: 94px; flex: none; }
+.vc b { font-size: 13px; line-height: 1; }
+.love { color: #d94a3a; font-style: normal; }
+.vec__s { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.vec__s .niche { width: 176px; height: 168px; }
+.vec__n { font: 700 24px 'Cinzel', serif; color: var(--cob); line-height: 1; margin-top: 2px; }
+.vec__r { font: italic 700 14px 'Alegreya', serif; color: var(--red); }
+.vec__l { margin: 2px 0; font: italic 500 14px 'Alegreya', serif; color: var(--soft); text-wrap: pretty; }
+.facts { display: grid; grid-template-columns: auto auto; gap: 2px 10px; font-size: 13px; text-align: left; width: 100%; padding: 4px 0; border-top: 1.5px dotted rgba(27,58,138,.4); }
+.facts span { color: var(--soft); }
+.vec__s .btn { width: 100%; }
+
+/* ---------- Pausa ---------- */
+.ph { left: 50%; top: 18px; transform: translateX(-50%); padding: 2px 18px 4px; text-align: center; white-space: nowrap; }
+.ph__t { font: 700 40px/1.05 'Cinzel', serif; color: var(--cob); letter-spacing: 2px; }
+.ph__d { font: italic 600 14px 'Alegreya', serif; color: #8a5a14; }
+.plist { left: 90px; top: 142px; width: 260px; padding: 6px; display: flex; flex-direction: column; gap: 8px; }
+.popts { left: 372px; right: 90px; top: 142px; padding: 6px 10px; display: flex; flex-direction: column; gap: 12px; }
+.set { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: center; font: italic 700 17px 'Alegreya', serif; }
+.set--n { grid-template-columns: 96px minmax(0, 1fr) 24px; }
+.set em { font-style: normal; font-weight: 800; text-align: right; font-family: 'Alegreya Sans', sans-serif; }
+.cyc { display: flex; align-items: center; gap: 10px; }
+.cyc b { min-width: 120px; text-align: center; padding: 3px 10px; border-radius: 3px; background: var(--plain) 0 0 / 80px; box-shadow: inset 0 0 0 1.5px var(--cob); }
+.cyc u { text-decoration: none; cursor: pointer; }
+
+/* Material sheet. */
+.mats { display: flex; flex-wrap: wrap; gap: 20px; }
+.mat { display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: #c9b89a; }
+.mat > div { width: 200px; height: 200px; border-radius: 4px; box-shadow: 0 8px 18px rgba(0,0,0,.4); }
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.cast figure { margin: 0; text-align: center; }
+.cast .niche { width: 150px; height: 170px; margin: 0 auto; }
+.cast figcaption { margin-top: 6px; font: italic 800 17px 'Alegreya', serif; color: #f3e6cf; }
+.cast figcaption small { display: block; font: 500 13px 'Alegreya Sans', sans-serif; color: #c9b89a; }
+</style>
+<style>
+.opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 700px), 1fr)); gap: 28px; }
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ab .foot { font-size: 14px; }
+.styles { display: flex; flex-direction: column; gap: 34px; }
+.srow h3 { font: italic 800 24px 'Alegreya', serif; margin: 0 0 2px; }
+.srow h3 span { font: 700 13px 'Alegreya Sans', sans-serif; letter-spacing: 2px; color: #d39a26; margin-right: 10px; font-style: normal; }
+.srow p { margin: 0 0 14px; color: #c9b89a; max-width: 820px; text-wrap: pretty; }
+.line { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+.line figure { margin: 0; text-align: center; }
+.line figcaption { margin-top: 6px; font: italic 800 16px 'Alegreya', serif; color: #f3e6cf; }
+.line figcaption small { display: block; font: 500 13px 'Alegreya Sans', sans-serif; color: #c9b89a; font-style: normal; }
+.line .niche { width: 150px; height: 190px; margin: 0 auto; }
+.niche .fig--cuento { width: 86%; margin-bottom: -2%; }
+.cotton { width: 150px; height: 190px; margin: 0 auto; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; border-radius: 3px;
+  background: radial-gradient(circle at 30% 20%, #f4e9cf, #e4d3ac); box-shadow: inset 0 0 0 2px #2a1a10, inset 0 0 0 6px #ecdfc0, inset 0 0 0 7px #2a1a10, 0 6px 14px rgba(0,0,0,.4); }
+.cotton .fig--lienzo { width: 84%; }
+.tilefig { width: 150px; height: 190px; margin: 0 auto; display: flex; align-items: flex-end; justify-content: center; border: 12px solid transparent; border-radius: 3px;
+  background: var(--plain) 0 0 / 80px padding-box, var(--deco) 0 0 / 24px border-box; box-shadow: 0 0 0 2px #6a4a2e, 0 6px 14px rgba(0,0,0,.4); }
+.tilefig .chibi { width: 104%; filter: url(#cobalt); margin-bottom: -6%; }
+.inicio .logo { left: 50%; top: 14px; transform: translateX(-50%); width: 500px; padding: 6px 14px; border-width: 20px; background-size: auto, 120px, 20px; }
+.inicio .glyph { width: 56px; }
+.inicio .logo__n { font-size: 36px; }
+.inicio .logo__t { font-size: 14px; }
+.inicio .tmenu { left: 50%; top: auto; bottom: 34px; transform: translateX(-50%); width: auto; flex-direction: row; padding: 4px; }
+.inicio .tmenu .tm { width: 230px; }
+.inicio .tmenu .keys { display: none; }
+.inicio .tmenu { bottom: 24px; border-width: 16px; background-size: auto, 120px, 16px; gap: 6px; }
+.inicio .tmenu .tm { width: 196px; padding: 5px 10px; font-size: 17px; }
+.inicio .tmenu .tm small { font-size: 11.5px; }
+</style>
+</head>
+<body>
+<!-- Recolours any element to cobalt-on-white, like hand-painted Talavera. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="cobalt" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.05 0.12 0.24 0.62 0.98"/><feFuncG type="table" tableValues="0.09 0.2 0.36 0.72 0.96"/><feFuncB type="table" tableValues="0.3 0.5 0.7 0.9 0.92"/></feComponentTransfer></filter></svg>
+<main class="page">
+  <header class="intro">
+    <h1>Tlaxcallan · 1519</h1>
+    <p>Cuatro estilos para el paisaje de inicio y cuatro para los personajes, todos con los menús de azulejo. El juego ocurre durante la guerra contra Tenochtitlan: la fecha es el año 1-Ácatl (1519), y en lugar de iglesia hay un teocalli.</p>
+  </header>
+  <div id="app"></div>
+</main>
+<script>
+// Flat-vector chibi characters for Tlaxcallan, matching the game's current look
+// (plaza NPCs): big head, small body, clean fills with a soft brown outline.
+// One parametric builder draws the whole cast; see CAST for each character.
+"use strict";
+(function () {
+  const L = '#4a2e22';           // outline
+  const sw = 'stroke="' + L + '" stroke-width="1.6" stroke-linejoin="round"';
+  const shade = (h, k) => '#' + [1, 3, 5].map(i => Math.round(parseInt(h.slice(i, i + 2), 16) * k)).map(v => Math.min(255, v).toString(16).padStart(2, '0')).join('');
+
+  // Embroidery strip: alternating triangles, the most common huipil/cueitl motif.
+  const tri = (x0, x1, y, h, c) => { let d = ''; for (let x = x0; x < x1 - 1; x += 6) d += `M${x} ${y + h}l3 ${-h}l3 ${h}Z`; return `<path d="${d}" fill="${c}"/>`; };
+
+  function hairBack(p) {
+    const c = p.hair, s = p.hairStyle;
+    if (s === 'afro') return `<circle cx="60" cy="56" r="47" fill="${c}" ${sw}/>${Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2; return `<circle cx="${60 + Math.cos(a) * 43}" cy="${56 + Math.sin(a) * 43}" r="9" fill="${c}"/>`; }).join('')}`;
+    if (s === 'rizos') return Array.from({ length: 22 }, (_, i) => { const side = i % 2 ? 1 : -1, k = Math.floor(i / 2); return `<circle cx="${60 + side * (30 + (k % 3) * 4)}" cy="${48 + k * 7}" r="11" fill="${c}" ${sw}/>`; }).join('') + `<path d="M24 50 C 24 110 96 110 96 50 Z" fill="${c}"/>`;
+    if (s === 'largo') return `<path d="M24 52 C 22 90 24 112 28 124 L92 124 C 96 112 98 90 96 52 Z" fill="${c}" ${sw}/>`;
+    if (s === 'coleta') return `<path d="M88 40 C 108 46 110 80 100 104 C 96 90 92 70 84 56 Z" fill="${c}" ${sw}/>`;
+    if (s === 'chongo') return `<circle cx="60" cy="20" r="14" fill="${c}" ${sw}/><path d="M48 22 h24" stroke="${p.acc2 || '#c0392b'}" stroke-width="4"/>`;
+    return '';
+  }
+  function hairFront(p) {
+    const c = p.hair, hi = shade(c === '#1a1210' ? '#3a2a24' : c, 1.25), s = p.hairStyle;
+    let g = `<path d="M26 58 C 22 26 44 16 60 16 C 78 16 98 26 94 58 C 88 44 78 38 70 36 C 64 42 52 44 44 40 C 38 44 32 50 26 58 Z" fill="${c}" ${sw}/>`;
+    if (s === 'rizos' || s === 'afro') g = `<path d="M26 58 C 22 26 44 16 60 16 C 78 16 98 26 94 58 C 86 46 78 42 60 42 C 42 42 34 46 26 58 Z" fill="${c}" ${sw}/>` + [30, 40, 50, 60, 70, 80, 90].map((x, i) => `<circle cx="${x}" cy="${26 + Math.abs(i - 3) * 4}" r="${8}" fill="${c}"/>`).join('');
+    g += `<path d="M40 24 C 48 19 58 18 66 20" stroke="${hi}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    // Ixtlapalli: hair twisted into two "horns" over the forehead.
+    if (s === 'cuernos') g += [46, 74].map(x => `<path d="M${x - 7} 22 C ${x - 8} 8 ${x + 8} 8 ${x + 7} 22 Z" fill="${c}" ${sw}/>`).join('');
+    if (s === 'trenzas') g += [24, 96].map(x => `${Array.from({ length: 7 }, (_, i) => `<ellipse cx="${x + (x < 60 ? 2 : -2)}" cy="${62 + i * 9}" rx="6" ry="6" fill="${c}" ${sw}/>`).join('')}<path d="M${x - 4} 124 l4 8 l4 -8" fill="${p.acc2 || '#c0392b'}"/><rect x="${x - 5}" y="120" width="10" height="4" fill="${p.acc2 || '#c0392b'}"/>`).join('');
+    return g;
+  }
+  function headwear(p) {
+    const h = p.head; if (!h) return '';
+    if (h === 'plumas') { const cs = p.feathers || ['#2f8f8a', '#7cb04a', '#e9b33e', '#c0392b', '#e9b33e', '#7cb04a', '#2f8f8a']; return cs.map((c, i) => { const a = (i - (cs.length - 1) / 2) * 15; return `<path transform="rotate(${a} 60 36)" d="M60 36 C 52 22 54 6 60 -2 C 66 6 68 22 60 36 Z" fill="${c}" ${sw}/>`; }).join('') + `<path d="M28 40 C 44 32 76 32 92 40 L92 47 C 76 40 44 40 28 47 Z" fill="#e9b33e" ${sw}/>${[38, 50, 60, 70, 82].map(x => `<circle cx="${x}" cy="41" r="2.2" fill="#2f8f8a"/>`).join('')}`; }
+    if (h === 'pluma') return `<path transform="rotate(20 86 34)" d="M86 34 C 78 20 80 4 88 -4 C 96 6 94 22 86 34 Z" fill="${p.acc2 || '#c0392b'}" ${sw}/><path d="M28 40 C 44 32 76 32 92 40 L92 46 C 76 39 44 39 28 46 Z" fill="${p.band || '#c0392b'}" ${sw}/>`;
+    if (h === 'banda') return `<path d="M27 42 C 44 34 76 34 93 42 L93 49 C 76 41 44 41 27 49 Z" fill="${p.band || '#c0392b'}" ${sw}/>${[40, 52, 64, 76].map(x => `<rect x="${x}" y="40" width="4" height="4" fill="#f6efe2" transform="rotate(45 ${x + 2} 42)"/>`).join('')}`;
+    if (h === 'flor') return `<g transform="translate(86 30)">${[0, 72, 144, 216, 288].map(a => `<ellipse cy="-6" rx="5" ry="7" transform="rotate(${a})" fill="${p.flower || '#e05a7a'}" ${sw}/>`).join('')}<circle r="3.6" fill="#f2c94c" ${sw}/></g>`;
+    if (h === 'cempa') return [26, 38, 50, 62, 74, 86, 94].map((x, i) => `<circle cx="${x}" cy="${34 - Math.sin(i / 6 * Math.PI) * 8}" r="7" fill="${i % 2 ? '#f29a1e' : '#f6b81e'}" ${sw}/><circle cx="${x}" cy="${34 - Math.sin(i / 6 * Math.PI) * 8}" r="2.4" fill="#d06a12"/>`).join('');
+    return '';
+  }
+
+  function body(p) {
+    const bw = [0, 7, 14][p.build || 0], sk = p.skin, skS = shade(sk, .82);
+    const top = p.top || '#f3ede2', topS = shade(top, .86), trim = p.trim || '#c0392b', skirt = p.skirt || '#2f5fa8';
+    let g = '';
+    // Legs + sandals (cactli).
+    g += `<rect x="47" y="140" width="10" height="17" rx="4" fill="${sk}" ${sw}/><rect x="63" y="140" width="10" height="17" rx="4" fill="${skS}" ${sw}/>`;
+    g += `<ellipse cx="51" cy="158" rx="8" ry="3.6" fill="#8a5a34" ${sw}/><ellipse cx="69" cy="158" rx="8" ry="3.6" fill="#8a5a34" ${sw}/>`;
+    // Cueitl (wrap skirt) with embroidered hem.
+    const w0 = 20 + bw / 2, w1 = 26 + bw / 2;
+    g += `<path d="M${60 - w0} 110 L${60 + w0} 110 L${60 + w1} 146 L${60 - w1} 146 Z" fill="${skirt}" ${sw}/><path d="M${60 + w0 - 6} 112 L${60 + w1 - 8} 145" stroke="${shade(skirt, .75)}" stroke-width="2"/>`;
+    g += `<rect x="${60 - w1 + 1}" y="137" width="${2 * w1 - 2}" height="8" fill="${p.hem || '#f3ede2'}"/>${tri(60 - w1 + 2, 60 + w1 - 2, 137, 7, trim)}`;
+    // Arms (behind the top's sleeves).
+    const ax = 21 + bw / 2;
+    g += `<path d="M${60 - ax} 94 C ${60 - ax - 6} 104 ${60 - ax - 6} 116 ${60 - ax - 2} 124" stroke="${L}" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M${60 - ax} 94 C ${60 - ax - 6} 104 ${60 - ax - 6} 116 ${60 - ax - 2} 124" stroke="${sk}" stroke-width="8" stroke-linecap="round" fill="none"/>`;
+    g += `<path d="M${60 + ax} 94 C ${60 + ax + 6} 104 ${60 + ax + 6} 116 ${60 + ax + 2} 124" stroke="${L}" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M${60 + ax} 94 C ${60 + ax + 6} 104 ${60 + ax + 6} 116 ${60 + ax + 2} 124" stroke="${skS}" stroke-width="8" stroke-linecap="round" fill="none"/>`;
+    // Top: huipil, quechquémitl over a blouse, or ichcahuipilli (quilted cotton armour).
+    const tw = 22 + bw / 2;
+    if (p.style === 'quech') {
+      g += `<path d="M${60 - tw + 2} 90 L${60 + tw - 2} 90 L${60 + tw} 118 L${60 - tw} 118 Z" fill="${p.blouse || '#f3ede2'}" ${sw}/>`;
+      g += `<path d="M${60 - tw - 6} 92 C ${60 - tw} 88 ${60 + tw} 88 ${60 + tw + 6} 92 L60 128 Z" fill="${top}" ${sw}/><path d="M${60 - tw - 2} 96 L60 124 L${60 + tw + 2} 96" stroke="${trim}" stroke-width="3" fill="none"/><path d="M60 128 l-3 6 h6Z" fill="${trim}"/>`;
+      g += `<path d="M${60 + tw - 4} 92 L60 128 L${60 + tw + 6} 92Z" fill="${topS}" opacity=".6"/>`;
+    } else if (p.style === 'armadura') {
+      g += `<path d="M${60 - tw} 88 L${60 + tw} 88 L${60 + tw + 2} 124 L${60 - tw - 2} 124 Z" fill="${top}" ${sw}/>`;
+      for (let y = 94; y < 124; y += 7) g += `<path d="M${60 - tw} ${y} H${60 + tw}" stroke="${topS}" stroke-width="1.6"/>`;
+      for (let x = 60 - tw + 7; x < 60 + tw; x += 8) g += `<path d="M${x} 88 V124" stroke="${topS}" stroke-width="1.2"/>`;
+      g += `<rect x="${60 - tw - 2}" y="118" width="${2 * tw + 4}" height="7" fill="${trim}" ${sw}/>${Array.from({ length: Math.floor((2 * tw) / 7) }, (_, i) => `<path d="M${60 - tw + 2 + i * 7} 125 v8" stroke="${trim}" stroke-width="3"/>`).join('')}`;
+    } else {
+      g += `<path d="M${60 - tw - 4} 90 C ${60 - tw} 86 ${60 + tw} 86 ${60 + tw + 4} 90 L${60 + tw + 2} 126 L${60 - tw - 2} 126 Z" fill="${top}" ${sw}/><path d="M${60 + tw - 6} 90 L${60 + tw - 2} 126 L${60 + tw + 2} 126 L${60 + tw + 4} 90Z" fill="${topS}"/>`;
+      g += `<path d="M50 88 L50 100 L70 100 L70 88" fill="none" stroke="${trim}" stroke-width="3.4"/>`;
+      g += `<rect x="${60 - tw - 1}" y="117" width="${2 * tw + 2}" height="7" fill="${p.band2 || trim}"/>${tri(60 - tw, 60 + tw, 117, 6, p.hem2 || '#f3ede2')}`;
+      if (p.stars) g += [[48, 108], [72, 106], [60, 112]].map(([x, y]) => `<path d="M${x} ${y - 3} l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1Z" fill="#f2c94c"/>`).join('');
+    }
+    // Hands.
+    g += `<circle cx="${60 - ax - 2}" cy="125" r="4.6" fill="${sk}" ${sw}/><circle cx="${60 + ax + 2}" cy="125" r="4.6" fill="${skS}" ${sw}/>`;
+    // Jade bead necklace.
+    if (p.jade) g += `<path d="M48 90 C 52 98 68 98 72 90" fill="none" stroke="${L}" stroke-width="1"/>` + [50, 55, 60, 65, 70].map((x, i) => `<circle cx="${x}" cy="${91 + (i === 0 || i === 4 ? 0 : i === 2 ? 5 : 3.5)}" r="2.6" fill="#3fa37a" ${sw}/>`).join('');
+    return g;
+  }
+
+  function face(p) {
+    const sk = p.skin, skS = shade(sk, .82), ey = 64;
+    let g = `<rect x="54" y="80" width="12" height="10" fill="${skS}"/>`;
+    g += `<ellipse cx="27" cy="62" rx="5" ry="7" fill="${sk}" ${sw}/><ellipse cx="93" cy="62" rx="5" ry="7" fill="${skS}" ${sw}/>`;
+    if (p.orejeras) g += [27, 93].map(x => `<circle cx="${x}" cy="66" r="4" fill="#e9b33e" ${sw}/><circle cx="${x}" cy="66" r="1.6" fill="#2f8f8a"/>`).join('');
+    g += `<path d="M60 22 C 84 22 94 38 94 58 C 94 78 80 88 60 88 C 40 88 26 78 26 58 C 26 38 36 22 60 22 Z" fill="${sk}" ${sw}/>`;
+    g += `<path d="M84 34 C 92 44 94 60 88 74 C 86 70 86 60 84 52 Z" fill="${skS}" opacity=".7"/>`;
+    g += [46, 74].map(x => `<ellipse cx="${x}" cy="${ey}" rx="5" ry="6.2" fill="#fff"/><ellipse cx="${x}" cy="${ey + .6}" rx="3.8" ry="5" fill="${p.eye || '#2a1712'}"/><circle cx="${x + 1.6}" cy="${ey - 1.6}" r="1.6" fill="#fff"/><path d="M${x - 6} ${ey - 3} C ${x - 3} ${ey - 8} ${x + 3} ${ey - 8} ${x + 6} ${ey - 4}" stroke="${L}" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M${x + (x < 60 ? -6 : 6)} ${ey - 3} l${x < 60 ? -3 : 3} -2" stroke="${L}" stroke-width="1.8" stroke-linecap="round"/>`).join('');
+    g += [46, 74].map(x => `<path d="M${x - 5} ${ey - 12} q5 -3 10 0" stroke="${shade(p.hair, 1)}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`).join('');
+    g += `<ellipse cx="38" cy="74" rx="5.5" ry="3" fill="#e0846e" opacity=".5"/><ellipse cx="82" cy="74" rx="5.5" ry="3" fill="#e0846e" opacity=".5"/>`;
+    if (p.freckles) g += [[36, 70], [40, 72], [34, 73], [80, 70], [84, 72], [86, 69]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9" fill="${shade(sk, .6)}"/>`).join('');
+    g += `<path d="M56 78 Q60 82 64 78" stroke="#8a3a2a" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+    if (p.paint) g += `<path d="M30 66 h8 M82 66 h8" stroke="${p.paint}" stroke-width="2.4" stroke-linecap="round"/>`;
+    return g;
+  }
+
+  function prop(p, phase) {
+    const a = p.prop, bw = [0, 7, 14][p.build || 0], rx = 60 + 21 + bw / 2 + 2, lx = 60 - 21 - bw / 2 - 2;
+    if (!a) return '';
+    if (a === 'lanza' && phase === 'back') return `<path d="M${rx + 2} 158 L${rx + 2} 10" stroke="${L}" stroke-width="5.4" stroke-linecap="round"/><path d="M${rx + 2} 158 L${rx + 2} 10" stroke="#9a6438" stroke-width="3"/><path d="M${rx + 2} -2 l-6 14 h12Z" fill="#2a2a3a" ${sw}/><path d="M${rx - 3} 20 l-4 6 M${rx + 7} 20 l4 6" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>`;
+    if (a === 'arco' && phase === 'back') return `<path d="M${rx + 6} 70 C ${rx + 24} 96 ${rx + 24} 136 ${rx + 6} 160" stroke="${L}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M${rx + 6} 70 C ${rx + 24} 96 ${rx + 24} 136 ${rx + 6} 160" stroke="#8a5a34" stroke-width="3" fill="none"/><path d="M${rx + 6} 70 L${rx + 6} 160" stroke="#f3ede2" stroke-width="1.2"/>`;
+    if (a === 'escudo' && phase === 'front') return `<g transform="translate(${lx - 4} 116)"><circle r="20" fill="#f3ede2" ${sw}/><circle r="15" fill="${p.shield || '#2f5fa8'}" ${sw}/><path d="M-15 0 H15 M0 -15 V15" stroke="#f3ede2" stroke-width="3"/><circle r="5" fill="#e9b33e" ${sw}/>${[-12, -4, 4, 12].map(x => `<path d="M${x} 18 l-2 10 h4Z" fill="${['#2f8f8a', '#c0392b', '#e9b33e', '#2f8f8a'][(x + 12) / 8]}" ${sw}/>`).join('')}</g>`;
+    if (a === 'canasta' && phase === 'front') return `<g transform="translate(${lx - 6} 122)"><path d="M-14 -4 C -14 -26 14 -26 14 -4" stroke="#8a5a34" stroke-width="3.4" fill="none"/><path d="M-16 -4 H16 L12 16 H-12 Z" fill="#d8a85a" ${sw}/><path d="M-14 3 H14 M-13 9 H13" stroke="#a87a3a" stroke-width="2"/>${[-8, 0, 8].map((x, i) => `<circle cx="${x}" cy="-6" r="5" fill="${['#c0392b', '#f2c94c', '#7cb04a'][i]}" ${sw}/>`).join('')}</g>`;
+    if (a === 'jicara' && phase === 'front') return `<g transform="translate(60 124)"><path d="M-16 -4 C -16 10 16 10 16 -4 Z" fill="#a8522e" ${sw}/><ellipse cy="-4" rx="16" ry="4" fill="${p.bowl || '#ecd3a0'}" ${sw}/><path d="M-10 2 h20" stroke="#f1dcb0" stroke-width="2"/></g>`;
+    if (a === 'flores' && phase === 'front') return `<g transform="translate(${lx - 2} 116)"><path d="M0 12 L-4 -8 M0 12 L4 -10 M0 12 L0 -12" stroke="#4f8a36" stroke-width="2.4"/>${[[-4, -10], [4, -12], [0, -15]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f6a81e" ${sw}/><circle cx="${x}" cy="${y}" r="1.8" fill="#d06a12"/>`).join('')}</g>`;
+    if (a === 'cacao' && phase === 'front') return `<g transform="translate(${lx - 4} 118)"><path d="M0 -14 C 10 -10 10 10 0 14 C -10 10 -10 -10 0 -14 Z" fill="#a8521e" ${sw}/><path d="M0 -12 V12 M-4 -10 C -6 0 -6 6 -4 10 M4 -10 C 6 0 6 6 4 10" stroke="#7a3418" stroke-width="1.4" fill="none"/></g>`;
+    if (a === 'red' && phase === 'front') return `<g transform="translate(${lx - 6} 120)"><path d="M-12 -14 L12 -14 L8 14 L-8 14 Z" fill="none" stroke="#c8b48a" stroke-width="2"/>${[-8, -2, 4, 10].map(y => `<path d="M-11 ${y} H11" stroke="#c8b48a" stroke-width="1.4"/>`).join('')}${[-6, 0, 6].map(x => `<path d="M${x} -14 V14" stroke="#c8b48a" stroke-width="1.4"/>`).join('')}<path d="M-6 4 C 0 -2 6 4 0 8 C -2 8 -4 6 -6 4 Z" fill="#7fa8c8" ${sw}/></g>`;
+    if (a === 'tambor' && phase === 'front') return `<g transform="translate(${lx - 2} 124)"><rect x="-11" y="-12" width="22" height="26" rx="4" fill="#a8522e" ${sw}/><ellipse cy="-12" rx="11" ry="4" fill="#ecd3a0" ${sw}/><path d="M-11 0 H11" stroke="#f1dcb0" stroke-width="2"/></g>`;
+    if (a === 'panal' && phase === 'front') return `<g transform="translate(${lx - 4} 120)"><rect x="-8" y="-14" width="16" height="28" rx="6" fill="#c89a50" ${sw}/><path d="M-8 -6 H8 M-8 2 H8" stroke="#8a5a34" stroke-width="1.6"/><circle cx="12" cy="-16" r="2.4" fill="#f2c94c" ${sw}/><circle cx="-12" cy="-20" r="2" fill="#f2c94c" ${sw}/></g>`;
+    return '';
+  }
+
+  // Returns an inline <svg> string. viewBox fits headdresses and props.
+  function chibi(p, cls = '') {
+    return `<svg class="chibi ${cls}" viewBox="-14 -14 148 182" role="img" aria-label="${p.name}">
+      <ellipse cx="60" cy="160" rx="34" ry="6" fill="rgba(30,20,10,.22)"/>
+      ${prop(p, 'back')}${hairBack(p)}${body(p)}${face(p)}${hairFront(p)}${headwear(p)}${prop(p, 'front')}
+    </svg>`;
+  }
+
+  // Cast from the game's roster. Look (skin, hair, build, props) follows the reference
+  // art; clothing is pre-Hispanic Tlaxcalteca: huipil or quechquémitl over a cueitl.
+  const CAST = [
+    { id: 'nizhoni', name: 'Nizhoni', role: 'Cazadora', line: 'Conoce cada vereda del monte.', skin: '#b07040', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#b8763a', trim: '#2f8f8a', skirt: '#8a5a34', head: 'banda', band: '#c0392b', prop: 'lanza', jade: true },
+    { id: 'doli', name: 'Doli', role: 'Recolectora', line: 'Vuelve del cerro con la canasta llena.', skin: '#a8683a', hair: '#1a1210', hairStyle: 'trenzas', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#a8522e', head: 'banda', band: '#e07a28', prop: 'canasta' },
+    { id: 'nalin', name: 'Nalin', role: 'Guerrera', line: 'Defiende las fronteras del señorío.', skin: '#9a5e34', hair: '#1a1210', hairStyle: 'coleta', style: 'armadura', top: '#efe3c8', trim: '#2f5fa8', skirt: '#1e3c78', head: 'plumas', prop: 'escudo', shield: '#2f5fa8', paint: '#2f5fa8' },
+    { id: 'nascha', name: 'Nascha', role: 'Arquera', line: 'Nunca falla un tiro, ni un chiste.', skin: '#b37a4c', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#7a8a3a', trim: '#e9b33e', skirt: '#5a4a2a', head: 'pluma', acc2: '#2f8f8a', band: '#7a8a3a', prop: 'arco', orejeras: true },
+    { id: 'kaya', name: 'Kaya', role: 'Tu amor', line: 'Te espera cada tarde junto al río.', skin: '#c08454', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#3a9ab0', trim: '#f3ede2', band2: '#1e5a78', skirt: '#1e5a78', hem: '#3a9ab0', head: 'banda', band: '#1e3c78', prop: 'lanza', jade: true, romance: true },
+    { id: 'citlali', name: 'Citlali', role: 'Tejedora', line: 'Borda estrellas en cada huipil.', skin: '#b8855a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#2a2440', trim: '#2f8f8a', band2: '#2f8f8a', skirt: '#1e2a4a', head: 'flor', flower: '#e05a7a', stars: true },
+    { id: 'tlalli', name: 'Tlalli', role: 'Alfarera', line: 'Sus cántaros no gotean nunca.', skin: '#c89468', hair: '#1a1210', hairStyle: 'chongo', acc2: '#2f5fa8', style: 'huipil', top: '#2f4a8a', trim: '#f3ede2', band2: '#f3ede2', hem2: '#2f4a8a', skirt: '#1e2a5a', prop: 'jicara', bowl: '#c46a32' },
+    { id: 'malinalli', name: 'Malinalli', role: 'Curandera', line: 'Sabe qué hierba cura cada mal.', skin: '#8a5430', hair: '#1a1210', hairStyle: 'trenzas', acc2: '#e9b33e', style: 'quech', top: '#d9a03a', trim: '#7a2a1e', skirt: '#6a3a1e', head: 'pluma', acc2: '#c0392b', band: '#e9b33e', jade: true, orejeras: true, prop: 'flores' },
+    { id: 'naara', name: 'Naara', role: 'Cantora', line: 'Su voz abre las fiestas del pueblo.', skin: '#5a3420', hair: '#120c0a', hairStyle: 'afro', style: 'huipil', top: '#4f7a3a', trim: '#e9b33e', band2: '#e9b33e', hem2: '#4f7a3a', skirt: '#2e4a24', orejeras: true, jade: true, prop: 'tambor' },
+    { id: 'yeyetzi', name: 'Yeyetzi', role: 'Pescadora', line: 'Pesca charales en la laguna.', skin: '#e2b48c', hair: '#c8502a', hairStyle: 'rizos', style: 'huipil', top: '#5f8a4a', trim: '#e07a28', skirt: '#3a5a30', freckles: true, prop: 'red', eye: '#3a6a3a' },
+    { id: 'isabel', name: 'Isabel', role: 'Viajera', line: 'Llegó de muy lejos siguiendo un mapa.', skin: '#f0c8a0', hair: '#e8c070', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#ecd8b0', trim: '#a8522e', skirt: '#8a6a4a', eye: '#3a5a8a' },
+    { id: 'yuki', name: 'Yuki', role: 'Tortillera', line: 'Sus tortillas salen infladitas del comal.', skin: '#c88a5a', hair: '#3a2418', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e07a28', trim: '#7a2a1e', band2: '#7a2a1e', skirt: '#7a3a1e', prop: 'jicara' },
+    { id: 'mei', name: 'Mei', role: 'Comerciante de cacao', line: 'Nadie regatea mejor en el tianguis.', skin: '#e0b088', hair: '#1a1210', hairStyle: 'largo', build: 2, style: 'huipil', top: '#7ab0d8', trim: '#f3ede2', band2: '#2f5fa8', skirt: '#2f5fa8', prop: 'cacao' },
+    { id: 'iyari', name: 'Iyari', role: 'Apicultora', line: 'Cuida abejas meliponas sin aguijón.', skin: '#a8683a', hair: '#2a1a14', hairStyle: 'rizos', build: 2, style: 'quech', top: '#c0392b', trim: '#f2c94c', skirt: '#6a2a1e', prop: 'panal' },
+    { id: 'ayelen', name: 'Ayelen', role: 'Floricultora', line: 'Siembra cempasúchil para la ofrenda.', skin: '#b07a48', hair: '#1a1210', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e9b33e', trim: '#c0392b', band2: '#c0392b', skirt: '#a8522e', head: 'cempa', prop: 'flores' },
+  ];
+  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesina de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
+
+  window.TlaxChars = { chibi, CAST, PLAYER };
+})();
+</script>
+<script>
+// Procedural "realistic" materials for Tlaxcallan v2, drawn on canvas at load:
+// glazed Talavera tiles (decorated + plain, with grout), a glazed cobalt tile for
+// primary buttons, and a matte-painting style title landscape of La Malinche.
+"use strict";
+(function () {
+  const rnd = s => () => (s = (s * 16807) % 2147483647) / 2147483647;
+
+  // 2D value noise + fbm.
+  function noise2(seed) {
+    const R = rnd(seed), P = new Float32Array(256 * 256).map(R);
+    const at = (x, y) => P[(y & 255) * 256 + (x & 255)];
+    const n = (x, y) => {
+      const xi = Math.floor(x), yi = Math.floor(y), tx = x - xi, ty = y - yi, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+      const a = at(xi, yi), b = at(xi + 1, yi), c = at(xi, yi + 1), d = at(xi + 1, yi + 1);
+      return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+    };
+    return (x, y, oct = 5) => { let s = 0, amp = .5, f = 1; for (let i = 0; i < oct; i++) { s += amp * n(x * f, y * f); f *= 2.03; amp *= .5; } return s; };
+  }
+  const canvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+  const mix = (a, b, t) => a + (b - a) * t;
+
+  // Shape drawn as if with a loaded brush: jittered outline, darker pooled rim, uneven fill.
+  function brush(g, R, fn, color, alpha = .92) {
+    g.save(); g.fillStyle = color;
+    g.globalAlpha = alpha * (.82 + R() * .18); g.beginPath(); fn(0, 0); g.fill();
+    g.globalAlpha = .22; g.translate((R() - .5) * 1.4, (R() - .5) * 1.4); g.beginPath(); fn(); g.fill();
+    g.globalAlpha = .35; g.lineWidth = 1.1; g.strokeStyle = color; g.stroke();
+    g.restore();
+  }
+  function glazeFinish(g, S, R, x0 = 0, y0 = 0) {
+    // Speckle in the tin glaze, highlight sweep, fine crazing.
+    for (let i = 0; i < S * S / 40; i++) { g.fillStyle = `rgba(${R() < .5 ? '90,70,40' : '255,255,255'},${R() * .08})`; g.fillRect(x0 + R() * S, y0 + R() * S, 1, 1); }
+    const hl = g.createLinearGradient(x0, y0, x0 + S, y0 + S);
+    hl.addColorStop(0, 'rgba(255,255,255,.35)'); hl.addColorStop(.32, 'rgba(255,255,255,.05)'); hl.addColorStop(.5, 'rgba(255,255,255,0)'); hl.addColorStop(1, 'rgba(60,40,20,.08)');
+    g.fillStyle = hl; g.fillRect(x0, y0, S, S);
+    g.strokeStyle = 'rgba(80,60,40,.07)'; g.lineWidth = .6;
+    for (let i = 0; i < 9; i++) { let x = x0 + R() * S, y = y0 + R() * S; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 5; k++) { x += (R() - .5) * S * .3; y += (R() - .5) * S * .3; g.lineTo(x, y); } g.stroke(); }
+  }
+  function tileBase(g, S, gap, base, R, x0 = 0, y0 = 0) {
+    g.fillStyle = '#cfc5b2'; g.fillRect(x0, y0, S, S);
+    for (let i = 0; i < S * 2; i++) { g.fillStyle = `rgba(${R() < .5 ? '120,105,85' : '235,228,214'},.5)`; g.fillRect(x0 + R() * S, y0 + R() * S, 1.4, 1.4); }
+    const r = S * .04, x = x0 + gap / 2, y = y0 + gap / 2, w = S - gap;
+    g.save(); g.beginPath(); g.roundRect(x, y, w, w, r); g.clip();
+    const bg = g.createRadialGradient(x + w * .45, y + w * .4, w * .1, x + w / 2, y + w / 2, w * .75);
+    bg.addColorStop(0, base[0]); bg.addColorStop(1, base[1]); g.fillStyle = bg; g.fillRect(x, y, w, w);
+    return { x, y, w, done() { glazeFinish(g, w, R, x, y); g.restore(); g.strokeStyle = 'rgba(70,55,35,.25)'; g.lineWidth = 1; g.beginPath(); g.roundRect(x + .5, y + .5, w - 1, w - 1, r); g.stroke(); } };
+  }
+
+  const COB = '#1b3a8a', OCH = '#d39a26', GRN = '#3d7a46';
+  // Decorated Talavera tile: rosette, ochre ring, corner quarter-medallions that join across tiles.
+  function decoTile(S = 192, seed = 3) {
+    const c = canvas(S, S), g = c.getContext('2d'), R = rnd(seed), gap = 5;
+    const t = tileBase(g, S, gap, ['#fbf7ee', '#ece3d0'], R), cx = S / 2, cy = S / 2, u = t.w / 100;
+    const jit = () => (R() - .5) * 1.2 * u;
+    // Corner quarter circles + ochre dots.
+    [[t.x, t.y], [t.x + t.w, t.y], [t.x, t.y + t.w], [t.x + t.w, t.y + t.w]].forEach(([x, y]) => {
+      brush(g, R, () => { g.arc(x + jit(), y + jit(), 24 * u, 0, Math.PI * 2); }, COB);
+      brush(g, R, () => { g.arc(x, y, 13 * u, 0, Math.PI * 2); }, '#f6f0e2', 1);
+      brush(g, R, () => { g.arc(x, y, 8 * u, 0, Math.PI * 2); }, OCH);
+    });
+    // Edge leaves pointing to the centre.
+    [0, 1, 2, 3].forEach(k => { const a = k * Math.PI / 2; g.save(); g.translate(cx, cy); g.rotate(a);
+      brush(g, R, () => { g.moveTo(0, -48 * u); g.quadraticCurveTo(9 * u, -40 * u, 0, -30 * u); g.quadraticCurveTo(-9 * u, -40 * u, 0, -48 * u); }, GRN);
+      g.restore(); });
+    // Rosette: 8 cobalt petals, ochre ring, centre.
+    for (let k = 0; k < 8; k++) { g.save(); g.translate(cx, cy); g.rotate(k * Math.PI / 4 + Math.PI / 8);
+      brush(g, R, () => { g.moveTo(0, -6 * u); g.bezierCurveTo(14 * u + jit(), -16 * u, 9 * u, -34 * u, 0, -38 * u + jit()); g.bezierCurveTo(-9 * u, -34 * u, -14 * u + jit(), -16 * u, 0, -6 * u); }, COB);
+      brush(g, R, () => { g.ellipse(0, -24 * u, 2.6 * u, 6 * u, 0, 0, Math.PI * 2); }, '#f6f0e2', .9);
+      g.restore(); }
+    brush(g, R, () => { g.arc(cx, cy, 11 * u, 0, Math.PI * 2); }, OCH);
+    brush(g, R, () => { g.arc(cx, cy, 5 * u, 0, Math.PI * 2); }, COB);
+    // Dotted cobalt frame line near the edge.
+    g.fillStyle = COB; for (let k = 0; k < 4; k++) for (let i = 30; i <= 70; i += 6) { g.globalAlpha = .75; const p = [[i, 8], [92, i], [i, 92], [8, i]][k]; g.beginPath(); g.arc(t.x + p[0] * u, t.y + p[1] * u, 1.5 * u, 0, Math.PI * 2); g.fill(); }
+    g.globalAlpha = 1; t.done(); return c.toDataURL();
+  }
+  // Plain white glazed tiles, 2×2 with slight variation so repetition is less visible.
+  function plainTiles(S = 128, seed = 9) {
+    const c = canvas(S * 2, S * 2), g = c.getContext('2d'), R = rnd(seed);
+    const tints = [['#fdfaf3', '#efe7d6'], ['#faf6ec', '#eae0cc'], ['#fefbf5', '#f1e9da'], ['#f9f4ea', '#e9dfcb']];
+    for (let i = 0; i < 4; i++) { const t = tileBase(g, S, 4, tints[i], R, (i % 2) * S, Math.floor(i / 2) * S); t.done(); }
+    return c.toDataURL();
+  }
+  // Cobalt-glazed tile for primary buttons and selected states.
+  function cobaltTile(S = 128, seed = 5) {
+    const c = canvas(S, S), g = c.getContext('2d'), R = rnd(seed);
+    const t = tileBase(g, S, 0, ['#2f56b4', '#16306e'], R);
+    for (let i = 0; i < 40; i++) { g.fillStyle = `rgba(10,20,60,${R() * .2})`; g.beginPath(); g.ellipse(R() * S, R() * S, 4 + R() * 12, 2 + R() * 6, R() * 3, 0, Math.PI * 2); g.fill(); }
+    t.done(); return c.toDataURL();
+  }
+
+  // Matte-painting landscape: sky, fbm clouds, La Malinche with ridges and gullies lit
+  // from the right (sunrise), haze, forest belt, valley and milpa silhouettes.
+  function landscape(W = 1280, H = 720) {
+    const c = canvas(W, H), g = c.getContext('2d'), img = g.createImageData(W, H), d = img.data, N = noise2(7), M = noise2(19), R = rnd(4);
+    const sunX = W * .8, sunY = H * .55;
+    const sky = y => { const t = y / (H * .72); const st = [[24, 22, 56], [70, 44, 98], [176, 86, 98], [236, 146, 92], [248, 206, 140]]; const f = Math.min(.999, Math.max(0, t)) * (st.length - 1), i = Math.floor(f), k = f - i; return st[i].map((v, j) => mix(v, st[i + 1][j], k)); };
+    const malTop = x => { const dx = (x - W * .47) / W; return H * .24 + Math.pow(Math.abs(dx) * 3.2, 1.25) * H * .28 + (N(x / 90, 3) - .5) * H * .06; };
+    const farTop = x => { const a = H * .5 - Math.max(0, 1 - Math.abs(x - W * .12) / (W * .14)) * H * .14, b = H * .52 - Math.max(0, 1 - Math.abs(x - W * .24) / (W * .1)) * H * .08; return Math.min(a, b) + (N(x / 40, 9) - .5) * 8; };
+    const forest = x => H * .69 + (N(x / 60, 30) - .5) * H * .05;
+    const valley = x => H * .76 + (N(x / 200, 50) - .5) * H * .02;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4; let [r, gg, b] = sky(y);
+      // Sun glow.
+      const sd = Math.hypot(x - sunX, (y - sunY) * 1.3) / W; const glow = Math.exp(-sd * 9) * .9 + Math.exp(-sd * 40) * .6;
+      r = mix(r, 255, glow * .8); gg = mix(gg, 236, glow * .7); b = mix(b, 196, glow * .5);
+      if (sd < .032) { r = 255; gg = 248; b = 226; }
+      // Clouds.
+      if (y < H * .45) { const cl = M(x / 260, y / 70, 5); const k = Math.max(0, (cl - .55) * 4) * (1 - y / (H * .45)); const lit = Math.max(0, 1 - Math.abs(x - sunX) / W) * .6; r = mix(r, 220 + lit * 35, k * .7); gg = mix(gg, 120 + lit * 80, k * .7); b = mix(b, 130 + lit * 40, k * .7); }
+      // Far volcanoes (Popocatépetl, Iztaccíhuatl), hazy.
+      const ft = farTop(x);
+      if (y > ft && y < H * .7) { const snow = y < ft + 18 + N(x / 14, y / 14, 3) * 14; r = snow ? 236 : 150; gg = snow ? 222 : 128; b = snow ? 232 : 170; const h = .35; r = mix(r, 240, h); gg = mix(gg, 180, h); b = mix(b, 160, h); }
+      // La Malinche.
+      const mt = malTop(x);
+      if (y > mt) {
+        // Gullies radiate from the summit: sample ridged noise in polar coordinates.
+        const px = W * .47, py = H * .2, ang = Math.atan2(x - px, y - py), dist = Math.hypot(x - px, y - py) / H;
+        const ridge = (a, r) => 1 - Math.abs(2 * N(a * 9, r * 6, 5) - 1);
+        const h0 = ridge(ang, dist) * .55 + N(x / 34, y / 34, 5) * .45, h1 = ridge(ang + .006, dist) * .55 + N((x + 1.5) / 34, y / 34, 5) * .45;
+        const fine = N(x / 5, y / 5, 3) - .5;
+        const slope = (h1 - h0) * 8, side = (x - px) / (W * .25);
+        let light = .62 + slope * .7 + side * .28 + fine * .18 + (h0 - .5) * .25;
+        light = Math.max(.12, Math.min(1.3, light));
+        const veg = Math.min(1, Math.max(0, (dist - .32) / .2));           // pine forest lower down
+        let cr = mix(104, 58, veg), cg = mix(84, 84, veg), cb = mix(118, 62, veg);
+        const warm = Math.max(0, light - .75);
+        r = cr * light + 150 * warm; gg = cg * light + 90 * warm; b = cb * light + 50 * warm;
+        const snow = dist < .16 + (h0 - .5) * .1 + N(x / 30, y / 30, 3) * .04 && h0 > .35;
+        if (snow) { const s = Math.min(1.08, .55 + slope * .5 + side * .3 + .3); r = 255 * s; gg = 236 * s; b = 240 * s; }
+        const haze = Math.min(.6, Math.max(0, (y - H * .42) / (H * .32)));
+        r = mix(r, 230, haze * .55); gg = mix(gg, 156, haze * .55); b = mix(b, 140, haze * .55);
+      }
+      // Forest belt.
+      if (y > forest(x)) { const t = N(x / 6, y / 6, 4); const l = .5 + (t - .5) * 1.4 + (x / W) * .2; r = 34 * l + 10; gg = 62 * l + 14; b = 36 * l + 10; }
+      // Valley fields in warm light.
+      if (y > valley(x)) { const band = Math.sin((y - valley(x)) / 3 + N(x / 50, y / 20, 3) * 6); const l = .8 + band * .08 + (N(x / 10, y / 10, 4) - .5) * .3 + (x / W) * .2; r = 104 * l; gg = 132 * l; b = 58 * l; }
+      d[i] = r; d[i + 1] = gg; d[i + 2] = b; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+    // Village + church catching the sun.
+    for (let k = 0; k < 26; k++) { const x = W * .55 + R() * W * .4, y = valley(x) + 2 + R() * 10, w = 6 + R() * 10; g.fillStyle = R() < .5 ? '#e8cfa6' : '#d8b48a'; g.fillRect(x, y - 6, w, 6); g.fillStyle = '#a8432f'; g.fillRect(x - 1, y - 8, w + 2, 2.4); }
+    // Basílica de Ocotlán on its hill: white stucco towers over red petatillo bases.
+    const cx = W * .83, cy = valley(cx) - 8;
+    g.fillStyle = '#5a7a3a'; g.beginPath(); g.ellipse(cx, cy + 14, 90, 22, 0, Math.PI, 0); g.fill();
+    const tower = (tx, s) => { g.fillStyle = '#b8432f'; g.fillRect(tx - 7 * s, cy - 22 * s, 14 * s, 22 * s); g.strokeStyle = 'rgba(120,40,30,.8)'; g.lineWidth = .6; for (let k = 0; k < 8; k++) { g.beginPath(); g.moveTo(tx - 7 * s, cy - k * 2.8 * s); g.lineTo(tx + 7 * s, cy - (k + 1) * 2.8 * s); g.stroke(); }
+      g.fillStyle = '#f6f0e4'; g.fillRect(tx - 6 * s, cy - 42 * s, 12 * s, 20 * s); g.fillRect(tx - 4.5 * s, cy - 54 * s, 9 * s, 12 * s); g.beginPath(); g.arc(tx, cy - 54 * s, 4.5 * s, Math.PI, 0); g.fill();
+      g.fillStyle = '#3a2a3a'; g.fillRect(tx - 2 * s, cy - 38 * s, 4 * s, 8 * s); g.fillRect(tx - 1.5 * s, cy - 51 * s, 3 * s, 6 * s); g.fillStyle = '#e0c070'; g.fillRect(tx - .5 * s, cy - 64 * s, 1 * s, 6 * s); g.fillRect(tx - 2 * s, cy - 62 * s, 4 * s, 1 * s); };
+    const s = 1.1; g.fillStyle = '#f6f0e4'; g.fillRect(cx - 14 * s, cy - 40 * s, 28 * s, 40 * s);
+    g.fillStyle = '#efe2c8'; g.beginPath(); g.moveTo(cx - 14 * s, cy - 40 * s); g.quadraticCurveTo(cx, cy - 56 * s, cx + 14 * s, cy - 40 * s); g.fill();
+    g.fillStyle = '#d8c09a'; g.fillRect(cx - 8 * s, cy - 36 * s, 16 * s, 26 * s); g.fillStyle = '#4a2e2a'; g.beginPath(); g.moveTo(cx - 4 * s, cy); g.lineTo(cx - 4 * s, cy - 10 * s); g.arc(cx, cy - 10 * s, 4 * s, Math.PI, 0); g.lineTo(cx + 4 * s, cy); g.fill();
+    tower(cx - 22 * s, s); tower(cx + 22 * s, s);
+    g.fillStyle = 'rgba(255,214,150,.25)'; g.fillRect(cx + 4 * s, cy - 56 * s, 22 * s, 56 * s);
+    // White herons (the Tlaxcalteca standard) crossing the dawn sky.
+    [[W * .3, H * .18, 1], [W * .34, H * .21, .8], [W * .27, H * .23, .7]].forEach(([hx, hy, k]) => { g.strokeStyle = '#f8f4ee'; g.lineWidth = 2.6 * k; g.lineCap = 'round'; g.beginPath(); g.moveTo(hx - 16 * k, hy - 6 * k); g.quadraticCurveTo(hx - 6 * k, hy - 10 * k, hx, hy); g.quadraticCurveTo(hx + 6 * k, hy - 10 * k, hx + 16 * k, hy - 6 * k); g.stroke(); g.lineWidth = 1.6 * k; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + 10 * k, hy + 2 * k); g.stroke(); });
+    // Milpa: corn stalk silhouettes, back-lit.
+    const rowY = [H * .86, H * .93, H * 1.01];
+    rowY.forEach((by, ri) => {
+      const s = .7 + ri * .3;
+      for (let x = -10; x < W * .62 - ri * 30; x += 11 * s + R() * 6) {
+        const h = (60 + R() * 30) * s, lean = (R() - .5) * 6;
+        g.strokeStyle = `rgb(${30 + ri * 6},${52 + ri * 8},${26})`; g.lineWidth = 2.2 * s; g.beginPath(); g.moveTo(x, by); g.quadraticCurveTo(x + lean, by - h * .5, x + lean * 1.6, by - h); g.stroke();
+        for (let k = 0; k < 4; k++) { const ly = by - h * (.3 + k * .16), dd = k % 2 ? 1 : -1, L = (24 - k * 3) * s; g.fillStyle = `rgba(${44 + ri * 10},${78 + ri * 12},${34},.95)`; g.beginPath(); g.moveTo(x, ly); g.quadraticCurveTo(x + dd * L * .6, ly - 10 * s, x + dd * L, ly + 4 * s); g.quadraticCurveTo(x + dd * L * .5, ly - 3 * s, x, ly + 3 * s); g.fill(); }
+        g.strokeStyle = 'rgba(240,200,110,.9)'; g.lineWidth = 1.2 * s; g.beginPath(); g.moveTo(x + lean * 1.6, by - h); g.lineTo(x + lean * 1.6 - 4 * s, by - h - 7 * s); g.moveTo(x + lean * 1.6, by - h); g.lineTo(x + lean * 1.6 + 4 * s, by - h - 7 * s); g.stroke();
+        g.strokeStyle = 'rgba(255,214,140,.5)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x + 1, by); g.quadraticCurveTo(x + lean + 1, by - h * .5, x + lean * 1.6 + 1, by - h); g.stroke();
+      }
+    });
+    // Magueyes.
+    [[W * .72, H * 1.0, 1.4], [W * .9, H * 1.02, 1.8], [W * .62, H * .98, 1]].forEach(([mx, my, s]) => {
+      [-70, 70, -48, 48, -26, 26, -8, 8, 0].forEach((a, i) => { g.save(); g.translate(mx, my); g.rotate(a * Math.PI / 180); const L = (90 - Math.abs(a) * .4) * s, w = 10 * s;
+        const gr = g.createLinearGradient(-w, 0, w, 0); gr.addColorStop(0, i < 4 ? '#24453c' : '#3d6e5c'); gr.addColorStop(1, i < 4 ? '#183028' : '#6e9a84');
+        g.fillStyle = gr; g.beginPath(); g.moveTo(-w, 0); g.quadraticCurveTo(-w, -L * .6, 0, -L); g.quadraticCurveTo(w, -L * .6, w, 0); g.fill();
+        g.strokeStyle = 'rgba(220,200,120,.45)'; g.lineWidth = 1.2; g.stroke(); g.restore(); });
+    });
+    // Film grain + vignette.
+    const v = g.createRadialGradient(W / 2, H / 2, H * .3, W / 2, H / 2, W * .7); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,5,20,.45)'); g.fillStyle = v; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < W * H / 30; i++) { g.fillStyle = `rgba(${R() < .5 ? 0 : 255},${R() < .5 ? 0 : 255},${R() < .5 ? 0 : 255},.035)`; g.fillRect(R() * W, R() * H, 1, 1); }
+    return c.toDataURL('image/jpeg', .9);
+  }
+
+  window.TlaxTex = { decoTile, plainTiles, cobaltTile, landscape };
+})();
+</script>
+<script>
+// Four title-landscape options for Tlaxcallan (960×540 SVG), none photoreal:
+// plano (flat geometric), papel (layered paper cut), lienzo (Lienzo de Tlaxcala
+// codex) and talavera (cobalt mural painted on tiles). All show La Malinche,
+// a teocalli, the milpa, magueyes and white herons — Tlaxcallan in 1519.
+"use strict";
+(function () {
+  const rnd = s => () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const svg = (defs, body) => `<svg class="scene" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>${body}</svg>`;
+  const wave = (y0, amp, f, ph, bottom = 560) => { let d = `M-10 ${bottom}L-10 ${y0}`; for (let x = -10; x <= 970; x += 10) d += `L${x} ${(y0 + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.7 + ph * 2) * amp * .35).toFixed(1)}`; return d + `L970 ${bottom}Z`; };
+  const MAL = 'M150 432 C 250 360 330 280 400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 C 610 266 700 360 820 432 Z';
+
+  // Stepped temple (teocalli) with shrine on top. c: colors {a: tier, b: tier shade, s: stairs, r: shrine roof, w: shrine wall}.
+  function teocalli(x, y, s, c, stroke = '') {
+    let g = '';
+    [[120, 0], [98, 1], [76, 2], [54, 3]].forEach(([w, i]) => { const ty = y - (i + 1) * 15 * s; g += `<path d="M${x - w / 2 * s} ${ty + 15 * s} L${x - (w / 2 - 6) * s} ${ty} L${x + (w / 2 - 6) * s} ${ty} L${x + w / 2 * s} ${ty + 15 * s} Z" fill="${c.a}" ${stroke}/><path d="M${x + (w / 2 - 14) * s} ${ty} L${x + (w / 2 - 6) * s} ${ty} L${x + w / 2 * s} ${ty + 15 * s} L${x + (w / 2 - 12) * s} ${ty + 15 * s}Z" fill="${c.b}"/>`; });
+    g += `<path d="M${x - 12 * s} ${y} L${x - 8 * s} ${y - 60 * s} L${x + 8 * s} ${y - 60 * s} L${x + 12 * s} ${y}Z" fill="${c.s}" ${stroke}/>`;
+    for (let k = 1; k < 12; k++) g += `<path d="M${x - (12 - k * .35) * s} ${y - k * 5 * s} H${x + (12 - k * .35) * s}" stroke="${c.b}" stroke-width="${1.2 * s}"/>`;
+    const ty = y - 60 * s;
+    g += `<rect x="${x - 16 * s}" y="${ty - 22 * s}" width="${32 * s}" height="${22 * s}" fill="${c.w}" ${stroke}/><path d="M${x - 5 * s} ${ty} V${ty - 12 * s} H${x + 5 * s} V${ty}Z" fill="#2a1a14"/>`;
+    g += `<path d="M${x - 20 * s} ${ty - 22 * s} L${x} ${ty - 40 * s} L${x + 20 * s} ${ty - 22 * s}Z" fill="${c.r}" ${stroke}/>`;
+    for (let k = -1; k <= 1; k++) g += `<circle cx="${x + k * 7 * s}" cy="${ty - 26 * s}" r="${1.6 * s}" fill="#f6efe0"/>`;
+    return g;
+  }
+  const corn = (x, y, s, c) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-46" stroke="${c.stem}" stroke-width="3.4"/><path d="M0 -12 C -10 -20 -18 -18 -22 -10 C -14 -14 -8 -12 0 -8Z M0 -22 C 10 -30 18 -28 22 -20 C 14 -24 8 -22 0 -18Z M0 -32 C -9 -40 -16 -38 -19 -31 C -12 -34 -6 -32 0 -28Z" fill="${c.leaf}"/>${c.cob ? `<ellipse cx="4" cy="-24" rx="3" ry="7" fill="${c.cob}" transform="rotate(15 4 -24)"/>` : ''}<path d="M0 -46 l-5 -6 M0 -46 l0 -8 M0 -46 l5 -6" stroke="${c.tas}" stroke-width="2.4" stroke-linecap="round"/></g>`;
+  const agave = (x, y, s, cs, stroke = '') => `<g transform="translate(${x} ${y}) scale(${s})">${[-64, 64, -40, 40, -18, 18, 0].map((a, i) => `<path transform="rotate(${a})" d="M-6 0 C -6 -24 -2 -40 0 -46 C 2 -40 6 -24 6 0Z" fill="${cs[Math.min(2, Math.floor(i / 2))]}" ${stroke}/>`).join('')}</g>`;
+  const heron = (x, y, s, fill, stroke = 'none', sw = 0) => `<path transform="translate(${x} ${y}) scale(${s})" d="M-26 -8 C -16 -14 -6 -12 0 0 C 6 -12 16 -14 26 -8 C 16 -8 8 -4 2 4 L14 6 L2 7 C -4 4 -14 -6 -26 -8 Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+  const milpa = (c, R, area = [[420, .7, 520], [450, .86, 470], [482, 1, 430], [516, 1.16, 400]]) => area.map(([y, s, x1], r) => { let g = ''; for (let x = 6 + (r % 2) * 16; x < x1; x += 30 * s + R() * 6) g += corn(x, y, s, c); return g; }).join('');
+  // Tlaxcalteca standard: white heron on a gold disc over a pole.
+  const banner = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-120" stroke="#5a3a22" stroke-width="5"/><circle cx="0" cy="-130" r="20" fill="#e9b33e" stroke="#7a4a14" stroke-width="3"/>${heron(0, -132, .55, '#fffaf0', '#3a2418', 2)}${['#2f8f8a', '#7cb04a', '#c0392b', '#7cb04a', '#2f8f8a'].map((c, i) => `<path transform="rotate(${(i - 2) * 22} 0 -130)" d="M0 -150 C -5 -162 -3 -172 0 -178 C 3 -172 5 -162 0 -150Z" fill="${c}"/>`).join('')}</g>`;
+
+  // ---------- 1 · Plano geométrico ----------
+  function plano() {
+    const R = rnd(8);
+    const defs = `<linearGradient id="p-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241c4a"/><stop offset=".32" stop-color="#4c2f6a"/><stop offset=".58" stop-color="#b4506a"/><stop offset=".76" stop-color="#ef8f58"/><stop offset=".9" stop-color="#f8cf84"/></linearGradient>`;
+    const stars = Array.from({ length: 50 }, () => `<circle cx="${R() * 960}" cy="${R() * 140}" r="${.8 + R()}" fill="#fff" opacity="${.3 + R() * .5}"/>`).join('');
+    const body = `<rect width="960" height="540" fill="url(#p-sky)"/>${stars}
+      ${[150, 110, 80].map((r, i) => `<circle cx="790" cy="330" r="${r}" fill="#ffd890" opacity="${.12 + i * .08}"/>`).join('')}<circle cx="790" cy="330" r="46" fill="#fff1c8"/>
+      ${[[90, 150, 160], [620, 110, 200], [380, 70, 110], [840, 200, 130]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="16" rx="8" fill="#e08a8a" opacity=".5"/><rect x="${x + w * .2}" y="${y - 10}" width="${w * .5}" height="14" rx="7" fill="#e08a8a" opacity=".45"/>`).join('')}
+      <path d="M-10 420 L110 296 L132 290 L150 298 L280 420Z" fill="#7c5a8e"/><path d="M132 290 L150 298 L280 420 L170 420Z" fill="#9a76a8"/><path d="M110 296 L132 290 L150 298 L140 312 L128 304 L118 314Z" fill="#f4e8f2"/>
+      <path d="${MAL}" fill="#4b3874"/><path d="M472 182 C 492 184 512 194 540 214 C 610 266 700 360 820 432 L530 432 C 520 330 500 250 472 182Z" fill="#6c4f90"/>
+      <path d="M472 182 L430 330 L380 432 M472 182 L560 300 L680 432" stroke="#3e2c64" stroke-width="3" fill="none" opacity=".45"/>
+      <path d="M400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 L520 222 L506 236 L492 222 L478 242 L464 220 L450 236 L436 222 L418 234 Z" fill="#cfc0dc"/><path d="M472 182 C 492 184 512 194 540 214 L520 222 L506 236 L492 222 L478 242 L472 230Z" fill="#fbeef4"/>
+      <path d="M-10 412 Q 240 376 480 404 T 970 394 V540 H-10Z" fill="#3f7a3a"/>
+      ${Array.from({ length: 22 }, (_, i) => `<circle cx="${20 + i * 44 + R() * 10}" cy="${398 + Math.sin(i) * 6}" r="${12 + R() * 6}" fill="#2f5e2e"/>`).join('')}
+      ${teocalli(790, 412, 1, { a: '#e6d2a8', b: '#c8ae80', s: '#b8432f', r: '#3a6a3a', w: '#f2e8d4' })}
+      <path d="M-10 442 Q 300 420 560 438 T 970 432 V540 H-10Z" fill="#4f9a3e"/>
+      <path d="M560 540 C 600 500 640 470 690 452 L708 452 C 670 474 640 508 620 540Z" fill="#d8b07a"/>
+      <g transform="translate(640 452)"><rect x="-10" y="-46" width="110" height="46" fill="#e8c69a"/><rect x="72" y="-46" width="28" height="46" fill="#d4ad7c"/><path d="M-20 -44 L110 -44 L80 -82 L10 -82Z" fill="#c8a050"/><path d="M-20 -44 L110 -44 L104 -50 L-14 -50Z" fill="#a8823a"/>${Array.from({ length: 9 }, (_, i) => `<path d="M${-14 + i * 14} -46 L${12 + i * 8} -80" stroke="#a8823a" stroke-width="1.6"/>`).join('')}<rect x="36" y="-30" width="18" height="30" fill="#5a3a24"/></g>
+      ${milpa({ stem: '#3f7a2e', leaf: '#5fa040', cob: '#f2c94c', tas: '#e9b33e' }, R)}
+      ${agave(470, 540, 1.2, ['#2f5a4e', '#3f7a68', '#5a9a84'])}${agave(770, 528, .9, ['#2f5a4e', '#3f7a68', '#5a9a84'])}${agave(910, 540, 1.3, ['#2f5a4e', '#3f7a68', '#5a9a84'])}
+      ${banner(560, 470, .8)}
+      ${heron(300, 120, .9, '#fffaf0')}${heron(340, 140, .7, '#fffaf0')}${heron(270, 150, .6, '#fffaf0')}`;
+    return svg(defs, body);
+  }
+
+  // ---------- 2 · Papel recortado ----------
+  function papel() {
+    const R = rnd(14);
+    const defs = `<linearGradient id="q-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2f6e"/><stop offset=".45" stop-color="#d0607a"/><stop offset=".8" stop-color="#f6b07a"/></linearGradient>
+      <filter id="q-ds" x="-5%" y="-10%" width="110%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#2a1030" flood-opacity=".5"/></filter>
+      <filter id="q-gr" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .2 0 0 0 -1.6 .9"/><feComponentTransfer><feFuncA type="linear" slope=".35"/></feComponentTransfer></filter>`;
+    const cornRow = (y, s, x1, col) => { let d = ''; for (let x = 0; x < x1; x += 26 * s + R() * 5) d += corn(x, y, s, { stem: col, leaf: col, tas: col }); return `<g filter="url(#q-ds)"><path d="${wave(y - 4, 3, .04, 1)}" fill="${col}"/>${d}</g>`; };
+    const body = `<rect width="960" height="540" fill="url(#q-sky)"/>
+      <g filter="url(#q-ds)">${[120, 90, 64, 44].map((r, i) => `<circle cx="770" cy="300" r="${r}" fill="${['#f9c07a', '#fbd08a', '#fde0a2', '#fff1cc'][i]}"/>`).join('')}</g>
+      <g filter="url(#q-ds)">${[[130, 130, 120], [560, 90, 150], [330, 180, 90]].map(([x, y, w]) => `<path d="M${x} ${y} a${w * .25} ${w * .25} 0 0 1 ${w * .4} -${w * .12} a${w * .3} ${w * .3} 0 0 1 ${w * .6} ${w * .12} Z" fill="#f6c2b8"/>`).join('')}</g>
+      <g filter="url(#q-ds)"><path d="M-10 420 C 60 360 110 300 140 290 C 170 300 230 360 330 420Z" fill="#b0789a"/><path d="M118 300 C 128 292 152 290 162 298 L150 312 L140 304 L128 312Z" fill="#fbeef4"/></g>
+      <g filter="url(#q-ds)"><path d="${MAL}" fill="#7a4a86"/></g>
+      <g filter="url(#q-ds)"><path d="M400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 C 528 226 516 222 506 232 C 494 222 484 238 472 228 C 460 238 450 224 438 232 C 428 222 414 228 400 220Z" fill="#fbeef4"/></g>
+      <g filter="url(#q-ds)"><path d="${wave(400, 8, .012, 1)}" fill="#5a3f7a"/></g>
+      <g filter="url(#q-ds)"><path d="${wave(424, 10, .016, 2)}" fill="#3e6e5a"/>${teocalli(780, 424, 1, { a: '#3e6e5a', b: '#335c4a', s: '#335c4a', r: '#c0392b', w: '#3e6e5a' })}</g>
+      ${cornRow(468, .9, 560, '#2f5a48')}${cornRow(506, 1.05, 520, '#24463a')}
+      <g filter="url(#q-ds)"><path d="${wave(520, 6, .02, 3)}" fill="#183028"/>${agave(700, 540, 1.4, ['#183028', '#183028', '#183028'])}${agave(880, 540, 1.7, ['#183028', '#183028', '#183028'])}${banner(610, 520, .8).replace(/#[0-9a-f]{6}/gi, m => m.toLowerCase() === '#fffaf0' ? m : '#183028')}</g>
+      <g filter="url(#q-ds)">${heron(300, 110, 1, '#fffaf0')}${heron(350, 132, .8, '#fffaf0')}${heron(260, 140, .7, '#fffaf0')}</g>
+      <rect width="960" height="540" filter="url(#q-gr)"/>`;
+    return svg(defs, body);
+  }
+
+  // ---------- 3 · Lienzo de Tlaxcala ----------
+  function lienzo() {
+    const R = rnd(21), K = '#2a1a10', ink = `stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+    const glosa = (x, y, t, s = 17) => `<text x="${x}" y="${y}" font-family="Alegreya, serif" font-style="italic" font-size="${s}" fill="#5a3418">${t}</text>`;
+    const spiral = (x, y, s) => `<path d="M${x} ${y} c 0 ${-10 * s} ${15 * s} ${-10 * s} ${15 * s} 0 c 0 ${7 * s} ${-9 * s} ${7 * s} ${-9 * s} ${2 * s}" fill="none" ${ink}/>`;
+    const foot = (x, y, a) => `<path transform="rotate(${a} ${x} ${y})" d="M${x} ${y} c -4 -10 6 -14 9 -6 c 2 6 -2 12 -9 6Z" fill="${K}"/>`;
+    const plant = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-90" ${ink}/>${[[-20, 1], [-40, -1], [-60, 1]].map(([yy, d]) => `<path d="M0 ${yy} C ${d * 20} ${yy - 22} ${d * 34} ${yy - 14} ${d * 38} ${yy + 4} C ${d * 26} ${yy - 4} ${d * 14} ${yy - 4} 0 ${yy + 6}Z" fill="#7aa45a" ${ink}/>`).join('')}<path d="M8 -50 C 2 -64 6 -76 14 -80 C 22 -76 24 -64 18 -50Z" fill="#e9b33e" ${ink}/><path d="M0 -90 l-8 -12 M0 -90 l0 -14 M0 -90 l8 -12" ${ink}/></g>`;
+    const stains = Array.from({ length: 30 }, () => `<ellipse cx="${R() * 960}" cy="${R() * 540}" rx="${20 + R() * 70}" ry="${10 + R() * 40}" fill="#b8925a" opacity="${.05 + R() * .08}"/>`).join('');
+    const defs = `<filter id="l-gr" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".7 .9" numOctaves="3" seed="5"/><feColorMatrix values="0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .2 0 0 0 -1.8 1"/><feComponentTransfer><feFuncA type="linear" slope=".45"/></feComponentTransfer></filter>
+      <filter id="l-wob" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>`;
+    const body = `<rect width="960" height="540" fill="#ecdfc0"/>${stains}
+      <g filter="url(#l-wob)">
+        <rect x="14" y="14" width="932" height="512" fill="none" ${ink}/><rect x="22" y="22" width="916" height="496" fill="none" stroke="${K}" stroke-width="1.4"/>
+        <g transform="translate(830 92)"><circle r="30" fill="#e9b33e" ${ink}/><circle r="16" fill="#c0392b" ${ink}/>${Array.from({ length: 8 }, (_, i) => `<path transform="rotate(${i * 45})" d="M-8 -32 L0 -50 L8 -32Z" fill="#e9b33e" ${ink}/>`).join('')}</g>
+        <g transform="translate(470 0)"><path d="M-170 430 C -170 320 -110 196 0 188 C 110 196 170 320 170 430 Z" fill="#7aa45a" ${ink}/>
+          <path d="M-160 350 C -100 332 100 332 160 350 C 166 380 170 410 170 430 L-170 430 C -170 410 -166 380 -160 350Z" fill="#4f86b8" ${ink}/>
+          ${Array.from({ length: 6 }, (_, i) => spiral(-140 + i * 50, 398, 1.1)).join('')}
+          ${[[-60, 260], [10, 230], [62, 290], [-24, 306], [100, 320], [-104, 316]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="#c8e0a0" ${ink}/>`).join('')}
+          <path d="M-28 196 C -18 172 18 172 28 196" fill="#f6efe0" ${ink}/>
+          <rect x="-180" y="426" width="360" height="20" fill="#e9b33e" ${ink}/>${Array.from({ length: 9 }, (_, i) => `<rect x="${-172 + i * 40}" y="430" width="20" height="12" fill="#c0392b"/>`).join('')}</g>
+        ${glosa(390, 178, 'matlalcueye')}
+        ${teocalli(780, 446, 1.1, { a: '#f6efe0', b: '#d8c8a8', s: '#c0392b', r: '#c0392b', w: '#f6efe0' }, ink)}
+        <path d="M780 300 c -10 -14 10 -22 0 -36 c -8 -12 8 -20 2 -30" fill="none" ${ink}/>
+        ${glosa(728, 474, 'tlaxcallan · ocotelulco')}
+        ${plant(90, 470, 1.2)}${plant(150, 480, .9)}${plant(210, 474, 1.05)}
+        <path d="M30 500 C 200 488 360 520 520 500 C 680 482 800 512 930 498" stroke="#4f86b8" stroke-width="16" fill="none"/><path d="M30 500 C 200 488 360 520 520 500 C 680 482 800 512 930 498" stroke="${K}" stroke-width="2" fill="none" transform="translate(0 -9)"/><path d="M30 500 C 200 488 360 520 520 500 C 680 482 800 512 930 498" stroke="${K}" stroke-width="2" fill="none" transform="translate(0 9)"/>
+        ${Array.from({ length: 14 }, (_, i) => `<circle cx="${50 + i * 64}" cy="${500 + Math.sin(i) * 6}" r="3" fill="#f6efe0" stroke="${K}" stroke-width="1.4"/>`).join('')}
+        ${glosa(600, 530, 'atoyac', 14)}
+        ${Array.from({ length: 10 }, (_, i) => foot(250 + i * 44, 470 - i * 4 + (i % 2) * 8, 80)).join('')}
+        ${heron(250, 110, 1.2, '#fffaf0', K, 2.4)}${heron(310, 136, .9, '#fffaf0', K, 2.4)}
+        <g transform="translate(660 486)"><path d="M0 0 C -2 -20 6 -34 18 -40 L28 -62 L24 -40 C 30 -30 28 -10 18 0Z" fill="#fffaf0" ${ink}/><path d="M6 0 V20 M14 0 V20" ${ink}/><circle cx="25" cy="-58" r="1.6" fill="${K}"/></g>
+        ${glosa(40, 236, 'Tlaxcallan, año 1-ácatl', 20)}
+      </g>
+      <rect width="960" height="540" filter="url(#l-gr)"/>`;
+    return svg(defs, body);
+  }
+
+  // ---------- 4 · Mural de Talavera ----------
+  function talavera() {
+    const R = rnd(31), C = '#1b3a8a', W = '#9fb4e0', O = '#d39a26', G = '#3d7a46';
+    const br = `stroke="${C}" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"`;
+    const defs = `<filter id="t-br" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+      <pattern id="t-grid" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="url(#t-gl)"/><path d="M0 0.75 H60 M0.75 0 V60" stroke="#c9bfa8" stroke-width="1.5"/></pattern>
+      <radialGradient id="t-gl" cx=".3" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#5a4a30" stop-opacity=".08"/></radialGradient>`;
+    const hatch = Array.from({ length: 26 }, (_, i) => { const x = 330 + i * 6; return `<path d="M${x} ${330 - i * 4} l-26 ${60 + i}" stroke="${C}" stroke-width="1.6" opacity=".55"/>`; }).join('');
+    const sky = Array.from({ length: 12 }, (_, i) => `<rect x="${R() * 700}" y="${30 + i * 13}" width="${120 + R() * 200}" height="7" rx="3.5" fill="${C}" opacity="${.08 + (12 - i) * .02}"/>`).join('');
+    const clouds = [[140, 140], [600, 110], [380, 70]].map(([x, y]) => `<path d="M${x} ${y} a18 18 0 0 1 30 -14 a24 24 0 0 1 44 0 a18 18 0 0 1 30 14 Z" fill="#f6f1e6" ${br}/>`).join('');
+    const body = `<rect width="960" height="540" fill="#f6f1e6"/>
+      <g filter="url(#t-br)">${sky}${clouds}
+        <g transform="translate(150 96) scale(.8)">${Array.from({ length: 16 }, (_, i) => `<path transform="rotate(${i * 22.5})" d="M0 -46 L0 -70" ${br}/>`).join('')}<circle r="40" fill="${O}" ${br}/><circle r="22" fill="#f2c94c" stroke="${C}" stroke-width="2"/></g>
+        <path d="M-10 420 C 60 360 110 300 140 290 C 170 300 230 360 330 420Z" fill="${W}" opacity=".7" ${br}/>
+        <path d="${MAL}" fill="${W}" ${br}/>${hatch}
+        <path d="M400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 C 528 226 516 222 506 232 C 494 222 484 238 472 228 C 460 238 450 224 438 232 C 428 222 414 228 400 220Z" fill="#fbf8f0" ${br}/>
+        <path d="M472 186 L455 300 M472 186 L520 290 M472 186 L600 330" stroke="${C}" stroke-width="2" opacity=".7"/>
+        <path d="${wave(408, 8, .014, 1)}" fill="#c8d4ee" ${br}/>
+        ${Array.from({ length: 20 }, (_, i) => `<circle cx="${20 + i * 48}" cy="${404 + Math.sin(i) * 6}" r="${12}" fill="${G}" opacity=".85" ${br}/>`).join('')}
+        ${teocalli(790, 432, 1, { a: '#fbf8f0', b: '#c8d4ee', s: C, r: O, w: '#fbf8f0' }, br)}
+        <path d="${wave(440, 6, .02, 2)}" fill="#e6ecf8" ${br}/>
+        ${milpa({ stem: C, leaf: G, cob: O, tas: O }, R, [[470, .8, 540], [500, .95, 500], [532, 1.1, 460]])}
+        ${agave(640, 540, 1.3, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}${agave(900, 540, 1.6, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}
+        ${heron(300, 120, 1, '#fbf8f0', C, 2.6)}${heron(350, 142, .8, '#fbf8f0', C, 2.6)}
+      </g>
+      <rect width="960" height="540" fill="url(#t-grid)"/>`;
+    return svg(defs, body);
+  }
+
+  window.TlaxScenes = { plano, papel, lienzo, talavera };
+})();
+</script>
+<script>
+// Alternative character styles for the same cast (params from propuestas-v2/chars.js):
+//  cuento — storybook proportions (~4.5 heads), soft shading, finer faces.
+//  lienzo — Lienzo de Tlaxcala codex figure: profile head, frontal torso, thick ink line.
+// The third style, "azulejo", is the chibi recoloured in cobalt by a CSS/SVG filter.
+"use strict";
+(function () {
+  const sh = (h, k) => '#' + [1, 3, 5].map(i => Math.min(255, Math.round(parseInt(h.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('');
+  const tri = (x0, x1, y, h, c) => { let d = ''; for (let x = x0; x < x1 - 1; x += 7) d += `M${x} ${y + h}l3.5 ${-h}l3.5 ${h}Z`; return `<path d="${d}" fill="${c}"/>`; };
+
+  // ---------- Cuento ----------
+  function cuento(p) {
+    const L = '#3a2418', st = `stroke="${L}" stroke-width="1.4" stroke-linejoin="round"`;
+    const bw = [0, 6, 13][p.build || 0], sk = p.skin, skS = sh(sk, .8), skH = sh(sk, 1.12), hair = p.hair, hs = p.hairStyle;
+    const top = p.top || '#f3ede2', topS = sh(top, .82), trim = p.trim || '#c0392b', skirt = p.skirt || '#2f5fa8';
+    let g = `<defs><linearGradient id="cf-${p.id}" x1="0" x2="1"><stop offset="0" stop-color="${skH}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${skS}"/></linearGradient></defs>`;
+    g += `<ellipse cx="60" cy="262" rx="36" ry="6" fill="rgba(30,20,10,.22)"/>`;
+    // Props behind.
+    if (p.prop === 'lanza') g += `<path d="M98 262 V14" stroke="${L}" stroke-width="5"/><path d="M98 262 V14" stroke="#9a6438" stroke-width="3"/><path d="M98 0 l-6 16 h12Z" fill="#2a2a3a" ${st}/>`;
+    if (p.prop === 'arco') g += `<path d="M96 100 C 122 140 122 210 96 250" stroke="${L}" stroke-width="5" fill="none"/><path d="M96 100 C 122 140 122 210 96 250" stroke="#8a5a34" stroke-width="3" fill="none"/><path d="M96 100 V250" stroke="#f3ede2" stroke-width="1"/>`;
+    // Back hair.
+    if (hs === 'largo') g += `<path d="M34 48 C 30 100 32 140 36 156 L84 156 C 88 140 90 100 86 48Z" fill="${hair}" ${st}/>`;
+    if (hs === 'rizos') g += Array.from({ length: 18 }, (_, i) => { const s = i % 2 ? 1 : -1, k = Math.floor(i / 2); return `<circle cx="${60 + s * (26 + (k % 3) * 3)}" cy="${46 + k * 11}" r="11" fill="${hair}" ${st}/>`; }).join('');
+    if (hs === 'afro') g += `<circle cx="60" cy="50" r="40" fill="${hair}" ${st}/>`;
+    if (hs === 'coleta') g += `<path d="M78 34 C 100 40 100 90 88 120 C 86 100 84 70 76 50Z" fill="${hair}" ${st}/>`;
+    if (hs === 'chongo') g += `<circle cx="60" cy="18" r="12" fill="${hair}" ${st}/>`;
+    // Legs and sandals.
+    g += `<rect x="48" y="236" width="9" height="20" rx="4" fill="${sk}" ${st}/><rect x="63" y="236" width="9" height="20" rx="4" fill="${skS}" ${st}/><path d="M44 256 h16 v4 h-16Z M60 256 h16 v4 h-16Z" fill="#7a4a24" ${st}/>`;
+    // Cueitl to the ankles.
+    const s0 = 21 + bw / 2, s1 = 28 + bw / 2;
+    g += `<path d="M${60 - s0} 140 L${60 + s0} 140 L${60 + s1} 240 L${60 - s1} 240Z" fill="${skirt}" ${st}/><path d="M${60 + s0 - 8} 142 L${60 + s1 - 12} 238" stroke="${sh(skirt, .75)}" stroke-width="2"/><path d="M${60 + s0 - 4} 140 L${60 + s1} 240 L${60 + s1 - 9} 240 L${60 + s0 - 9} 140Z" fill="${sh(skirt, .8)}" opacity=".6"/>`;
+    g += `<rect x="${60 - s1 + 1}" y="226" width="${2 * s1 - 2}" height="10" fill="${p.hem || '#f3ede2'}"/>${tri(60 - s1 + 2, 60 + s1 - 2, 226, 9, trim)}`;
+    // Arms.
+    const ax = 25 + bw / 2;
+    [[-1, sk], [1, skS]].forEach(([d, c]) => { g += `<path d="M${60 + d * ax} 94 C ${60 + d * (ax + 6)} 120 ${60 + d * (ax + 6)} 146 ${60 + d * (ax + 2)} 166" stroke="${L}" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M${60 + d * ax} 94 C ${60 + d * (ax + 6)} 120 ${60 + d * (ax + 6)} 146 ${60 + d * (ax + 2)} 166" stroke="${c}" stroke-width="8.4" stroke-linecap="round" fill="none"/>`; });
+    // Top.
+    const tw = 24 + bw / 2;
+    if (p.style === 'quech') {
+      g += `<path d="M${60 - tw + 3} 86 L${60 + tw - 3} 86 L${60 + tw} 150 L${60 - tw} 150Z" fill="#f3ede2" ${st}/><path d="M${60 - tw - 8} 90 C ${60 - tw} 82 ${60 + tw} 82 ${60 + tw + 8} 90 L60 158Z" fill="${top}" ${st}/><path d="M${60 + tw - 4} 90 L60 158 L${60 + tw + 8} 90Z" fill="${topS}" opacity=".6"/><path d="M${60 - tw - 3} 96 L60 150 L${60 + tw + 3} 96" stroke="${trim}" stroke-width="3" fill="none"/><path d="M60 158 l-4 9 h8Z" fill="${trim}"/>`;
+    } else if (p.style === 'armadura') {
+      g += `<path d="M${60 - tw} 84 L${60 + tw} 84 L${60 + tw + 2} 152 L${60 - tw - 2} 152Z" fill="${top}" ${st}/>`;
+      for (let y = 92; y < 150; y += 8) g += `<path d="M${60 - tw} ${y} H${60 + tw}" stroke="${topS}" stroke-width="1.6"/>`;
+      for (let x = 60 - tw + 8; x < 60 + tw; x += 9) g += `<path d="M${x} 84 V150" stroke="${topS}" stroke-width="1.2"/>`;
+      g += `<rect x="${60 - tw - 2}" y="146" width="${2 * tw + 4}" height="8" fill="${trim}" ${st}/>${Array.from({ length: Math.floor(2 * tw / 7) }, (_, i) => `<path d="M${60 - tw + 2 + i * 7} 154 v10" stroke="${trim}" stroke-width="3"/>`).join('')}`;
+    } else {
+      g += `<path d="M${60 - tw - 6} 88 C ${60 - tw} 82 ${60 + tw} 82 ${60 + tw + 6} 88 L${60 + tw + 3} 156 L${60 - tw - 3} 156Z" fill="${top}" ${st}/><path d="M${60 + tw - 6} 86 L${60 + tw - 2} 156 L${60 + tw + 3} 156 L${60 + tw + 6} 88Z" fill="${topS}"/>`;
+      g += `<path d="M49 84 L49 100 L71 100 L71 84" fill="none" stroke="${trim}" stroke-width="3.4"/>${tri(60 - tw, 60 + tw, 146, 8, p.hem2 || '#f3ede2').replace('<path', `<path`)}<rect x="${60 - tw - 2}" y="144" width="${2 * tw + 4}" height="3" fill="${p.band2 || trim}"/>`;
+      if (p.stars) g += [[50, 120], [70, 116], [60, 132]].map(([x, y]) => `<path d="M${x} ${y - 3} l1 2 l2 1 l-2 1 l-1 2 l-1 -2 l-2 -1 l2 -1Z" fill="#f2c94c"/>`).join('');
+    }
+    g += `<circle cx="${60 - ax - 2}" cy="168" r="5" fill="${sk}" ${st}/><circle cx="${60 + ax + 2}" cy="168" r="5" fill="${skS}" ${st}/>`;
+    if (p.jade) g += [49, 54, 60, 66, 71].map((x, i) => `<circle cx="${x}" cy="${87 + [0, 3, 5, 3, 0][i]}" r="2.6" fill="#3fa37a" ${st}/>`).join('');
+    // Neck and head (about a quarter of the height).
+    g += `<path d="M54 70 h12 v16 c -4 3 -8 3 -12 0Z" fill="${skS}" ${st}/>`;
+    g += `<ellipse cx="37" cy="52" rx="4" ry="6" fill="${sk}" ${st}/><ellipse cx="83" cy="52" rx="4" ry="6" fill="${skS}" ${st}/>`;
+    if (p.orejeras) g += [37, 83].map(x => `<circle cx="${x}" cy="56" r="3.4" fill="#e9b33e" ${st}/>`).join('');
+    g += `<path d="M60 22 C 76 22 84 34 84 50 C 84 66 74 78 60 78 C 46 78 36 66 36 50 C 36 34 44 22 60 22Z" fill="url(#cf-${p.id})" ${st}/>`;
+    g += [50, 70].map(x => `<path d="M${x - 5} 52 C ${x - 3} 48 ${x + 3} 48 ${x + 5} 52 C ${x + 3} 55 ${x - 3} 55 ${x - 5} 52Z" fill="#fff"/><circle cx="${x}" cy="52" r="2.6" fill="${p.eye || '#2a1712'}"/><circle cx="${x + .9}" cy="51" r=".9" fill="#fff"/><path d="M${x - 6} 51.5 C ${x - 3} 46.5 ${x + 3} 46.5 ${x + 6} 51" stroke="${L}" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M${x - 5} 44 q5 -2.5 10 0" stroke="${hair}" stroke-width="2" fill="none" stroke-linecap="round"/>`).join('');
+    g += `<path d="M60 55 C 59 60 58 62 61 63" stroke="${skS}" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M55 68 Q60 71 65 68 Q60 73 55 68Z" fill="#a8483e"/><ellipse cx="44" cy="61" rx="4" ry="2.2" fill="#e0846e" opacity=".4"/><ellipse cx="76" cy="61" rx="4" ry="2.2" fill="#e0846e" opacity=".4"/>`;
+    if (p.freckles) g += [[42, 58], [45, 60], [75, 58], [78, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".8" fill="${sh(sk, .6)}"/>`).join('');
+    if (p.paint) g += `<path d="M40 56 h6 M74 56 h6" stroke="${p.paint}" stroke-width="2" stroke-linecap="round"/>`;
+    // Front hair.
+    const cap = hs === 'rizos' || hs === 'afro'
+      ? `<path d="M36 50 C 32 24 48 16 60 16 C 74 16 88 24 84 50 C 78 38 70 34 60 34 C 50 34 42 38 36 50Z" fill="${hair}" ${st}/>${[40, 48, 56, 64, 72, 80].map((x, i) => `<circle cx="${x}" cy="${24 + Math.abs(i - 2.5) * 3}" r="6" fill="${hair}"/>`).join('')}`
+      : `<path d="M36 50 C 32 24 48 16 60 16 C 74 16 88 24 84 50 C 80 40 72 34 66 32 C 62 36 52 38 46 35 C 42 38 38 44 36 50Z" fill="${hair}" ${st}/>`;
+    g += cap + `<path d="M46 22 C 52 19 60 18 66 20" stroke="${sh(hair === '#1a1210' || hair === '#120c0a' ? '#3a2a24' : hair, 1.2)}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    if (hs === 'trenzas') g += [34, 86].map(x => `${Array.from({ length: 8 }, (_, i) => `<ellipse cx="${x + (x < 60 ? 2 : -2)}" cy="${58 + i * 10}" rx="5.4" ry="6" fill="${hair}" ${st}/>`).join('')}<rect x="${x - 4}" y="136" width="8" height="5" fill="${p.acc2 || '#c0392b'}"/>`).join('');
+    if (hs === 'chongo') g += `<path d="M50 18 h20" stroke="${p.acc2 || '#2f5fa8'}" stroke-width="3.4"/>`;
+    // Headwear.
+    if (p.head === 'plumas') g += ['#2f8f8a', '#7cb04a', '#e9b33e', '#c0392b', '#e9b33e', '#7cb04a', '#2f8f8a'].map((c, i) => `<path transform="rotate(${(i - 3) * 14} 60 32)" d="M60 32 C 54 20 55 6 60 -2 C 65 6 66 20 60 32Z" fill="${c}" ${st}/>`).join('') + `<path d="M36 34 C 50 28 70 28 84 34 L84 39 C 70 33 50 33 36 39Z" fill="#e9b33e" ${st}/>`;
+    if (p.head === 'pluma') g += `<path transform="rotate(18 80 30)" d="M80 30 C 74 18 76 4 82 -2 C 88 6 86 20 80 30Z" fill="${p.acc2 || '#c0392b'}" ${st}/><path d="M36 34 C 50 28 70 28 84 34 L84 39 C 70 33 50 33 36 39Z" fill="${p.band || '#c0392b'}" ${st}/>`;
+    if (p.head === 'banda') g += `<path d="M36 35 C 50 29 70 29 84 35 L84 40 C 70 34 50 34 36 40Z" fill="${p.band || '#c0392b'}" ${st}/>`;
+    if (p.head === 'flor') g += `<g transform="translate(80 28)">${[0, 72, 144, 216, 288].map(a => `<ellipse cy="-5" rx="4" ry="5.4" transform="rotate(${a})" fill="${p.flower || '#e05a7a'}" ${st}/>`).join('')}<circle r="2.8" fill="#f2c94c"/></g>`;
+    if (p.head === 'cempa') g += [38, 46, 54, 62, 70, 78, 84].map((x, i) => `<circle cx="${x}" cy="${28 - Math.sin(i / 6 * Math.PI) * 6}" r="5.4" fill="${i % 2 ? '#f29a1e' : '#f6b81e'}" ${st}/>`).join('');
+    // Props in front.
+    const lx = 60 - ax - 4;
+    if (p.prop === 'escudo') g += `<g transform="translate(${lx} 156)"><circle r="22" fill="#f3ede2" ${st}/><circle r="16" fill="${p.shield || '#2f5fa8'}" ${st}/><path d="M-16 0 H16 M0 -16 V16" stroke="#f3ede2" stroke-width="3"/><circle r="5" fill="#e9b33e" ${st}/>${[-12, -4, 4, 12].map(x => `<path d="M${x} 20 l-2 11 h4Z" fill="#2f8f8a" ${st}/>`).join('')}</g>`;
+    if (p.prop === 'canasta') g += `<g transform="translate(${lx - 4} 168)"><path d="M-14 -4 C -14 -24 14 -24 14 -4" stroke="#8a5a34" stroke-width="3" fill="none"/><path d="M-16 -4 H16 L12 16 H-12Z" fill="#d8a85a" ${st}/>${[-8, 0, 8].map((x, i) => `<circle cx="${x}" cy="-6" r="5" fill="${['#c0392b', '#f2c94c', '#7cb04a'][i]}" ${st}/>`).join('')}</g>`;
+    if (p.prop === 'jicara') g += `<g transform="translate(60 168)"><path d="M-16 -4 C -16 10 16 10 16 -4Z" fill="#a8522e" ${st}/><ellipse cy="-4" rx="16" ry="4" fill="${p.bowl || '#ecd3a0'}" ${st}/></g>`;
+    if (p.prop === 'tambor') g += `<g transform="translate(${lx} 168)"><rect x="-11" y="-14" width="22" height="30" rx="4" fill="#a8522e" ${st}/><ellipse cy="-14" rx="11" ry="4" fill="#ecd3a0" ${st}/></g>`;
+    if (p.prop === 'flores') g += `<g transform="translate(${lx} 160)"><path d="M0 14 L-4 -8 M0 14 L4 -10 M0 14 V-12" stroke="#4f8a36" stroke-width="2.4"/>${[[-4, -10], [4, -12], [0, -15]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f6a81e" ${st}/>`).join('')}</g>`;
+    if (p.prop === 'cacao') g += `<g transform="translate(${lx} 162)"><path d="M0 -14 C 10 -10 10 10 0 14 C -10 10 -10 -10 0 -14Z" fill="#a8521e" ${st}/></g>`;
+    if (p.prop === 'red') g += `<g transform="translate(${lx - 4} 164)"><path d="M-12 -14 L12 -14 L8 14 L-8 14Z" fill="rgba(200,180,138,.3)" stroke="#c8b48a" stroke-width="2"/><path d="M-6 4 C 0 -2 6 4 0 8Z" fill="#7fa8c8" ${st}/></g>`;
+    if (p.prop === 'panal') g += `<g transform="translate(${lx} 164)"><rect x="-8" y="-14" width="16" height="28" rx="6" fill="#c89a50" ${st}/><circle cx="12" cy="-16" r="2.4" fill="#f2c94c"/></g>`;
+    return `<svg class="fig fig--cuento" viewBox="-14 -10 148 280" role="img" aria-label="${p.name}">${g}</svg>`;
+  }
+
+  // ---------- Lienzo de Tlaxcala ----------
+  function lienzo(p) {
+    const K = '#2a1a10', ink = `stroke="${K}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
+    const bw = [0, 5, 10][p.build || 0], sk = p.skin, hair = p.hair, hs = p.hairStyle;
+    const top = p.top || '#f3ede2', trim = p.trim || '#c0392b', skirt = p.skirt || '#2f5fa8';
+    let g = '';
+    if (p.prop === 'lanza') g += `<path d="M92 196 V18" ${ink}/><path d="M92 18 V196" stroke="#a8743a" stroke-width="1.4"/><path d="M92 4 l-6 16 h12Z" fill="#3a3a4a" ${ink}/>`;
+    if (p.prop === 'arco') g += `<path d="M94 64 C 114 96 114 150 94 182" fill="none" ${ink}/><path d="M94 64 V182" stroke="${K}" stroke-width="1"/>`;
+    // Hair mass behind (profile, facing right).
+    if (hs === 'afro') g += `<circle cx="52" cy="38" r="30" fill="${hair}" ${ink}/>`;
+    else if (hs === 'rizos') g += `<path d="M30 30 C 26 60 28 90 34 104 L62 104 C 60 80 62 50 60 26Z" fill="${hair}" ${ink}/>${[40, 52, 64, 76, 88, 100].map(y => `<circle cx="32" cy="${y}" r="6" fill="${hair}" ${ink}/>`).join('')}`;
+    else if (hs === 'largo') g += `<path d="M32 30 C 28 60 30 90 34 104 L58 104 C 56 80 58 50 58 26Z" fill="${hair}" ${ink}/>`;
+    else if (hs === 'coleta') g += `<path d="M34 34 C 18 40 14 70 22 90 C 26 74 30 56 40 46Z" fill="${hair}" ${ink}/>`;
+    else if (hs === 'trenzas') g += `<path d="M36 50 C 30 70 30 90 34 108" stroke="${K}" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M36 50 C 30 70 30 90 34 108" stroke="${hair}" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="5 2"/><rect x="29" y="106" width="10" height="5" fill="${p.acc2 || '#c0392b'}" ${ink}/>`;
+    // Feet in profile with sandals.
+    g += `<path d="M44 186 h8 v6 h14 c 4 0 4 6 0 6 h-22Z M62 186 h8 v6 h14 c 4 0 4 6 0 6 h-22Z" fill="${sk}" ${ink}/><path d="M44 196 H66 M62 196 H84" stroke="#7a4a24" stroke-width="3"/>`;
+    // Cueitl: frontal rectangle with greca band.
+    g += `<path d="M${38 - bw} 120 H${82 + bw} L${84 + bw} 188 H${36 - bw}Z" fill="${skirt}" ${ink}/><rect x="${37 - bw}" y="172" width="${46 + 2 * bw}" height="12" fill="#f3ede2" ${ink}/>`;
+    let gr = ''; for (let x = 40 - bw; x < 80 + bw; x += 10) gr += `M${x} 182 v-6 h5 v-3 h5`; g += `<path d="${gr}" fill="none" stroke="${trim}" stroke-width="2.2"/>`;
+    // Torso frontal: huipil / quechquémitl / quilted armour, with fringe.
+    if (p.style === 'quech') g += `<path d="M${36 - bw} 72 H${84 + bw} L60 132Z" fill="${top}" ${ink}/><path d="M${42 - bw} 78 L60 122 L${78 + bw} 78" fill="none" stroke="${trim}" stroke-width="3"/>`;
+    else if (p.style === 'armadura') { g += `<rect x="${36 - bw}" y="70" width="${48 + 2 * bw}" height="56" rx="3" fill="${top}" ${ink}/>`; for (let y = 78; y < 124; y += 8) g += `<path d="M${38 - bw} ${y} H${82 + bw}" stroke="${K}" stroke-width="1"/>`; g += `<rect x="${36 - bw}" y="120" width="${48 + 2 * bw}" height="8" fill="${trim}" ${ink}/>`; }
+    else { g += `<path d="M${34 - bw} 72 H${86 + bw} L${88 + bw} 132 H${32 - bw}Z" fill="${top}" ${ink}/><path d="M50 72 V86 H70 V72" fill="none" stroke="${trim}" stroke-width="3"/><rect x="${33 - bw}" y="120" width="${54 + 2 * bw}" height="8" fill="${trim}" ${ink}/>`; for (let x = 34 - bw; x < 86 + bw; x += 5) g += `<path d="M${x} 132 v5" stroke="${K}" stroke-width="1.6"/>`; }
+    if (p.jade) g += [50, 56, 62, 68].map(x => `<circle cx="${x}" cy="76" r="3" fill="#3fa37a" ${ink}/>`).join('');
+    // Arms: back arm down, front arm bent forward holding the prop.
+    g += `<path d="M38 76 C 30 92 30 108 34 118" fill="none" stroke="${K}" stroke-width="10" stroke-linecap="round"/><path d="M38 76 C 30 92 30 108 34 118" fill="none" stroke="${sk}" stroke-width="6" stroke-linecap="round"/>`;
+    g += `<path d="M80 76 C 86 90 88 100 92 104" fill="none" stroke="${K}" stroke-width="10" stroke-linecap="round"/><path d="M80 76 C 86 90 88 100 92 104" fill="none" stroke="${sk}" stroke-width="6" stroke-linecap="round"/><circle cx="93" cy="105" r="5" fill="${sk}" ${ink}/>`;
+    // Head in profile.
+    g += `<path d="M54 62 v10 h12 v-10" fill="${sk}" ${ink}/>`;
+    g += `<path d="M40 40 C 40 20 54 12 66 14 C 76 16 80 26 80 34 L84 42 L80 44 C 82 48 80 50 78 50 C 80 54 76 58 70 58 L66 62 C 56 66 44 60 40 50Z" fill="${sk}" ${ink}/>`;
+    g += `<path d="M70 32 C 73 30 77 31 78 33 C 76 35 72 35 70 32Z" fill="#fff" stroke="${K}" stroke-width="1.6"/><circle cx="75" cy="32.6" r="1.5" fill="${K}"/><path d="M68 27 q5 -3 10 0" stroke="${K}" stroke-width="2" fill="none"/>`;
+    g += `<circle cx="54" cy="38" r="5" fill="#e9b33e" ${ink}/><circle cx="54" cy="38" r="2" fill="#3fa37a"/>`;
+    if (p.paint) g += `<path d="M64 40 h10" stroke="${p.paint}" stroke-width="3"/>`;
+    // Hair cap.
+    if (hs === 'afro') g += `<path d="M38 40 C 30 14 70 2 76 22 C 66 18 56 22 50 32 C 46 34 42 38 38 40Z" fill="${hair}" ${ink}/>`;
+    else if (hs === 'rizos') g += `<path d="M38 44 C 32 14 72 6 76 24 C 66 20 58 22 52 30 C 48 30 42 36 38 44Z" fill="${hair}" ${ink}/>${[44, 54, 64, 72].map((x, i) => `<circle cx="${x}" cy="${18 + (i % 2) * 3}" r="5" fill="${hair}" ${ink}/>`).join('')}`;
+    else g += `<path d="M38 44 C 34 14 70 6 77 24 C 70 22 62 22 56 26 C 54 30 50 32 46 32 C 44 36 40 40 38 44Z" fill="${hair}" ${ink}/>`;
+    if (hs === 'chongo') g += `<circle cx="46" cy="14" r="9" fill="${hair}" ${ink}/>`;
+    if (p.head === 'plumas') g += ['#2f8f8a', '#7cb04a', '#e9b33e', '#c0392b', '#2f8f8a'].map((c, i) => `<path transform="rotate(${-40 + i * 16} 50 22)" d="M50 22 C 44 10 46 -4 50 -10 C 54 -4 56 10 50 22Z" fill="${c}" ${ink}/>`).join('') + `<path d="M40 24 C 52 16 66 16 76 22 L74 28 C 64 22 52 22 42 30Z" fill="#e9b33e" ${ink}/>`;
+    if (p.head === 'pluma') g += `<path transform="rotate(-30 46 22)" d="M46 22 C 40 10 42 -4 46 -10 C 50 -4 52 10 46 22Z" fill="${p.acc2 || '#c0392b'}" ${ink}/><path d="M40 26 C 52 18 66 18 77 24 L76 29 C 64 24 52 24 42 31Z" fill="${p.band || '#c0392b'}" ${ink}/>`;
+    if (p.head === 'banda') g += `<path d="M40 26 C 52 18 66 18 77 24 L76 29 C 64 24 52 24 42 31Z" fill="${p.band || '#c0392b'}" ${ink}/>`;
+    if (p.head === 'flor') g += `<g transform="translate(48 20)">${[0, 72, 144, 216, 288].map(a => `<ellipse cy="-5" rx="4" ry="5" transform="rotate(${a})" fill="${p.flower || '#e05a7a'}" ${ink}/>`).join('')}<circle r="2.6" fill="#e9b33e"/></g>`;
+    if (p.head === 'cempa') g += [40, 50, 60, 70].map((x, i) => `<circle cx="${x}" cy="${20 - (i === 1 || i === 2 ? 4 : 0)}" r="5.4" fill="#f29a1e" ${ink}/>`).join('');
+    // Speech scroll: the codex sign for a speaking figure.
+    g += `<path d="M86 44 c 8 -2 10 -10 4 -12 c -4 -1 -6 3 -3 5" fill="none" stroke="${K}" stroke-width="2"/>`;
+    // Props in front.
+    if (p.prop === 'escudo') g += `<g transform="translate(96 108)"><circle r="18" fill="#f3ede2" ${ink}/><circle r="12" fill="${p.shield || '#2f5fa8'}" ${ink}/><path d="M-12 0 H12 M0 -12 V12" stroke="#f3ede2" stroke-width="2.6"/>${[-10, -3, 4, 11].map(x => `<path d="M${x} 16 l-2 10 h4Z" fill="#2f8f8a" ${ink}/>`).join('')}</g>`;
+    if (p.prop === 'canasta') g += `<g transform="translate(98 112)"><path d="M-12 0 H12 L9 16 H-9Z" fill="#d8a85a" ${ink}/>${[-6, 0, 6].map((x, i) => `<circle cx="${x}" cy="-2" r="4" fill="${['#c0392b', '#e9b33e', '#7cb04a'][i]}" ${ink}/>`).join('')}</g>`;
+    if (p.prop === 'jicara') g += `<g transform="translate(98 106)"><path d="M-12 0 C -12 12 12 12 12 0Z" fill="#a8522e" ${ink}/></g>`;
+    if (p.prop === 'tambor') g += `<g transform="translate(102 112)"><rect x="-9" y="-12" width="18" height="26" fill="#a8522e" ${ink}/><path d="M-9 -12 H9" stroke="#f3ede2" stroke-width="3"/></g>`;
+    if (p.prop === 'flores') g += `<g transform="translate(96 98)"><path d="M0 8 V-10" ${ink}/>${[[-5, -10], [5, -12], [0, -16]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.4" fill="#f29a1e" ${ink}/>`).join('')}</g>`;
+    if (p.prop === 'cacao') g += `<path transform="translate(98 104)" d="M0 -12 C 9 -8 9 8 0 12 C -9 8 -9 -8 0 -12Z" fill="#a8521e" ${ink}/>`;
+    if (p.prop === 'red') g += `<path transform="translate(100 108)" d="M-10 -10 L10 -10 L7 12 L-7 12Z" fill="none" ${ink}/>`;
+    if (p.prop === 'panal') g += `<rect x="92" y="96" width="14" height="22" rx="5" fill="#c89a50" ${ink}/>`;
+    return `<svg class="fig fig--lienzo" viewBox="0 -14 124 216" role="img" aria-label="${p.name}">${g}</svg>`;
+  }
+
+  window.TlaxFigs = { cuento, lienzo };
+})();
+</script>
+<script>
+// v3 options page: 4 title landscapes (with the Talavera menu) and 4 character styles.
+"use strict";
+(function () {
+  const X = window.TlaxTex, SC = window.TlaxScenes, F = window.TlaxFigs, { chibi, CAST, PLAYER } = window.TlaxChars;
+  const root = document.documentElement.style;
+  root.setProperty('--deco', `url(${X.decoTile()})`); root.setProperty('--plain', `url(${X.plainTiles()})`); root.setProperty('--cobalt', `url(${X.cobaltTile()})`);
+
+  const cacao = '<svg class="mini" viewBox="0 0 64 64"><path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="#a8521e" stroke="#3a2418" stroke-width="3"/></svg>';
+  const glyph = `<svg class="glyph" viewBox="0 0 120 110"><path d="M14 104 C 14 60 34 30 60 30 C 86 30 106 60 106 104 Z" fill="#4f8f4a" stroke="#1a1410" stroke-width="4"/><path d="M14 92 H106 V104 H14Z" fill="#d39a26" stroke="#1a1410" stroke-width="4"/><ellipse cx="60" cy="30" rx="26" ry="7" fill="#f3e2b8" stroke="#1a1410" stroke-width="3"/><path d="M30 10 C 34 6 50 8 56 22 L48 24 C 44 18 38 16 32 18 Z" fill="#c48a5a" stroke="#1a1410" stroke-width="3"/><path d="M90 50 C 86 54 70 52 64 38 L72 36 C 76 42 82 44 88 42 Z" fill="#c48a5a" stroke="#1a1410" stroke-width="3"/></svg>`;
+  const inicio = scene => `<div class="ab inicio">${scene}
+    <div class="pnl logo">${glyph}<div><div class="logo__n">Tlaxcallan</div><div class="logo__t">Año 1-Ácatl · 1519 · llegan extranjeros por el oriente</div></div></div>
+    <div class="pnl tmenu"><div class="tm tm--on" data-sel="tm"><span>Continuar</span><small>Día 3 · veintena Tlacaxipehualiztli · ${cacao} 900 300</small></div>
+      <div class="tm" data-sel="tm"><span>Nueva partida</span><small>Hereda la milpa de tu abuela</small></div>
+      <div class="tm" data-sel="tm"><span>Opciones</span><small>Volumen, idioma y mensajes</small></div>
+      <div class="keys"><span><kbd>▲▼</kbd>elegir</span><span><kbd>Enter</kbd>aceptar</span></div></div>
+    <div class="foot">Señorío de Tlaxcallan · Tepetícpac · Ocotelulco · Tizatlán · Quiahuiztlán · en guerra con Tenochtitlan</div></div>`;
+
+  const LAND = [
+    ['A', 'Plano geométrico', 'El estilo actual de tu juego, más pulido: facetas de luz y sombra, sol de atardecer, teocalli, casa de adobe con techo de paja y el estandarte de la garza blanca junto a la milpa.', SC.plano()],
+    ['B', 'Papel recortado', 'Capas de papel de colores con sombra entre ellas, como un diorama o un papel picado. Se presta a parallax: cada capa puede moverse a distinta velocidad.', SC.papel()],
+    ['C', 'Lienzo de Tlaxcala', 'Inspirado en el Lienzo de Tlaxcala, pintado por los tlaxcaltecas sobre la conquista: tinta negra sobre algodón y la Malinche como glifo de cerro con su falda azul. Lleva el río Atoyac, huellas como camino y glosas escritas a mano.', SC.lienzo()],
+    ['D', 'Mural de Talavera', 'El paisaje pintado a pincel en cobalto, ocre y verde sobre azulejos con juntas y brillo. Combina directamente con los menús que te gustaron.', SC.talavera()],
+  ];
+  const SAMPLE = [PLAYER, CAST[2], CAST[4], CAST[8], CAST[9], CAST[11]];
+  const cap = p => `<figcaption>${p.name}${p.romance ? ' ♥' : ''}<small>${p.role}</small></figcaption>`;
+  const STY = [
+    ['1', 'Chibi (el actual)', 'Cabeza grande y cuerpo pequeño, como los vecinos de tu plaza. Es el que te mandé antes, como referencia.', p => `<div class="niche">${chibi(p)}</div>`],
+    ['2', 'Cuento ilustrado', 'Proporciones más reales (unas 4½ cabezas), caras más finas, ropa hasta el tobillo y sombreado suave. Más elegante y épico, y queda bien en retratos y escenas de diálogo.', p => `<div class="niche">${F.cuento(p)}</div>`],
+    ['3', 'Lienzo de Tlaxcala', 'Como los códices: cabeza de perfil, torso de frente, tinta gruesa y colores planos. Incluye la vírgula de la palabra delante de la boca. Es el más tlaxcalteca y el más original.', p => `<div class="cotton">${F.lienzo(p)}</div>`],
+    ['4', 'Azulejo pintado', 'Cada personaje pintado en cobalto sobre azulejo blanco, como una pieza de Talavera. Ideal para retratos en los menús, cartas o la pantalla de Vecinos.', p => `<div class="tilefig">${chibi(p)}</div>`],
+  ];
+
+  document.getElementById('app').innerHTML = `
+    <section class="sec"><h2>Paisaje de inicio · 4 opciones</h2><p>Todas usan el menú de azulejo y ninguna es realista. Elige una o dime qué combinar.</p>
+      <div class="opts">${LAND.map(([k, n, d, s]) => `<figure class="board"><div class="fit">${inicio(s)}</div><figcaption><b>${k} · ${n}</b> — ${d}</figcaption></figure>`).join('')}</div></section>
+    <section class="sec"><h2>Personajes · 4 estilos</h2><p>Los mismos seis personajes en cada estilo: Tú, Nalin, Kaya, Naara, Yeyetzi y Yuki.</p>
+      <div class="styles">${STY.map(([k, n, d, fn]) => `<div class="srow"><h3><span>ESTILO ${k}</span>${n}</h3><p>${d}</p><div class="line">${SAMPLE.map(p => `<figure>${fn(p)}${cap(p)}</figure>`).join('')}</div></div>`).join('')}</div></section>`;
+
+  const fits = [...document.querySelectorAll('.fit')];
+  const fit = () => fits.forEach(f => f.firstElementChild.style.setProperty('--k', f.clientWidth / 960));
+  new ResizeObserver(fit).observe(document.body); fit();
+  document.addEventListener('click', e => { const el = e.target.closest('[data-sel]'); if (!el) return; el.parentElement.querySelectorAll('[data-sel]').forEach(x => x.classList.toggle('tm--on', x === el)); });
+})();
+</script>
+</body>
+</html>
