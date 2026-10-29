@@ -1,0 +1,50 @@
+/* Corazón de Maíz · intro. 960×540 stage scaled to the window; Talavera caption panel. */
+:root { --cob: #1b3a8a; --och: #d39a26; --navy: #16306e; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #0d1124; overflow: hidden; font-family: 'Alegreya Sans', system-ui, sans-serif; }
+#stage { position: fixed; left: 50%; top: 50%; width: 960px; height: 540px; overflow: hidden; transform-origin: center; background: #f6f1e6; cursor: pointer; user-select: none; }
+.layer { position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease; }
+.layer.on { opacity: 1; }
+.mural { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.07); transition: transform 11s linear; }
+.layer.on .mural { transform: scale(1) translateX(var(--pan, 0)); }
+.fig { position: absolute; transform: translateX(-50%) translateY(14px); opacity: 0; transition: opacity 1s ease .5s, transform 1.4s ease .5s; }
+.layer.on .fig { opacity: 1; transform: translateX(-50%); }
+.fig svg { height: 100%; width: auto; display: block; filter: drop-shadow(0 4px 3px rgba(20,20,40,.25)); }
+.fig--paint svg { filter: url(#cobalt); }
+.fig--flip svg { transform: scaleX(-1); }
+
+/* Talavera panel (same as the game menus). */
+.cx { position: absolute; border: 20px solid transparent; border-radius: 4px; color: var(--navy);
+  background: linear-gradient(rgba(255,252,245,.86), rgba(255,250,240,.9)) padding-box, var(--plain) 0 0 / 120px padding-box, var(--deco) -1px -1px / 20px border-box;
+  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 5px #f8f2e4, inset 0 0 0 7px var(--och), 0 14px 24px rgba(0,0,0,.45); }
+.cap { left: 70px; right: 70px; bottom: 34px; min-height: 104px; padding: 12px 22px 10px; transition: opacity .4s; }
+.cap__y { font: italic 700 14px 'Alegreya', serif; color: #8a5a14; letter-spacing: .5px; }
+.cap__t { margin-top: 2px; font: 500 20px/1.35 'Alegreya', serif; text-wrap: pretty; min-height: 54px; }
+.cap__t i { font-style: normal; opacity: 0; }
+.cap__more { position: absolute; right: 12px; bottom: 6px; color: var(--cob); font-size: 14px; animation: bob 1s ease-in-out infinite alternate; opacity: 0; }
+.cap.done .cap__more { opacity: 1; }
+@keyframes bob { to { transform: translateY(3px); } }
+.dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 6px; }
+.dots i { width: 12px; height: 12px; border-radius: 2px; background: #f6f1e6; box-shadow: inset 0 0 0 1.5px var(--cob), 0 1px 0 rgba(0,0,0,.3); transition: background .3s; }
+.dots i.on { background: var(--cobalt) 0 0 / 40px; box-shadow: inset 0 0 0 1.5px #0f2458, inset 0 0 0 3px var(--och); }
+.keys { position: absolute; right: 14px; bottom: 10px; display: flex; gap: 12px; font-size: 13px; color: #fff; text-shadow: 0 1px 3px #000; }
+kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px; font: 700 12px 'Alegreya Sans', sans-serif; color: var(--navy); text-align: center; border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #8a7a60; text-shadow: none; }
+.skip { position: absolute; right: 14px; top: 12px; }
+
+/* Title card on the last scene. */
+.title { left: 50%; top: 24px; width: 560px; display: flex; gap: 14px; align-items: center; padding: 8px 18px; transform: translateX(-50%) scale(.92); opacity: 0; transition: opacity 1.2s ease 1.2s, transform 1.2s ease 1.2s; }
+.layer.on .title { opacity: 1; transform: translateX(-50%); }
+.title svg { width: 64px; flex: none; }
+.title__n { font: 700 38px/1 'Cinzel', serif; color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
+.title__t { font: italic 600 14px 'Alegreya', serif; color: #8a5a14; margin-top: 4px; }
+.start { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); padding: 8px 22px; border-radius: 3px; font: italic 700 18px 'Alegreya', serif; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); background: var(--cobalt) 0 0 / 120px; box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 6px 12px rgba(0,0,0,.4); opacity: 0; transition: opacity .6s; }
+.start.on { opacity: 1; animation: glow 1.6s ease-in-out infinite alternate; }
+@keyframes glow { to { box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 0 22px rgba(211,154,38,.8); } }
+/* Compact caption at the very bottom so the mural and figures stay visible. */
+.cap { left: 60px; right: 60px; bottom: 8px; min-height: 0; border-width: 16px; padding: 6px 18px 6px; }
+.cap__y { font-size: 13px; }
+.cap__t { font-size: 18px; line-height: 1.3; min-height: 47px; }
+.dots { top: 14px; bottom: auto; justify-content: flex-start; left: 16px; }
+.keys { top: 12px; bottom: auto; }
+.start { bottom: 132px; }
+.title { top: 18px; }
