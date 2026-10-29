@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de Estado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500;1,600;1,700;1,800&family=Alegreya+Sans:wght@500;700;800&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estado.css">
+<style>
+  body { margin: 0; background: #14110f; color: #f3e6cf; font-family: 'Alegreya Sans', sans-serif; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 16px 60px; }
+  h1 { font: 700 34px 'Cinzel', serif; margin: 0 0 6px; text-align: center; }
+  .lead { text-align: center; color: #c9b89a; margin: 0 auto 28px; max-width: 720px; font-size: 17px; }
+  .cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 24px; align-items: start; }
+  .cmp figure { margin: 0; }
+  .cmp figcaption { margin-top: 8px; font: italic 700 18px 'Alegreya', serif; text-align: center; }
+  .antes img { width: 100%; border-radius: 6px; display: block; }
+  .scene { position: relative; aspect-ratio: 3 / 4; border-radius: 6px; overflow: hidden; background: url('juego.jpg') 70% 30% / 260% auto; display: flex; justify-content: center; padding-top: 14px; }
+  .scene .ce { transform-origin: top center; }
+  h2 { font: italic 800 24px 'Alegreya', serif; margin: 40px 0 12px; }
+  .states { display: flex; flex-wrap: wrap; gap: 24px; }
+  .states > div { display: flex; flex-direction: column; gap: 8px; }
+  .states small { color: #c9b89a; font-size: 14px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>Panel de estado</h1>
+  <p class="lead">Las franjas azules de la derecha (fama, equipo y encargo), rehechas en el mismo azulejo de Talavera que el reloj y el resto de los menús.</p>
+  <div class="cmp">
+    <figure class="antes"><img src="antes.jpg" alt="Panel actual del juego"><figcaption>Antes</figcaption></figure>
+    <figure><div class="scene"><div id="e1"></div></div><figcaption>Después</figcaption></figure>
+  </div>
+  <h2>Otros estados</h2>
+  <div class="states">
+    <div><div id="e2"></div><small>Fama positiva y encargo que aún no tienes</small></div>
+    <div><div id="e3"></div><small>Muy honrado, el encargo vence mañana, día soleado</small></div>
+  </div>
+</main>
+<script src="estado.js"></script>
+<script>
+  CdmEstado.render(document.getElementById('e1'), {
+    estacion: 'Verano', dia: 3, anio: 1, clima: 'lluvia', hora: '7:10 am', cacao: 397018,
+    fama: { valor: -80, nombre: 'Deshonrado' },
+    equipo: { cantidad: 18, defensa: 0, tecla: 'I' },
+    encargo: { quien: 'Yolotl', objeto: 'calabaza', nombre: 'calabaza', cantidad: 1, dias: 3, tienes: 400000 },
+  });
+  CdmEstado.render(document.getElementById('e2'), {
+    estacion: 'Primavera', dia: 12, anio: 1, clima: 'nublado', hora: '4:30 pm', cacao: 1888,
+    fama: { valor: 43, nombre: 'Respetado' },
+    equipo: { cantidad: 6, defensa: 35, tecla: 'I' },
+    encargo: { quien: 'Kaya', objeto: 'cempa', nombre: 'cempasúchil', cantidad: 5, dias: 4, tienes: 2 },
+  });
+  CdmEstado.render(document.getElementById('e3'), {
+    estacion: 'Otoño', dia: 20, anio: 2, clima: 'sol', hora: '9:00 am', cacao: 52300,
+    fama: { valor: 88, nombre: 'Honrado' },
+    equipo: { cantidad: 24, defensa: 70, tecla: 'I' },
+    encargo: { quien: 'Xicohténcatl', objeto: 'obsidiana', nombre: 'navajas de obsidiana', cantidad: 12, dias: 1, tienes: 9 },
+  });
+</script>
+</body>
+</html>
