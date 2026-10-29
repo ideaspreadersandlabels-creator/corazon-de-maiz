@@ -48,3 +48,18 @@ kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px;
 .keys { top: 12px; bottom: auto; }
 .start { bottom: 132px; }
 .title { top: 18px; }
+
+/* Caption header: place/year on the left, the line being sung on the right. */
+.cap__h { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.cap__l { font: italic 600 13px 'Alegreya', serif; color: var(--cob); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .9; }
+.mute { all: unset; cursor: pointer; display: inline-flex; align-items: center; color: #fff; text-shadow: 0 1px 3px #000; font-size: 13px; }
+.mute[aria-pressed="true"] span { text-decoration: line-through; opacity: .8; }
+
+/* Start cover: browsers only allow sound after a click or key press. */
+.cover { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(14,22,52,.55); transition: opacity .8s; }
+.cover.off { opacity: 0; pointer-events: none; }
+.cover__p { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 40px 16px; text-align: center; }
+.cover__p svg { width: 96px; }
+.cover__n { font: 700 42px/1 'Cinzel', serif; color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
+.cover__t { margin-top: 6px; font: italic 700 18px 'Alegreya', serif; animation: bob 1.1s ease-in-out infinite alternate; }
+.cover__s { font: 500 13px 'Alegreya Sans', sans-serif; color: #8a5a14; }
