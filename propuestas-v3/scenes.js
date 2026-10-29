@@ -121,21 +121,21 @@
       <radialGradient id="t-gl" cx=".3" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#5a4a30" stop-opacity=".08"/></radialGradient>`;
     const hatch = Array.from({ length: 26 }, (_, i) => { const x = 330 + i * 6; return `<path d="M${x} ${330 - i * 4} l-26 ${60 + i}" stroke="${C}" stroke-width="1.6" opacity=".55"/>`; }).join('');
     const sky = Array.from({ length: 12 }, (_, i) => `<rect x="${R() * 700}" y="${30 + i * 13}" width="${120 + R() * 200}" height="7" rx="3.5" fill="${C}" opacity="${.08 + (12 - i) * .02}"/>`).join('');
-    const clouds = [[140, 140], [600, 110], [380, 70]].map(([x, y]) => `<path d="M${x} ${y} a18 18 0 0 1 30 -14 a24 24 0 0 1 44 0 a18 18 0 0 1 30 14 Z" fill="#f6f1e6" ${br}/>`).join('');
+    const clouds = [[70, 132], [640, 196], [840, 238]].map(([x, y]) => `<path d="M${x} ${y} a18 18 0 0 1 30 -14 a24 24 0 0 1 44 0 a18 18 0 0 1 30 14 Z" fill="#f6f1e6" ${br}/>`).join('');
     const body = `<rect width="960" height="540" fill="#f6f1e6"/>
       <g filter="url(#t-br)">${sky}${clouds}
-        <g transform="translate(150 96) scale(.8)">${Array.from({ length: 16 }, (_, i) => `<path transform="rotate(${i * 22.5})" d="M0 -46 L0 -70" ${br}/>`).join('')}<circle r="40" fill="${O}" ${br}/><circle r="22" fill="#f2c94c" stroke="${C}" stroke-width="2"/></g>
+        <g transform="translate(858 112) scale(.8)">${Array.from({ length: 16 }, (_, i) => `<path transform="rotate(${i * 22.5})" d="M0 -46 L0 -70" ${br}/>`).join('')}<circle r="40" fill="${O}" ${br}/><circle r="22" fill="#f2c94c" stroke="${C}" stroke-width="2"/></g>
         <path d="M-10 420 C 60 360 110 300 140 290 C 170 300 230 360 330 420Z" fill="${W}" opacity=".7" ${br}/>
         <path d="${MAL}" fill="${W}" ${br}/>${hatch}
         <path d="M400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 C 528 226 516 222 506 232 C 494 222 484 238 472 228 C 460 238 450 224 438 232 C 428 222 414 228 400 220Z" fill="#fbf8f0" ${br}/>
         <path d="M472 186 L455 300 M472 186 L520 290 M472 186 L600 330" stroke="${C}" stroke-width="2" opacity=".7"/>
         <path d="${wave(408, 8, .014, 1)}" fill="#c8d4ee" ${br}/>
         ${Array.from({ length: 20 }, (_, i) => `<circle cx="${20 + i * 48}" cy="${404 + Math.sin(i) * 6}" r="${12}" fill="${G}" opacity=".85" ${br}/>`).join('')}
-        ${teocalli(790, 432, 1, { a: '#fbf8f0', b: '#c8d4ee', s: C, r: O, w: '#fbf8f0' }, br)}
+        ${teocalli(872, 432, 1, { a: '#fbf8f0', b: '#c8d4ee', s: C, r: O, w: '#fbf8f0' }, br)}
         <path d="${wave(440, 6, .02, 2)}" fill="#e6ecf8" ${br}/>
         ${milpa({ stem: C, leaf: G, cob: O, tas: O }, R, [[470, .8, 540], [500, .95, 500], [532, 1.1, 460]])}
         ${agave(640, 540, 1.3, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}${agave(900, 540, 1.6, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}
-        ${heron(300, 120, 1, '#fbf8f0', C, 2.6)}${heron(350, 142, .8, '#fbf8f0', C, 2.6)}
+        ${heron(130, 196, 1, '#fbf8f0', C, 2.6)}${heron(178, 218, .8, '#fbf8f0', C, 2.6)}${heron(92, 226, .66, '#fbf8f0', C, 2.6)}
       </g>
       <rect width="960" height="540" fill="url(#t-grid)"/>`;
     return svg(defs, body);

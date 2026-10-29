@@ -75,3 +75,50 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
 .ti-menu .cb { width: 196px; padding: 5px 10px; display: flex; flex-direction: column; font: italic 700 17px 'Alegreya', serif; }
 .ti-menu .cb small { font: 500 11.5px 'Alegreya Sans', sans-serif; font-style: normal; }
 .ti-foot { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font: italic 500 13px 'Alegreya', serif; color: #fbeed6; text-shadow: 0 1px 3px #000; }
+
+/* ---------- Review pass: icons, portraits, layout fixes ---------- */
+.cf .fig { height: 92%; margin-bottom: 1%; }
+/* Bolsa, left column. */
+.bag__l { gap: 6px; }
+.who { flex-direction: column; align-items: flex-start; gap: 0; }
+.who span { color: var(--soft); font-weight: 700; }
+.fame { width: 100%; display: flex; justify-content: space-between; align-items: center; font: italic 700 14px 'Alegreya', serif; color: var(--navy); }
+.ms { grid-template-columns: 78px 1fr 24px; }
+.ms label { display: flex; align-items: center; gap: 4px; }
+.purse--bag { align-self: stretch; margin-top: auto; justify-content: center; gap: 6px; font-size: 18px; }
+.purse--bag .mini { width: 18px; height: 18px; }
+.purse--bag small { font: 500 13px 'Alegreya Sans', sans-serif; opacity: .85; }
+/* Vecinos: names under the figures, cards fill the grid. */
+.vec__g { gap: 7px; }
+.vc { padding: 8px 0 5px; gap: 2px; }
+.vc__a { width: 92px; height: 98px; }
+.vc__a .fig { height: 100%; width: auto; overflow: visible; }
+.vc b { margin-top: 2px; }
+/* HUD: stat bars in their own tile frame, covering the game's bars. */
+.vbs { position: absolute; right: 8px; bottom: 4px; top: auto; left: auto; display: flex; gap: 9px; padding: 8px 10px 10px; border-width: 16px; background-size: auto, 120px, 16px; }
+.vb { gap: 5px; text-shadow: none; }
+.vb .st { width: 22px; height: 22px; }
+.vb__t { height: 132px; width: 20px; }
+.tut kbd, .item__t kbd { font-size: 12px; }
+/* Amoxtli. */
+.amo__l { position: relative; }
+.amo__done { margin-top: auto; padding-top: 8px; border-top: 1.5px dotted rgba(27, 58, 138, .5); font: italic 600 14px 'Alegreya', serif; color: var(--soft); }
+.amo__todo { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: var(--navy); }
+.amo__todo li { display: flex; align-items: center; gap: 8px; }
+.amo__todo li::before { content: ''; flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--cob); background: #fff; }
+.amo__todo li.ok { color: var(--soft); text-decoration: line-through; text-decoration-color: rgba(27, 58, 138, .45); }
+.amo__todo li.ok::before { background: radial-gradient(circle, #3f9a3a 0 4px, #fff 4.5px); }
+/* Mapa: labels with a paper halo so lines never cut through them. */
+.map text { paint-order: stroke; stroke: #f6edd6; stroke-width: 4px; stroke-linejoin: round; }
+.seno { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; font: italic 700 14px 'Alegreya', serif; color: var(--navy); }
+.seno li::before { content: '◆ '; color: var(--och); font-style: normal; font-size: 10px; vertical-align: 1px; }
+/* Pausa: header and panels no longer overlap. */
+.ph { top: 14px; }
+.plist, .popts { top: 168px; }
+/* Inicio: the footer clears the menu. */
+.ti-menu { bottom: 34px; }
+.ti-foot { bottom: 6px; }
+.vc__a { height: 92px; }
+.vc { padding: 7px 0 4px; }
+.sks { gap: 6px; }
+.sk { padding: 4px 12px 4px 6px; }

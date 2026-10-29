@@ -192,3 +192,8 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; margin-right: 5p
 .tmenu { bottom: 34px; padding: 16px; }
 .foot { color: #2a1a10; font-weight: 700; text-shadow: 0 0 4px #f4ead2, 0 0 4px #f4ead2; }
 .seller .cf--seller { height: 200px; }
+
+/* Stat glyphs (energy, life, spirit) and fame feathers from menus4.js. */
+.st { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; flex: none; }
+.qzs { display: inline-flex; gap: 1px; align-items: flex-end; }
+.qz { width: 8px; height: 17px; }

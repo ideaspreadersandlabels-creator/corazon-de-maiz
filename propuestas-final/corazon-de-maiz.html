@@ -202,6 +202,11 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 6px; margin-right: 5p
 .tmenu { bottom: 34px; padding: 16px; }
 .foot { color: #2a1a10; font-weight: 700; text-shadow: 0 0 4px #f4ead2, 0 0 4px #f4ead2; }
 .seller .cf--seller { height: 200px; }
+
+/* Stat glyphs (energy, life, spirit) and fame feathers from menus4.js. */
+.st { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; flex: none; }
+.qzs { display: inline-flex; gap: 1px; align-items: flex-end; }
+.qz { width: 8px; height: 17px; }
 </style>
 <style>
 /* Final screens: HUD, dialogue, Oficios, Amoxtli, Mapa (extends propuestas-v4/style4.css). */
@@ -367,6 +372,53 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
 .ti-menu .cb { width: 196px; padding: 5px 10px; display: flex; flex-direction: column; font: italic 700 17px 'Alegreya', serif; }
 .ti-menu .cb small { font: 500 11.5px 'Alegreya Sans', sans-serif; font-style: normal; }
 .ti-foot { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font: italic 500 13px 'Alegreya', serif; color: #fbeed6; text-shadow: 0 1px 3px #000; }
+
+/* ---------- Review pass: icons, portraits, layout fixes ---------- */
+.cf .fig { height: 92%; margin-bottom: 1%; }
+/* Bolsa, left column. */
+.bag__l { gap: 6px; }
+.who { flex-direction: column; align-items: flex-start; gap: 0; }
+.who span { color: var(--soft); font-weight: 700; }
+.fame { width: 100%; display: flex; justify-content: space-between; align-items: center; font: italic 700 14px 'Alegreya', serif; color: var(--navy); }
+.ms { grid-template-columns: 78px 1fr 24px; }
+.ms label { display: flex; align-items: center; gap: 4px; }
+.purse--bag { align-self: stretch; margin-top: auto; justify-content: center; gap: 6px; font-size: 18px; }
+.purse--bag .mini { width: 18px; height: 18px; }
+.purse--bag small { font: 500 13px 'Alegreya Sans', sans-serif; opacity: .85; }
+/* Vecinos: names under the figures, cards fill the grid. */
+.vec__g { gap: 7px; }
+.vc { padding: 8px 0 5px; gap: 2px; }
+.vc__a { width: 92px; height: 98px; }
+.vc__a .fig { height: 100%; width: auto; overflow: visible; }
+.vc b { margin-top: 2px; }
+/* HUD: stat bars in their own tile frame, covering the game's bars. */
+.vbs { position: absolute; right: 8px; bottom: 4px; top: auto; left: auto; display: flex; gap: 9px; padding: 8px 10px 10px; border-width: 16px; background-size: auto, 120px, 16px; }
+.vb { gap: 5px; text-shadow: none; }
+.vb .st { width: 22px; height: 22px; }
+.vb__t { height: 132px; width: 20px; }
+.tut kbd, .item__t kbd { font-size: 12px; }
+/* Amoxtli. */
+.amo__l { position: relative; }
+.amo__done { margin-top: auto; padding-top: 8px; border-top: 1.5px dotted rgba(27, 58, 138, .5); font: italic 600 14px 'Alegreya', serif; color: var(--soft); }
+.amo__todo { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: var(--navy); }
+.amo__todo li { display: flex; align-items: center; gap: 8px; }
+.amo__todo li::before { content: ''; flex: none; width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--cob); background: #fff; }
+.amo__todo li.ok { color: var(--soft); text-decoration: line-through; text-decoration-color: rgba(27, 58, 138, .45); }
+.amo__todo li.ok::before { background: radial-gradient(circle, #3f9a3a 0 4px, #fff 4.5px); }
+/* Mapa: labels with a paper halo so lines never cut through them. */
+.map text { paint-order: stroke; stroke: #f6edd6; stroke-width: 4px; stroke-linejoin: round; }
+.seno { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; font: italic 700 14px 'Alegreya', serif; color: var(--navy); }
+.seno li::before { content: '◆ '; color: var(--och); font-style: normal; font-size: 10px; vertical-align: 1px; }
+/* Pausa: header and panels no longer overlap. */
+.ph { top: 14px; }
+.plist, .popts { top: 168px; }
+/* Inicio: the footer clears the menu. */
+.ti-menu { bottom: 34px; }
+.ti-foot { bottom: 6px; }
+.vc__a { height: 92px; }
+.vc { padding: 7px 0 4px; }
+.sks { gap: 6px; }
+.sk { padding: 4px 12px 4px 6px; }
 </style>
 </head>
 <body>
@@ -501,23 +553,23 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   // Cast from the game's roster. Look (skin, hair, build, props) follows the reference
   // art; clothing is pre-Hispanic Tlaxcalteca: huipil or quechquémitl over a cueitl.
   const CAST = [
-    { id: 'nizhoni', name: 'Nizhoni', role: 'Cazadora', line: 'Conoce cada vereda del monte.', skin: '#b07040', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#b8763a', trim: '#2f8f8a', skirt: '#8a5a34', head: 'banda', band: '#c0392b', prop: 'lanza', jade: true },
-    { id: 'doli', name: 'Doli', role: 'Recolectora', line: 'Vuelve del cerro con la canasta llena.', skin: '#a8683a', hair: '#1a1210', hairStyle: 'trenzas', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#a8522e', head: 'banda', band: '#e07a28', prop: 'canasta' },
-    { id: 'nalin', name: 'Nalin', role: 'Guerrera', line: 'Defiende las fronteras del señorío.', skin: '#9a5e34', hair: '#1a1210', hairStyle: 'coleta', style: 'armadura', top: '#efe3c8', trim: '#2f5fa8', skirt: '#1e3c78', head: 'plumas', prop: 'escudo', shield: '#2f5fa8', paint: '#2f5fa8' },
-    { id: 'nascha', name: 'Nascha', role: 'Arquera', line: 'Nunca falla un tiro, ni un chiste.', skin: '#b37a4c', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#7a8a3a', trim: '#e9b33e', skirt: '#5a4a2a', head: 'pluma', acc2: '#2f8f8a', band: '#7a8a3a', prop: 'arco', orejeras: true },
-    { id: 'kaya', name: 'Kaya', role: 'Tu amor', line: 'Te espera cada tarde junto al río.', skin: '#c08454', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#3a9ab0', trim: '#f3ede2', band2: '#1e5a78', skirt: '#1e5a78', hem: '#3a9ab0', head: 'banda', band: '#1e3c78', prop: 'lanza', jade: true, romance: true },
-    { id: 'citlali', name: 'Citlali', role: 'Tejedora', line: 'Borda estrellas en cada huipil.', skin: '#b8855a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#2a2440', trim: '#2f8f8a', band2: '#2f8f8a', skirt: '#1e2a4a', head: 'flor', flower: '#e05a7a', stars: true },
-    { id: 'tlalli', name: 'Tlalli', role: 'Alfarera', line: 'Sus cántaros no gotean nunca.', skin: '#c89468', hair: '#1a1210', hairStyle: 'chongo', acc2: '#2f5fa8', style: 'huipil', top: '#2f4a8a', trim: '#f3ede2', band2: '#f3ede2', hem2: '#2f4a8a', skirt: '#1e2a5a', prop: 'jicara', bowl: '#c46a32' },
-    { id: 'malinalli', name: 'Malinalli', role: 'Curandera', line: 'Sabe qué hierba cura cada mal.', skin: '#8a5430', hair: '#1a1210', hairStyle: 'trenzas', acc2: '#e9b33e', style: 'quech', top: '#d9a03a', trim: '#7a2a1e', skirt: '#6a3a1e', head: 'pluma', acc2: '#c0392b', band: '#e9b33e', jade: true, orejeras: true, prop: 'flores' },
-    { id: 'naara', name: 'Naara', role: 'Cantora', line: 'Su voz abre las fiestas del pueblo.', skin: '#5a3420', hair: '#120c0a', hairStyle: 'afro', style: 'huipil', top: '#4f7a3a', trim: '#e9b33e', band2: '#e9b33e', hem2: '#4f7a3a', skirt: '#2e4a24', orejeras: true, jade: true, prop: 'tambor' },
-    { id: 'yeyetzi', name: 'Yeyetzi', role: 'Pescadora', line: 'Pesca charales en la laguna.', skin: '#e2b48c', hair: '#c8502a', hairStyle: 'rizos', style: 'huipil', top: '#5f8a4a', trim: '#e07a28', skirt: '#3a5a30', freckles: true, prop: 'red', eye: '#3a6a3a' },
-    { id: 'isabel', name: 'Isabel', role: 'Viajera', line: 'Llegó de muy lejos siguiendo un mapa.', skin: '#f0c8a0', hair: '#e8c070', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#ecd8b0', trim: '#a8522e', skirt: '#8a6a4a', eye: '#3a5a8a' },
-    { id: 'yuki', name: 'Yuki', role: 'Tortillera', line: 'Sus tortillas salen infladitas del comal.', skin: '#c88a5a', hair: '#3a2418', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e07a28', trim: '#7a2a1e', band2: '#7a2a1e', skirt: '#7a3a1e', prop: 'jicara' },
-    { id: 'mei', name: 'Mei', role: 'Comerciante de cacao', line: 'Nadie regatea mejor en el tianguis.', skin: '#e0b088', hair: '#1a1210', hairStyle: 'largo', build: 2, style: 'huipil', top: '#7ab0d8', trim: '#f3ede2', band2: '#2f5fa8', skirt: '#2f5fa8', prop: 'cacao' },
-    { id: 'iyari', name: 'Iyari', role: 'Apicultora', line: 'Cuida abejas meliponas sin aguijón.', skin: '#a8683a', hair: '#2a1a14', hairStyle: 'rizos', build: 2, style: 'quech', top: '#c0392b', trim: '#f2c94c', skirt: '#6a2a1e', prop: 'panal' },
-    { id: 'ayelen', name: 'Ayelen', role: 'Floricultora', line: 'Siembra cempasúchil para la ofrenda.', skin: '#b07a48', hair: '#1a1210', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e9b33e', trim: '#c0392b', band2: '#c0392b', skirt: '#a8522e', head: 'cempa', prop: 'flores' },
+    { id: 'nizhoni', name: 'Nizhoni', role: 'Cazadora', line: 'Conoce cada vereda del monte.', skin: '#b07040', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#b8763a', trim: '#2f8f8a', skirt: '#8a5a34', head: 'banda', band: '#c0392b', prop: 'lanza', jade: true , mood: 'fierce' , pattern: 'rombos' },
+    { id: 'doli', name: 'Doli', role: 'Recolectora', line: 'Vuelve del cerro con la canasta llena.', skin: '#a8683a', hair: '#1a1210', hairStyle: 'trenzas', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#a8522e', head: 'banda', band: '#e07a28', prop: 'canasta' , pattern: 'flores' },
+    { id: 'nalin', name: 'Nalin', role: 'Guerrera', line: 'Defiende las fronteras del señorío.', skin: '#9a5e34', hair: '#1a1210', hairStyle: 'coleta', style: 'armadura', top: '#efe3c8', trim: '#2f5fa8', skirt: '#1e3c78', head: 'plumas', prop: 'escudo', shield: '#2f5fa8', paint: '#2f5fa8' , mood: 'fierce' , prop2: 'macuahuitl' },
+    { id: 'nascha', name: 'Nascha', role: 'Arquera', line: 'Nunca falla un tiro, ni un chiste.', skin: '#b37a4c', hair: '#1a1210', hairStyle: 'largo', style: 'quech', top: '#7a8a3a', trim: '#e9b33e', skirt: '#5a4a2a', head: 'pluma', acc2: '#2f8f8a', band: '#7a8a3a', prop: 'arco', orejeras: true , pattern: 'rayas' },
+    { id: 'kaya', name: 'Kaya', role: 'Tu amor', line: 'Te espera cada tarde junto al río.', skin: '#c08454', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#3a9ab0', trim: '#f3ede2', band2: '#1e5a78', skirt: '#1e5a78', hem: '#3a9ab0', head: 'banda', band: '#1e3c78', prop: 'lanza', jade: true, romance: true , pattern: 'flores' },
+    { id: 'citlali', name: 'Citlali', role: 'Tejedora', line: 'Borda estrellas en cada huipil.', skin: '#b8855a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#2a2440', trim: '#2f8f8a', band2: '#2f8f8a', skirt: '#1e2a4a', head: 'flor', flower: '#e05a7a', stars: true , prop: 'malacate' },
+    { id: 'tlalli', name: 'Tlalli', role: 'Alfarera', line: 'Sus cántaros no gotean nunca.', skin: '#c89468', hair: '#1a1210', hairStyle: 'chongo', acc2: '#2f5fa8', style: 'huipil', top: '#2f4a8a', trim: '#f3ede2', band2: '#f3ede2', hem2: '#2f4a8a', skirt: '#1e2a5a', prop: 'olla', bowl: '#c46a32' , pattern: 'puntos' },
+    { id: 'malinalli', name: 'Malinalli', role: 'Curandera', line: 'Sabe qué hierba cura cada mal.', skin: '#8a5430', hair: '#1a1210', hairStyle: 'trenzas', acc2: '#e9b33e', style: 'quech', top: '#d9a03a', trim: '#7a2a1e', skirt: '#6a3a1e', head: 'pluma', acc2: '#c0392b', band: '#e9b33e', jade: true, orejeras: true, prop: 'hierbas', eyes: 'calm' , mood: 'calm' , pattern: 'rombos' },
+    { id: 'naara', name: 'Naara', role: 'Cantora', line: 'Su voz abre las fiestas del pueblo.', skin: '#5a3420', hair: '#120c0a', hairStyle: 'afro', style: 'huipil', top: '#4f7a3a', trim: '#e9b33e', band2: '#e9b33e', hem2: '#4f7a3a', skirt: '#2e4a24', orejeras: true, jade: true, prop: 'tambor' , pattern: 'flores' },
+    { id: 'yeyetzi', name: 'Yeyetzi', role: 'Pescadora', line: 'Pesca charales en la laguna.', skin: '#e2b48c', hair: '#c8502a', hairStyle: 'rizos', style: 'huipil', top: '#5f8a4a', trim: '#e07a28', skirt: '#3a5a30', freckles: true, prop: 'peces', eye: '#3a6a3a' , pattern: 'olas' },
+    { id: 'isabel', name: 'Isabel', role: 'Viajera', line: 'Llegó de muy lejos siguiendo un mapa.', skin: '#f0c8a0', hair: '#e8c070', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#ecd8b0', trim: '#a8522e', skirt: '#8a6a4a', eye: '#3a5a8a' , prop: 'bordon' , pattern: 'rayas' },
+    { id: 'yuki', name: 'Yuki', role: 'Tortillera', line: 'Sus tortillas salen infladitas del comal.', skin: '#c88a5a', hair: '#3a2418', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e07a28', trim: '#7a2a1e', band2: '#7a2a1e', skirt: '#7a3a1e', prop: 'chiquihuite'},
+    { id: 'mei', name: 'Mei', role: 'Comerciante de cacao', line: 'Nadie regatea mejor en el tianguis.', skin: '#e0b088', hair: '#1a1210', hairStyle: 'largo', build: 2, style: 'huipil', top: '#7ab0d8', trim: '#f3ede2', band2: '#2f5fa8', skirt: '#2f5fa8', prop: 'cacao' , pattern: 'rombos' },
+    { id: 'iyari', name: 'Iyari', role: 'Apicultora', line: 'Cuida abejas meliponas sin aguijón.', skin: '#a8683a', hair: '#2a1a14', hairStyle: 'rizos', build: 2, style: 'quech', top: '#c0392b', trim: '#f2c94c', skirt: '#6a2a1e', prop: 'jobon', pattern: 'puntos' },
+    { id: 'ayelen', name: 'Ayelen', role: 'Floricultora', line: 'Siembra cempasúchil para la ofrenda.', skin: '#b07a48', hair: '#1a1210', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e9b33e', trim: '#c0392b', band2: '#c0392b', skirt: '#a8522e', head: 'cempa', prop: 'flores' , pattern: 'flores' },
   ];
-  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesino de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'tilma', legs: true, top: '#efe6d2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
+  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesino de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'tilma', legs: true, top: '#efe6d2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28', prop: 'coa', mood: 'smile' };
 
   window.TlaxChars = { chibi, CAST, PLAYER };
 })();
@@ -828,21 +880,21 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
       <radialGradient id="t-gl" cx=".3" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#5a4a30" stop-opacity=".08"/></radialGradient>`;
     const hatch = Array.from({ length: 26 }, (_, i) => { const x = 330 + i * 6; return `<path d="M${x} ${330 - i * 4} l-26 ${60 + i}" stroke="${C}" stroke-width="1.6" opacity=".55"/>`; }).join('');
     const sky = Array.from({ length: 12 }, (_, i) => `<rect x="${R() * 700}" y="${30 + i * 13}" width="${120 + R() * 200}" height="7" rx="3.5" fill="${C}" opacity="${.08 + (12 - i) * .02}"/>`).join('');
-    const clouds = [[140, 140], [600, 110], [380, 70]].map(([x, y]) => `<path d="M${x} ${y} a18 18 0 0 1 30 -14 a24 24 0 0 1 44 0 a18 18 0 0 1 30 14 Z" fill="#f6f1e6" ${br}/>`).join('');
+    const clouds = [[70, 132], [640, 196], [840, 238]].map(([x, y]) => `<path d="M${x} ${y} a18 18 0 0 1 30 -14 a24 24 0 0 1 44 0 a18 18 0 0 1 30 14 Z" fill="#f6f1e6" ${br}/>`).join('');
     const body = `<rect width="960" height="540" fill="#f6f1e6"/>
       <g filter="url(#t-br)">${sky}${clouds}
-        <g transform="translate(150 96) scale(.8)">${Array.from({ length: 16 }, (_, i) => `<path transform="rotate(${i * 22.5})" d="M0 -46 L0 -70" ${br}/>`).join('')}<circle r="40" fill="${O}" ${br}/><circle r="22" fill="#f2c94c" stroke="${C}" stroke-width="2"/></g>
+        <g transform="translate(858 112) scale(.8)">${Array.from({ length: 16 }, (_, i) => `<path transform="rotate(${i * 22.5})" d="M0 -46 L0 -70" ${br}/>`).join('')}<circle r="40" fill="${O}" ${br}/><circle r="22" fill="#f2c94c" stroke="${C}" stroke-width="2"/></g>
         <path d="M-10 420 C 60 360 110 300 140 290 C 170 300 230 360 330 420Z" fill="${W}" opacity=".7" ${br}/>
         <path d="${MAL}" fill="${W}" ${br}/>${hatch}
         <path d="M400 220 C 430 196 452 184 472 182 C 492 184 512 194 540 214 C 528 226 516 222 506 232 C 494 222 484 238 472 228 C 460 238 450 224 438 232 C 428 222 414 228 400 220Z" fill="#fbf8f0" ${br}/>
         <path d="M472 186 L455 300 M472 186 L520 290 M472 186 L600 330" stroke="${C}" stroke-width="2" opacity=".7"/>
         <path d="${wave(408, 8, .014, 1)}" fill="#c8d4ee" ${br}/>
         ${Array.from({ length: 20 }, (_, i) => `<circle cx="${20 + i * 48}" cy="${404 + Math.sin(i) * 6}" r="${12}" fill="${G}" opacity=".85" ${br}/>`).join('')}
-        ${teocalli(790, 432, 1, { a: '#fbf8f0', b: '#c8d4ee', s: C, r: O, w: '#fbf8f0' }, br)}
+        ${teocalli(872, 432, 1, { a: '#fbf8f0', b: '#c8d4ee', s: C, r: O, w: '#fbf8f0' }, br)}
         <path d="${wave(440, 6, .02, 2)}" fill="#e6ecf8" ${br}/>
         ${milpa({ stem: C, leaf: G, cob: O, tas: O }, R, [[470, .8, 540], [500, .95, 500], [532, 1.1, 460]])}
         ${agave(640, 540, 1.3, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}${agave(900, 540, 1.6, [C, '#2f56b4', G], `stroke="${C}" stroke-width="1.6"`)}
-        ${heron(300, 120, 1, '#fbf8f0', C, 2.6)}${heron(350, 142, .8, '#fbf8f0', C, 2.6)}
+        ${heron(130, 196, 1, '#fbf8f0', C, 2.6)}${heron(178, 218, .8, '#fbf8f0', C, 2.6)}${heron(92, 226, .66, '#fbf8f0', C, 2.6)}
       </g>
       <rect width="960" height="540" fill="url(#t-grid)"/>`;
     return svg(defs, body);
@@ -865,25 +917,37 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   const fret = (x0, x1, y, h, c) => { let d = ''; for (let x = x0; x < x1 - 8; x += 10) d += `M${x} ${y + h} v${-h * .5} h4 v${-h * .4} h5`; return `<path d="${d}" fill="none" stroke="${c}" stroke-width="2"/>`; };
 
   // ---------- Códice Borgia ----------
-  function borgia(p) {
+  // Optional per-character params (propuestas-v2/chars.js): mood ('smile' | 'calm' |
+  // 'fierce'), eyes ('calm' = heavy lid), age ('old'), pattern on the garment
+  // ('flores' | 'rombos' | 'rayas' | 'puntos' | 'olas'), prop + prop2.
+  // opts.tight crops the empty headroom (portraits); opts.top sets the crop by hand;
+  // opts.speaking adds the vírgula (speech scroll) in front of the mouth.
+  const HELD = ['lanza', 'arco', 'baston', 'coa', 'bordon', 'macuahuitl', 'malacate', 'olla', 'chiquihuite', 'peces', 'cacao', 'jobon', 'hierbas', 'flores', 'canasta', 'jicara', 'red', 'panal'];
+  function borgia(p, opts = {}) {
     const sk = p.skin, hair = p.hair, hs = p.hairStyle, top = p.top || '#f3ede2', trim = p.trim || '#c0392b', skirt = p.skirt || '#2f5fa8';
-    const bw = [0, 4, 9][p.build || 0];
+    const bw = [0, 4, 9][p.build || 0], woman = !p.legs, props = [p.prop, p.prop2].filter(Boolean), has = k => props.includes(k);
+    const mood = p.mood || (woman ? 'smile' : 'calm');
     let g = '';
-    // Props behind the body.
-    if (p.prop === 'lanza') g += `<path d="M112 196 V14" stroke="${K}" stroke-width="6"/><path d="M112 196 V14" stroke="#b07a3a" stroke-width="3"/><path d="M112 0 l-7 18 h14Z" fill="#3a3a4a" ${ink}/><path d="M106 26 l-6 8 M118 26 l6 8" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>`;
-    if (p.prop === 'arco') g += `<path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="${K}" stroke-width="6"/><path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="#9a6438" stroke-width="3"/><path d="M112 70 V190" stroke="${K}" stroke-width="1.2"/>`;
-    if (p.prop === 'baston') g += `<path d="M112 196 V28" stroke="${K}" stroke-width="6"/><path d="M112 196 V28" stroke="#b07a3a" stroke-width="3"/>${['#2f8f8a', '#3fa37a', '#c0392b'].map((c, i) => `<path transform="rotate(${-24 + i * 24} 112 30)" d="M112 30 C 107 18 108 6 112 0 C 116 6 117 18 112 30Z" fill="${c}" ${ink}/>`).join('')}<circle cx="112" cy="31" r="4" fill="#e9b33e" ${ink}/>`;
+    // Wooden shafts held upright in the front hand (x = 112), drawn behind everything.
+    const pole = (y0, y1, c = '#b07a3a') => `<path d="M112 ${y1} V${y0}" stroke="${K}" stroke-width="6" stroke-linecap="round"/><path d="M112 ${y1} V${y0}" stroke="${c}" stroke-width="3" stroke-linecap="round"/><path d="M111 ${y1 - 6} V${y0 + 6}" stroke="#e8c08a" stroke-width="1" opacity=".75"/>`;
+    if (has('lanza')) g += pole(16, 196) + `<path d="M112 0 l-7 18 h14Z" fill="#3a3a4a" ${ink}/><path d="M112 5 l-3 11 h3Z" fill="#8a8aa8"/><path d="M106 26 l-6 8 M118 26 l6 8" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>`;
+    if (has('arco')) g += `<path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="${K}" stroke-width="6"/><path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="#9a6438" stroke-width="3"/><path d="M112 70 V190" stroke="${K}" stroke-width="1.2"/><path d="M110 70 h4 M110 190 h4" stroke="#c0392b" stroke-width="3"/>`;
+    if (has('baston')) g += pole(28, 196) + ['#2f8f8a', '#3fa37a', '#c0392b'].map((c, i) => `<path transform="rotate(${-24 + i * 24} 112 30)" d="M112 30 C 107 18 108 6 112 0 C 116 6 117 18 112 30Z" fill="${c}" ${ink}/>`).join('') + `<circle cx="112" cy="31" r="4" fill="#e9b33e" ${ink}/>`;
+    // Coa (huictli): digging stick with a foot peg and a fire-hardened blade.
+    if (has('coa')) g += pole(44, 170) + `<path d="M106.5 166 h11 l3.5 22 c 0 7 -18 7 -18 0Z" fill="#7a4a24" ${ink}/><path d="M109 170 l1 16" stroke="#b07a4a" stroke-width="1.6"/><path d="M103 148 h18" stroke="${K}" stroke-width="5.4" stroke-linecap="round"/><path d="M103 148 h18" stroke="#b07a3a" stroke-width="2.4" stroke-linecap="round"/>`;
+    // Walking staff with a water gourd (bule) tied near the top.
+    if (has('bordon')) g += pole(48, 196, '#9a6a3a') + `<circle cx="112" cy="46" r="5" fill="#7a4a24" ${ink}/><path d="M112 60 C 120 62 124 66 124 72" fill="none" stroke="${K}" stroke-width="1.4"/><g transform="translate(124 84)"><ellipse cy="-8" rx="4" ry="5" fill="#d8b05a" ${ink}/><ellipse cy="5" rx="7.5" ry="9" fill="#d8b05a" ${ink}/><path d="M-4 -2 h8" stroke="#c0392b" stroke-width="2.4"/><path d="M-4 5 c 0 -4 2 -6 4 -6" stroke="#fff3c8" stroke-width="1.6" fill="none"/></g>`;
     // Feathers behind the head.
     if (p.head === 'plumas') g += ['#2f8f8a', '#3fa37a', '#7cb04a', '#e9b33e', '#c0392b', '#3fa37a', '#2f8f8a'].map((c, i) => `<g transform="rotate(${-78 + i * 15} 46 26)"><path d="M46 26 C 38 8 40 -18 46 -32 C 52 -18 54 8 46 26Z" fill="${c}" ${ink}/><path d="M46 20 V-24" stroke="${K}" stroke-width="1.2"/><circle cx="46" cy="-22" r="3.4" fill="#f6efe0" stroke="${K}" stroke-width="1.4"/></g>`).join('');
     // Hair mass behind.
-    if (hs === 'afro') g += `<circle cx="56" cy="42" r="40" fill="${hair}" ${ink}/>${Array.from({ length: 12 }, (_, i) => { const a = i / 12 * Math.PI * 2; return `<circle cx="${56 + Math.cos(a) * 38}" cy="${42 + Math.sin(a) * 38}" r="7" fill="${hair}" ${ink}/>`; }).join('')}`;
+    if (hs === 'afro') g += `<circle cx="56" cy="42" r="40" fill="${hair}" ${ink}/>${Array.from({ length: 12 }, (_, i) => { const a = i / 12 * Math.PI * 2; return `<circle cx="${(56 + Math.cos(a) * 38).toFixed(1)}" cy="${(42 + Math.sin(a) * 38).toFixed(1)}" r="7" fill="${hair}" ${ink}/>`; }).join('')}`;
     else if (hs === 'rizos') g += `<path d="M36 34 C 22 70 22 120 32 138 L60 138 C 56 110 56 70 60 50Z" fill="${hair}" ${ink}/>${[48, 62, 76, 90, 104, 118, 132].map(y => `<circle cx="${28 + (y % 3)}" cy="${y}" r="8" fill="${hair}" ${ink}/>`).join('')}`;
-    else if (hs === 'largo') g += `<path d="M36 34 C 24 70 24 116 32 138 L58 138 C 54 110 54 70 58 52Z" fill="${hair}" ${ink}/><path d="M34 60 C 30 90 30 116 34 132" stroke="#4a3a34" stroke-width="1.6" fill="none"/>`;
+    else if (hs === 'largo') g += `<path d="M36 34 C 24 70 24 116 32 138 L58 138 C 54 110 54 70 58 52Z" fill="${hair}" ${ink}/><path d="M34 60 C 30 90 30 116 34 132" stroke="${sh(hair, 2.4)}" stroke-width="1.6" fill="none" opacity=".7"/>`;
     else if (hs === 'coleta') g += `<path d="M36 38 C 14 46 8 90 18 116 C 24 96 28 72 42 54Z" fill="${hair}" ${ink}/><rect x="30" y="42" width="10" height="8" fill="${p.acc2 || '#c0392b'}" ${ink} transform="rotate(-30 35 46)"/>`;
     else if (hs === 'trenzas') g += `${Array.from({ length: 8 }, (_, i) => `<ellipse cx="${36 - i * .6}" cy="${70 + i * 9}" rx="6" ry="6" fill="${hair}" ${ink}/>`).join('')}<rect x="28" y="138" width="12" height="6" fill="${p.acc2 || '#c0392b'}" ${ink}/>`;
     else if (hs === 'chongo') g += `<circle cx="38" cy="18" r="11" fill="${hair}" ${ink}/>`;
-    // Back arm (behind the torso).
-    g += `<path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${K}" stroke-width="12" stroke-linecap="round"/><path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${sh(sk, .85)}" stroke-width="7.4" stroke-linecap="round"/>`;
+    // Back arm and hand (behind the torso).
+    g += `<path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${K}" stroke-width="12" stroke-linecap="round"/><path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${sh(sk, .85)}" stroke-width="7.4" stroke-linecap="round"/><path d="M34.5 133 C 36 128.5 44 128.5 45.6 133 C 46.6 138 43.6 142 40 142 C 36.4 142 33.6 138 34.5 133Z" fill="${sh(sk, .85)}" ${ink}/>`;
     // Legs and feet in profile, stepping forward.
     const foot = x => `<path d="M${x} 182 h9 v6 h14 c 5 0 5 8 0 8 h-25Z" fill="${sk}" ${ink}/><path d="M${x} 190 H${x + 26}" stroke="#7a4a24" stroke-width="3.4"/><path d="M${x + 4} 182 v6" stroke="#7a4a24" stroke-width="3"/>`;
     if (p.legs) {
@@ -896,48 +960,98 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
     } else {
       g += foot(42) + foot(74);
       // Cueitl.
-      g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
+      g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${88 + bw - 6} 134 L${96 + bw - 9} 168" stroke="${sh(skirt, .78)}" stroke-width="3"/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
     }
+    // Small motif painted on the garment.
+    const motif = (k, x, y, c) => k === 'flores' ? `<g transform="translate(${x} ${y})">${[0, 90, 180, 270].map(a => `<circle cx="0" cy="-2.6" r="2" transform="rotate(${a})" fill="${c}"/>`).join('')}<circle r="1.4" fill="#f2c94c"/></g>`
+      : k === 'rombos' ? `<path d="M${x} ${y - 4} l4 4 l-4 4 l-4 -4Z" fill="${c}"/><circle cx="${x}" cy="${y}" r="1.1" fill="#f6efe0"/>`
+      : k === 'puntos' ? `<circle cx="${x}" cy="${y}" r="1.9" fill="${c}"/>`
+      : k === 'estrellas' ? `<path d="M${x} ${y - 4} l1.4 2.6 l2.6 1.4 l-2.6 1.4 l-1.4 2.6 l-1.4 -2.6 l-2.6 -1.4 l2.6 -1.4Z" fill="#f2c94c" stroke="${K}" stroke-width=".8"/>` : '';
+    const pattern = p.pattern || (p.stars ? 'estrellas' : null);
     // Torso.
-    if (p.style === 'quech') g += `<path d="M${42 - bw} 88 H${86 + bw} L${90 + bw} 132 H${38 - bw}Z" fill="#f3ede2" ${ink}/><path d="M${34 - bw} 88 H${94 + bw} L64 146Z" fill="${top}" ${ink}/><path d="M${42 - bw} 94 L64 136 L${86 + bw} 94" fill="none" stroke="${trim}" stroke-width="4"/>${Array.from({ length: 7 }, (_, i) => `<path d="M${58 + i * 2} 142 v8" stroke="${trim}" stroke-width="2"/>`).join('')}`;
-    else if (p.style === 'tilma') g += `<path d="M${40 - bw} 86 H${88 + bw} L${88 + bw} 128 H${40 - bw}Z" fill="${sk}" ${ink}/><path d="M60 104 C 66 110 76 110 82 104" stroke="${sh(sk, .78)}" stroke-width="2" fill="none"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${K}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${top}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="86" cy="94" r="5.5" fill="${top}" ${ink}/><path d="M84 98 L80 112 M88 98 L90 112" stroke="${K}" stroke-width="2.4"/>`;
+    if (p.style === 'quech') {
+      g += `<path d="M${42 - bw} 88 H${86 + bw} L${90 + bw} 132 H${38 - bw}Z" fill="#f3ede2" ${ink}/><path d="M${34 - bw} 88 H${94 + bw} L64 146Z" fill="${top}" ${ink}/><path d="M${42 - bw} 94 L64 136 L${86 + bw} 94" fill="none" stroke="${trim}" stroke-width="4"/>${Array.from({ length: 7 }, (_, i) => `<path d="M${58 + i * 2} 142 v8" stroke="${trim}" stroke-width="2"/>`).join('')}`;
+      if (pattern === 'rayas') g += [48, 56, 64, 72, 80].map(x => `<path d="M${x} 99 l${(64 - x) * .24} 18" stroke="${sh(top, 1.35)}" stroke-width="2.4"/>`).join('');
+      else if (pattern) g += [[52, 102], [64, 102], [76, 102], [58, 114], [70, 114], [64, 125]].map(([x, y]) => motif(pattern, x, y, sh(top, 1.4))).join('');
+    } else if (p.style === 'tilma') g += `<path d="M${40 - bw} 86 H${88 + bw} L${88 + bw} 128 H${40 - bw}Z" fill="${sk}" ${ink}/><path d="M60 104 C 66 110 76 110 82 104" stroke="${sh(sk, .78)}" stroke-width="2" fill="none"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${K}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${top}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="86" cy="94" r="5.5" fill="${top}" ${ink}/><path d="M84 98 L80 112 M88 98 L90 112" stroke="${K}" stroke-width="2.4"/>`;
     else if (p.style === 'armadura') { g += `<path d="M${40 - bw} 86 H${88 + bw} L${90 + bw} 136 H${38 - bw}Z" fill="${top}" ${ink}/>`; for (let y = 94; y < 134; y += 8) g += `<path d="M${40 - bw} ${y} H${88 + bw}" stroke="${K}" stroke-width="1.2"/>`; for (let x = 46 - bw; x < 88 + bw; x += 8) g += `<path d="M${x} 86 V136" stroke="${K}" stroke-width=".8"/>`; g += `<rect x="${38 - bw}" y="130" width="${52 + 2 * bw}" height="8" fill="${trim}" ${ink}/>`; }
-    else { g += `<path d="M${38 - bw} 86 H${90 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${top}" ${ink}/><path d="M54 86 V100 H74 V86" fill="none" stroke="${trim}" stroke-width="3.4"/><path d="M${35 - bw} 126 H${93 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${p.band2 || trim}" ${ink}/>${fret(37 - bw, 93 + bw, 127, 10, p.hem2 || '#f3ede2')}`; if (p.stars) g += [[50, 112], [78, 108]].map(([x, y]) => `<path d="M${x} ${y - 4} l1.4 2.6 l2.6 1.4 l-2.6 1.4 l-1.4 2.6 l-1.4 -2.6 l-2.6 -1.4 l2.6 -1.4Z" fill="#f2c94c" stroke="${K}" stroke-width=".8"/>`).join(''); }
-    if (p.jade) g += [52, 58, 64, 70, 76].map((x, i) => `<circle cx="${x}" cy="${90 + [0, 3, 4, 3, 0][i]}" r="3.4" fill="#3fa37a" ${ink}/>`).join('');
+    else {
+      g += `<path d="M${38 - bw} 86 H${90 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${top}" ${ink}/><path d="M${84 + bw} 88 L${88 + bw} 124" stroke="${sh(top, .82)}" stroke-width="3"/><path d="M54 86 V100 H74 V86" fill="none" stroke="${trim}" stroke-width="3.4"/><path d="M${35 - bw} 126 H${93 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${p.band2 || trim}" ${ink}/>${fret(37 - bw, 93 + bw, 127, 10, p.hem2 || '#f3ede2')}`;
+      const mc = pattern === 'estrellas' ? null : sh(top, top === '#f3ede2' || top === '#f6efe0' || top === '#efe6d2' || top === '#ecd8b0' ? .62 : 1.45);
+      if (pattern === 'rayas') g += [44 - bw, 50 - bw, 78 + bw, 84 + bw].map(x => `<path d="M${x} 90 V122" stroke="${mc}" stroke-width="2.4"/>`).join('') + `<path d="M56 104 V122 M64 104 V122 M72 104 V122" stroke="${mc}" stroke-width="2.4"/>`;
+      else if (pattern === 'olas') g += [108, 117].map(y => `<path d="M${42 - bw} ${y} q4 -4 8 0 t8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke="${mc}" stroke-width="2.2"/>`).join('');
+      else if (pattern) g += [[46 - bw, 106], [58, 110], [70, 110], [82 + bw, 106], [52, 120], [64, 120], [76, 120]].map(([x, y]) => motif(pattern, x, y, mc)).join('');
+    }
+    if (p.jade) g += [52, 58, 64, 70, 76].map((x, i) => `<circle cx="${x}" cy="${90 + [0, 3, 4, 3, 0][i]}" r="3.4" fill="#3fa37a" ${ink}/><circle cx="${x - 1}" cy="${89 + [0, 3, 4, 3, 0][i]}" r="1" fill="#bfe6cf"/>`).join('');
     // Neck and head.
     g += `<path d="M56 76 L56 88 L76 88 L74 78" fill="${sk}" ${ink}/>`;
     g += `<path d="M42 72 C 30 56 30 32 40 22 C 50 10 74 8 88 18 C 94 24 96 32 96 38 L102 48 C 103 50 102 52 100 52 L98 54 C 100 56 100 58 97 59 C 99 62 97 66 93 66 L92 72 C 88 78 76 82 66 82 L50 80Z" fill="${sk}" ${ink}/>`;
-    g += `<path d="M76 38 C 80 32 88 32 92 38 C 88 43 80 43 76 38Z" fill="#fff" ${ink}/><circle cx="86" cy="38" r="2.8" fill="${K}"/><path d="M76 29 Q84 25 92 29" stroke="${K}" stroke-width="2.4" fill="none"/>`;
-    g += `<path d="M92 63 h6" stroke="${K}" stroke-width="2.4"/>`;
+    g += `<path d="M86 70 C 90 66 92 60 92 54" stroke="${sh(sk, .82)}" stroke-width="2.2" fill="none" opacity=".7"/>`;
+    // Eye: almond white, pupil with a catch-light; heavy lid for calm/old characters; lash for women.
+    g += `<path d="M76 38 C 80 32 88 32 92 38 C 88 43 80 43 76 38Z" fill="#fff" ${ink}/><circle cx="86" cy="38" r="2.9" fill="${p.eye || K}"/><circle cx="87.2" cy="36.8" r=".95" fill="#fff"/>`;
+    if (p.eyes === 'calm' || p.age === 'old') g += `<path d="M76 37.6 C 80 34 88 34 92 37.6 C 88 35.6 80 35.6 76 37.6Z" fill="${sh(sk, .9)}" stroke="${K}" stroke-width="2"/>`;
+    if (woman) g += `<path d="M76.4 37.4 l-4.4 -2.6" stroke="${K}" stroke-width="2.2" stroke-linecap="round"/>`;
+    // Brow and mouth by mood.
+    g += mood === 'fierce' ? `<path d="M75 27 L93 31.6" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`
+      : mood === 'calm' ? `<path d="M76 29 Q84 27 92 29" stroke="${K}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+      : `<path d="M76 29.4 Q84 24.6 92 29" stroke="${K}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    g += opts.speaking ? `<path d="M92 61.4 h6.6 l-1.4 3.8 h-4Z" fill="#6a1e18" stroke="${K}" stroke-width="1.6" stroke-linejoin="round"/>`
+      : mood === 'smile' ? `<path d="M91.6 62.2 q3.6 3 7.2 -.2" stroke="${K}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+      : `<path d="M92 63 h6" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/>`;
+    if (woman && mood === 'smile') g += `<ellipse cx="80" cy="52" rx="4.6" ry="2.8" fill="#e0624e" opacity=".28"/>`;
+    if (p.age === 'old') g += `<path d="M70 49 q4 3 8 1 M72 56 q3 2 6 1" stroke="${sh(sk, .7)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
     if (p.paint) g += `<path d="M66 50 H90" stroke="${p.paint}" stroke-width="4" stroke-linecap="round"/>`;
     if (p.freckles) g += [[74, 50], [79, 52], [84, 50]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="${sh(sk, .6)}"/>`).join('');
-    g += `<circle cx="58" cy="52" r="9" fill="${p.orejeras ? '#e9b33e' : '#3fa37a'}" ${ink}/><circle cx="58" cy="52" r="3.6" fill="#f6efe0" ${ink}/>`;
+    // Ear with ear spool and a hanging pendant, below eye level so it reads as jewellery.
+    const spool = p.orejeras ? '#e9b33e' : '#3fa37a', spoolIn = p.orejeras ? '#3fa37a' : '#e9b33e';
+    g += `<path d="M54 45 C 48.6 46 47.6 55 52 58 C 55 60 59 58.6 59.4 55" fill="${sk}" ${ink}/><path d="M53.4 49 C 51.4 50.6 51.6 53.6 53.6 54.6" fill="none" stroke="${sh(sk, .72)}" stroke-width="1.4"/>`;
+    g += `<circle cx="56" cy="59.5" r="5.2" fill="${spool}" ${ink}/><circle cx="56" cy="59.5" r="2" fill="${spoolIn}" stroke="${K}" stroke-width="1.1"/><path d="M53.8 64.6 h4.4 l-.6 6.6 h-3.2Z" fill="${spool}" stroke="${K}" stroke-width="1.8" stroke-linejoin="round"/>`;
     // Hair cap.
     if (hs === 'afro' || hs === 'rizos') g += `<path d="M38 60 C 28 32 46 10 72 12 C 84 12 92 18 94 28 C 84 24 74 24 66 28 C 62 36 54 42 46 42 C 42 48 40 54 38 60Z" fill="${hair}" ${ink}/>${[48, 60, 72, 84].map((x, i) => `<circle cx="${x}" cy="${16 + (i % 2) * 3}" r="6" fill="${hair}" ${ink}/>`).join('')}`;
-    else g += `<path d="M38 60 C 28 32 46 10 72 12 C 84 12 92 18 94 28 C 84 24 74 24 66 28 C 62 36 54 42 46 42 C 42 48 40 54 38 60Z" fill="${hair}" ${ink}/><path d="M50 20 C 58 15 70 14 80 16" stroke="#4a3a34" stroke-width="2" fill="none"/>`;
+    else g += `<path d="M38 60 C 28 32 46 10 72 12 C 84 12 92 18 94 28 C 84 24 74 24 66 28 C 62 36 54 42 46 42 C 42 48 40 54 38 60Z" fill="${hair}" ${ink}/><path d="M50 20 C 58 15 70 14 80 16" stroke="${sh(hair, 2.6)}" stroke-width="2" fill="none" opacity=".7"/>`;
     // Headwear.
     const band = c => `<path d="M38 34 C 54 22 76 20 94 28 L92 35 C 76 28 56 30 40 42Z" fill="${c}" ${ink}/>`;
     if (p.head === 'plumas') g += band('#e9b33e') + [50, 62, 74, 86].map(x => `<circle cx="${x}" cy="${30 - (x - 50) * .06}" r="2.4" fill="#3fa37a"/>`).join('');
     if (p.head === 'pluma') g += `<g transform="rotate(-28 44 28)"><path d="M44 28 C 36 10 38 -14 44 -26 C 50 -14 52 10 44 28Z" fill="${p.acc2 || '#c0392b'}" ${ink}/><path d="M44 22 V-20" stroke="${K}" stroke-width="1.2"/></g>` + band(p.band || '#c0392b');
     if (p.head === 'banda') g += band(p.band || '#c0392b') + [52, 64, 76].map(x => `<rect x="${x}" y="27" width="4" height="4" fill="#f6efe0" transform="rotate(45 ${x + 2} 29)"/>`).join('');
     if (p.head === 'flor') g += `<g transform="translate(44 22)">${[0, 72, 144, 216, 288].map(a => `<ellipse cy="-7" rx="5" ry="7" transform="rotate(${a})" fill="${p.flower || '#e05a7a'}" ${ink}/>`).join('')}<circle r="3.6" fill="#e9b33e" ${ink}/></g>`;
-    if (p.head === 'cempa') g += [40, 52, 64, 76, 88].map((x, i) => `<circle cx="${x}" cy="${26 - Math.sin(i / 4 * Math.PI) * 8}" r="7" fill="${i % 2 ? '#f29a1e' : '#f6b81e'}" ${ink}/>`).join('');
+    if (p.head === 'cempa') g += [40, 52, 64, 76, 88].map((x, i) => `<circle cx="${x}" cy="${(26 - Math.sin(i / 4 * Math.PI) * 8).toFixed(1)}" r="7" fill="${i % 2 ? '#f29a1e' : '#f6b81e'}" ${ink}/><circle cx="${x}" cy="${(26 - Math.sin(i / 4 * Math.PI) * 8).toFixed(1)}" r="2.6" fill="#c06a12"/>`).join('');
     if (hs === 'chongo') g += `<path d="M30 18 h16" stroke="${p.acc2 || '#2f5fa8'}" stroke-width="4"/>`;
-    // Front arm bent forward, codex hand.
+    // Things held in front of the body, under the front hand.
+    if (has('macuahuitl')) g += `<g transform="rotate(12 112 108)"><path d="M107.6 100 V36 C 107.6 26 116.4 26 116.4 36 V100Z" fill="#9a6438" ${ink}/>${[40, 50, 60, 70, 80, 90].map(y => `<path d="M107 ${y} l-6 3 l6 3Z M117 ${y} l6 3 l-6 3Z" fill="#2a2a3a" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/>`).join('')}<path d="M110 42 V96" stroke="#c48a4a" stroke-width="1.4"/><path d="M109.6 100 v20 h4.8 v-20" fill="#7a4a24" ${ink}/><path d="M112 120 c -4 6 -2 10 2 10" fill="none" stroke="#c0392b" stroke-width="2"/></g>`;
+    if (has('malacate')) g += `<path d="M103 82 L127 138" stroke="${K}" stroke-width="4.4" stroke-linecap="round"/><path d="M103 82 L127 138" stroke="#d8b07a" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="123" cy="129" rx="8.4" ry="3.4" transform="rotate(23 123 129)" fill="#c46a32" ${ink}/><path d="M118 128 l9 3" stroke="#f6e2b8" stroke-width="1.4"/><path d="M98 80 C 94 74 98 67 104 69 C 106 63 115 64 114 71 C 120 72 119 81 112 82 C 108 86 101 85 98 80Z" fill="#fbf8f0" ${ink}/><path d="M104 76 c 2 -2 5 -2 7 0" stroke="#d6d0c4" stroke-width="1.4" fill="none"/>`;
+    if (has('olla')) g += `<g transform="translate(118 126)"><path d="M-9 -16 h18 l-2 6 c 9 3 13 10 12 17 c -1 9 -9 14 -17 14 c -8 0 -16 -5 -17 -14 c -1 -7 3 -14 12 -17Z" fill="#c46a32" ${ink}/><ellipse cy="-16" rx="9" ry="2.6" fill="#6a2e14" ${ink}/><path d="M-13 3 h4 v-4 h5 v4 h4 v-4 h5 v4 h4" fill="none" stroke="#f6e2b8" stroke-width="2"/><path d="M-11 -4 c 1 -4 4 -6 7 -6" stroke="#f0a070" stroke-width="2" fill="none" stroke-linecap="round"/></g>`;
+    if (has('chiquihuite')) g += `<g transform="translate(122 122)"><ellipse cy="-9" rx="13" ry="3.4" fill="#ecd3a0" ${ink}/><ellipse cy="-12" rx="12" ry="3.2" fill="#f3e2b8" ${ink}/><circle cx="-4" cy="-12.4" r="1" fill="#b8844a"/><circle cx="4" cy="-11.6" r="1" fill="#b8844a"/><path d="M-16 -6 H16 C 15 7 9 13 0 13 C -9 13 -15 7 -16 -6Z" fill="#d8a85a" ${ink}/>${[-10, -4, 2, 8].map(x => `<path d="M${x} -5 l2.6 15" stroke="#a87a3a" stroke-width="1.3"/>`).join('')}<path d="M-14.6 2 H14.6" stroke="#a87a3a" stroke-width="1.3"/><path d="M-17 -6 C -13 -10 -8 -4 -2 -8 L0 -2 L-17 -2Z" fill="#fbf8f0" ${ink}/><path d="M-15.4 -3.4 h13" stroke="#c0392b" stroke-width="1.8"/></g>`;
+    if (has('peces')) { const fish = (x, y, r) => `<g transform="translate(${x} ${y}) rotate(${r})"><path d="M0 -10 C 5.4 -6 5.4 6 0 10 C -5.4 6 -5.4 -6 0 -10Z" fill="#a9c2d2" ${ink}/><path d="M0 9 l-5 7 h10Z" fill="#7d9cb0" ${ink}/><circle cx="1.4" cy="-5.6" r="1.3" fill="${K}"/><path d="M-1.4 -3 C -2.4 1 -2.2 4 -1.2 7" stroke="#eef6fa" stroke-width="1.5" fill="none"/></g>`; g += `<path d="M113 109 C 114 114 115 117 115 121 M114 109 C 120 114 125 120 125 128" fill="none" stroke="#7a5a3a" stroke-width="1.8"/>` + `<g transform="translate(115 133) scale(1.22) translate(-115 -133)">${fish(115, 133, 6)}</g>` + `<g transform="translate(125 141) scale(1.22) translate(-125 -141)">${fish(125, 141, -8)}</g>`; }
+    if (has('cacao')) g += `<g transform="translate(120 100) rotate(-28)"><path d="M0 -24 C 9 -22 15 -10 15 2 C 15 14 8 22 0 24 C -8 22 -15 14 -15 2 C -15 -10 -9 -22 0 -24Z" fill="#e39a32" ${ink}/><path d="M0 -24 C 9 -22 15 -10 15 2 C 15 14 8 22 0 24 C 5 14 7 2 6 -10 C 5 -17 3 -21 0 -24Z" fill="#c4641e"/><path d="M0 -22 C -2 -8 -2 8 0 22 M-7.6 -17 C -11 -6 -11 10 -7 18 M7.6 -17 C 11 -6 11 10 7 18" fill="none" stroke="#9a4a16" stroke-width="1.6"/><path d="M-4 -14 C -6 -6 -6 2 -4.6 8" stroke="#ffd98a" stroke-width="2" fill="none" stroke-linecap="round"/>${[[-11, -2], [-11, 8], [11, 4], [3, 14], [-3, -18]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="#8a3a10"/>`).join('')}<path d="M0 -24 C 0 -24 15 2 0 24 C -15 2 0 -24 0 -24" fill="none" ${ink}/><path d="M0 -24 V-31" stroke="#4a2e16" stroke-width="3" stroke-linecap="round"/></g>`;
+    if (has('jobon')) g += `<g transform="translate(114 118)"><path d="M-18 -9 H18 C 22 -9 22 9 18 9 H-18Z" fill="#a8743a" ${ink}/><path d="M-14 -3.6 H12 M-16 3.4 H10" stroke="#7a4a24" stroke-width="1.4"/><ellipse cx="18" rx="4.2" ry="9" fill="#6a3e1c" ${ink}/><circle cx="18" r="1.6" fill="#f2c94c"/><ellipse cx="-18" rx="4.2" ry="9" fill="#c48a4a" ${ink}/><path d="M-19 -4 a 2 4 0 0 1 0 8" stroke="#e0b070" stroke-width="1.2" fill="none"/></g>` + [[129, 98], [136, 108], [123, 90]].map(([x, y]) => `<g transform="translate(${x} ${y})"><ellipse cx="-1" cy="-3" rx="2" ry="1.4" fill="#eef4fa" stroke="${K}" stroke-width=".7"/><ellipse rx="3" ry="2.1" fill="#e9b33e" stroke="${K}" stroke-width="1"/><path d="M-.8 -1.8 v3.6 M1 -1.8 v3.6" stroke="${K}" stroke-width=".9"/></g>`).join('');
+    if (has('hierbas')) g += `<g transform="translate(116 106)">${[-22, -8, 6, 20].map((a, i) => `<g transform="rotate(${a})"><path d="M0 6 V-26" stroke="#3f7a2e" stroke-width="2"/>${[-8, -15, -22].map(y => `<ellipse cx="-3.4" cy="${y}" rx="3.4" ry="1.9" transform="rotate(-32 -3.4 ${y})" fill="#5fa040" stroke="${K}" stroke-width=".8"/><ellipse cx="3.4" cy="${y - 3}" rx="3.4" ry="1.9" transform="rotate(32 3.4 ${y - 3})" fill="#7cb04a" stroke="${K}" stroke-width=".8"/>`).join('')}<circle cy="-28" r="2.2" fill="${i % 2 ? '#e05a7a' : '#f2c94c'}" stroke="${K}" stroke-width=".8"/></g>`).join('')}<path d="M-3.4 3.6 h6.8" stroke="#c0392b" stroke-width="3.2"/></g>`;
+    if (has('flores')) { const fl = [[-10, -18], [0, -25], [10, -18], [-6, -8], [7, -8]]; g += `<g transform="translate(116 104)">${fl.map(([x, y]) => `<path d="M0 6 L${x} ${y}" stroke="#3f7a2e" stroke-width="2.2"/>`).join('')}${fl.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5.8" fill="#f29a1e" ${ink}/><circle cx="${x}" cy="${y}" r="3.2" fill="#f6b81e" stroke="#c06a12" stroke-width="1.1"/>`).join('')}<path d="M-3.4 4 h6.8" stroke="#c0392b" stroke-width="3.2"/></g>`; }
+    if (has('canasta')) g += `<g transform="translate(116 126)"><path d="M-10 -14 C -10 -24 10 -24 10 -14" stroke="${K}" stroke-width="2.4" fill="none"/><path d="M-14 -12 H14 L10 10 H-10Z" fill="#d8a85a" ${ink}/><path d="M-12.6 -4 H12.6 M-11.4 3 H11.4" stroke="#a87a3a" stroke-width="1.4"/>${[-8, -2, 4, 10].map(x => `<path d="M${x} -11 l-1 20" stroke="#a87a3a" stroke-width="1.1"/>`).join('')}<circle cx="-7" cy="-14" r="4.6" fill="#b4286e" ${ink}/><path d="M-1 -19 c 6 0 9 3 9 7 c -4 0 -9 -2 -9 -7Z" fill="#d0342a" ${ink}/><circle cx="7" cy="-14" r="4.4" fill="#e9b33e" ${ink}/></g>`;
+    if (has('jicara')) g += `<g transform="translate(114 98)"><path d="M-14 0 C -14 14 14 14 14 0Z" fill="#a8522e" ${ink}/><ellipse rx="14" ry="3.6" fill="${p.bowl || '#ecd3a0'}" ${ink}/></g>`;
+    if (has('red')) g += `<g transform="translate(116 124)"><path d="M-12 -14 L12 -14 L8 14 L-8 14Z" fill="rgba(240,230,200,.4)" ${ink}/><path d="M-11 -4 H11 M-10 6 H10 M0 -14 V14" stroke="${K}" stroke-width="1"/></g>`;
+    if (has('panal')) g += `<g transform="translate(116 124)"><rect x="-9" y="-16" width="18" height="30" rx="7" fill="#c89a50" ${ink}/><path d="M-9 -6 H9 M-9 4 H9" stroke="${K}" stroke-width="1.2"/></g>`;
+    // Huéhuetl: standing drum, its jaguar-skin head under the front hand.
+    if (has('tambor')) g += `<g transform="translate(121 110)"><path d="M-13 0 H13 L11 62 L8 86 H3.6 L1.6 74 H-1.6 L-3.6 86 H-8 L-11 62Z" fill="#a8522e" ${ink}/><path d="M-12.6 16 H12.6 M-11.6 40 H11.6" stroke="${K}" stroke-width="1.6"/><path d="M-11 25 h4 v-4 h5 v4 h4 v-4 h5 v4 h4" fill="none" stroke="#f3ede2" stroke-width="2"/><path d="M-9 56 h18" stroke="#e9b33e" stroke-width="3"/><ellipse rx="13" ry="4" fill="#e9c46a" ${ink}/>${[[-7, -.6], [-1, 1], [5, -1], [8, 1.4], [-3, -2]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.2" fill="${K}"/>`).join('')}</g>`;
+    // Front arm and hand: a closed grip when holding something, the open codex hand otherwise.
     g += `<path d="M84 94 C 94 104 98 112 108 108" fill="none" stroke="${K}" stroke-width="12" stroke-linecap="round"/><path d="M84 94 C 94 104 98 112 108 108" fill="none" stroke="${sk}" stroke-width="7.4" stroke-linecap="round"/>`;
-    g += `<path d="M106 102 C 112 98 118 100 118 106 C 118 112 112 114 106 112 Z" fill="${sk}" ${ink}/><path d="M110 102 C 110 96 116 94 116 100" fill="${sk}" ${ink}/>`;
-    // Props in front.
-    if (p.prop === 'escudo') g += `<g transform="translate(36 120)"><circle r="22" fill="#f3ede2" ${ink}/><circle r="15" fill="${p.shield || '#2f5fa8'}" ${ink}/><path d="M-15 0 H15 M0 -15 V15" stroke="#f3ede2" stroke-width="3"/><circle r="5" fill="#e9b33e" ${ink}/>${[-14, -5, 4, 13].map((x, i) => `<path d="M${x} 20 l-3 13 h6Z" fill="${['#2f8f8a', '#c0392b', '#e9b33e', '#2f8f8a'][i]}" ${ink}/>`).join('')}</g>`;
-    if (p.prop === 'canasta') g += `<g transform="translate(114 126)"><path d="M-10 -14 C -10 -24 10 -24 10 -14" stroke="${K}" stroke-width="2.4" fill="none"/><path d="M-14 -12 H14 L10 10 H-10Z" fill="#d8a85a" ${ink}/><path d="M-12 -4 H12 M-11 3 H11" stroke="${K}" stroke-width="1.2"/>${[-7, 0, 7].map((x, i) => `<circle cx="${x}" cy="-14" r="4.4" fill="${['#c0392b', '#e9b33e', '#7cb04a'][i]}" ${ink}/>`).join('')}</g>`;
-    if (p.prop === 'jicara') g += `<g transform="translate(114 98)"><path d="M-14 0 C -14 14 14 14 14 0Z" fill="#a8522e" ${ink}/><ellipse rx="14" ry="3.6" fill="${p.bowl || '#ecd3a0'}" ${ink}/></g>`;
-    if (p.prop === 'tambor') g += `<g transform="translate(122 164)"><path d="M-12 -28 H12 L10 20 L4 14 L0 20 L-4 14 L-10 20Z" fill="#a8522e" ${ink}/><ellipse cy="-28" rx="12" ry="4" fill="#ecd3a0" ${ink}/>${fret(-10, 12, -16, 10, '#f3ede2')}</g>`;
-    if (p.prop === 'flores') g += `<g transform="translate(114 96)"><path d="M0 12 L-6 -10 M0 12 L6 -12 M0 12 V-14" stroke="#3f7a2e" stroke-width="2.6"/>${[[-6, -12], [6, -14], [0, -18]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5.4" fill="#f29a1e" ${ink}/>`).join('')}</g>`;
-    if (p.prop === 'cacao') g += `<path transform="translate(114 92)" d="M0 -14 C 11 -10 11 10 0 14 C -11 10 -11 -10 0 -14Z" fill="#a8521e" ${ink}/>`;
-    if (p.prop === 'red') g += `<g transform="translate(116 124)"><path d="M-12 -14 L12 -14 L8 14 L-8 14Z" fill="rgba(240,230,200,.4)" ${ink}/><path d="M-11 -4 H11 M-10 6 H10 M0 -14 V14" stroke="${K}" stroke-width="1"/><path d="M-6 2 C 0 -4 6 2 0 6Z" fill="#7fa8c8" ${ink}/></g>`;
-    if (p.prop === 'panal') g += `<g transform="translate(116 124)"><rect x="-9" y="-16" width="18" height="30" rx="7" fill="#c89a50" ${ink}/><path d="M-9 -6 H9 M-9 4 H9" stroke="${K}" stroke-width="1.2"/><circle cx="12" cy="-20" r="3" fill="#f2c94c" ${ink}/></g>`;
-    // Speech scroll (vírgula).
-    g += `<path d="M102 60 c 10 -2 14 -12 6 -16 c -6 -2 -9 4 -4 7" fill="none" stroke="${K}" stroke-width="2.4"/>`;
-    return `<svg class="fig fig--borgia" viewBox="-4 -38 144 238" role="img" aria-label="${p.name}">${g}</svg>`;
+    g += props.some(k => HELD.includes(k))
+      ? `<path d="M103 102 C 106 97 115 96 119 100 C 122 104 121 111 117 114 C 112 117 105 115 103 110 Z" fill="${sk}" ${ink}/><path d="M114.6 100.6 v3.6 M118 102.4 v3.4" stroke="${K}" stroke-width="1.4" stroke-linecap="round"/><path d="M105 107 C 109 105 114 106 117.4 109" fill="none" stroke="${K}" stroke-width="1.7" stroke-linecap="round"/>`
+      : `<path d="M103 103.4 C 106 99.4 112 98.4 116 97.4 L125 95.4 C 128.4 94.8 129 99 125.6 99.6 L119.4 100.8 L126.4 101.2 C 129.6 101.4 129.4 105.6 126.2 105.6 L117.4 105.8 C 115 109.6 109 112.4 105 111.4 Z" fill="${sk}" ${ink}/><path d="M109 100.4 C 108.2 94.4 112.6 91.6 115.2 94.4 C 116.4 96 115.4 98.4 114.2 99.4" fill="${sk}" ${ink}/>`;
+    // Shield over the back arm.
+    if (has('escudo')) g += `<g transform="translate(36 120)"><circle r="22" fill="#f3ede2" ${ink}/><circle r="15" fill="${p.shield || '#2f5fa8'}" ${ink}/><path d="M-15 0 H15 M0 -15 V15" stroke="#f3ede2" stroke-width="3"/><circle r="5" fill="#e9b33e" ${ink}/>${[-14, -5, 4, 13].map((x, i) => `<path d="M${x} 20 l-3 13 h6Z" fill="${['#2f8f8a', '#c0392b', '#e9b33e', '#2f8f8a'][i]}" ${ink}/>`).join('')}</g>`;
+    // Speech scroll (vírgula), only while speaking.
+    if (opts.speaking) g += `<path d="M104 58 c 10 -2 14 -12 6 -16 c -6 -2 -9 4 -4 7" fill="none" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/>`;
+    // Crop: the default box fits every headdress; tight boxes drop empty headroom.
+    let vt = -38;
+    if (opts.top != null) vt = opts.top;
+    else if (opts.tight) {
+      vt = hs === 'afro' ? -8 : 2;
+      if (has('lanza') || has('baston')) vt = Math.min(vt, -4);
+      if (p.head === 'pluma') vt = Math.min(vt, -26);
+      if (p.head === 'plumas') vt = -38;
+    }
+    return `<svg class="fig fig--borgia" viewBox="-4 ${vt} 144 ${200 - vt}" role="img" aria-label="${p.name || ''}">${g}</svg>`;
   }
 
   // ---------- Muñeca de barro de Xochitécatl ----------
@@ -1015,22 +1129,43 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   const { CAST, PLAYER } = window.TlaxChars, F = window.TlaxFigs4;
   const K = '#1a1410', O = `stroke="${K}" stroke-width="2.8" stroke-linejoin="round"`;
 
-  const IC = {
-    coa: `<path d="M12 52 L48 10" stroke="${K}" stroke-width="9" stroke-linecap="round"/><path d="M12 52 L48 10" stroke="#9a6438" stroke-width="5" stroke-linecap="round"/><path d="M6 48 C 4 56 8 60 16 58 L20 52 L12 44Z" fill="#3a3a4a" ${O}/>`,
-    cantaro: `<path d="M48 24 C 58 24 58 40 50 42" stroke="${K}" stroke-width="5" fill="none"/><path d="M32 16 C 18 18 10 30 12 42 C 14 54 24 60 32 60 C 40 60 50 54 52 42 C 54 30 46 18 32 16Z" fill="#d07a3a" ${O}/><path d="M25 7 H39 L37 18 H27Z" fill="#b8622e" ${O}/><path d="M14 38 h4 v-4 h6 v4 h4 v-4 h6 v4 h4 v-4 h6 v4 h4" fill="none" stroke="#f6e2b8" stroke-width="2.4"/>`,
-    hacha: `<path d="M20 58 L40 12" stroke="${K}" stroke-width="9" stroke-linecap="round"/><path d="M20 58 L40 12" stroke="#9a6438" stroke-width="5" stroke-linecap="round"/><path d="M30 18 C 44 10 56 16 56 28 C 48 28 40 26 34 30Z" fill="#3a6a5a" ${O}/>`,
-    maiz: `<path d="M14 58 C 12 40 20 28 30 22 C 28 36 26 46 26 58Z" fill="#5fa040" ${O}/><ellipse cx="34" cy="30" rx="11" ry="20" transform="rotate(22 34 30)" fill="#f2c94c" ${O}/><path d="M22 60 C 30 46 40 40 52 36 C 44 46 38 54 34 62Z" fill="#7cb04a" ${O}/>`,
-    maizAzul: `<path d="M14 58 C 12 40 20 28 30 22 C 28 36 26 46 26 58Z" fill="#5fa040" ${O}/><ellipse cx="34" cy="30" rx="11" ry="20" transform="rotate(22 34 30)" fill="#3d63b8" ${O}/><path d="M22 60 C 30 46 40 40 52 36 C 44 46 38 54 34 62Z" fill="#7cb04a" ${O}/>`,
-    frijol: [[22, 26], [42, 30], [30, 44]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="10" ry="7" fill="#8f2a24" ${O}/>`).join(''),
-    calabaza: `<path d="M32 20 C 32 12 36 8 40 8" stroke="${K}" stroke-width="4" fill="none"/><ellipse cx="32" cy="38" rx="24" ry="18" fill="#e07a28" ${O}/><ellipse cx="32" cy="38" rx="9" ry="18" fill="#f29a3e" ${O}/>`,
-    chile: `<path d="M42 14 C 52 18 52 32 44 42 C 36 54 22 59 10 58 C 20 52 28 44 32 34 C 35 26 36 18 42 14Z" fill="#d0342a" ${O}/><path d="M38 16 C 40 10 48 10 50 14 C 46 18 42 18 38 16Z" fill="#4f8a36" ${O}/>`,
-    cacao: `<path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="#a8521e" ${O}/><path d="M32 10 V54" stroke="${K}" stroke-width="2"/>`,
-    tlaxcalli: `${[44, 38, 32].map(y => `<ellipse cx="32" cy="${y}" rx="22" ry="8" fill="#ecd3a0" ${O}/>`).join('')}<circle cx="26" cy="31" r="2" fill="#a8743a"/><circle cx="38" cy="33" r="2" fill="#a8743a"/>`,
-    octli: `<path d="M10 28 C 10 48 20 58 32 58 C 44 58 54 48 54 28Z" fill="#a8522e" ${O}/><ellipse cx="32" cy="28" rx="22" ry="7" fill="#f7f2e6" ${O}/>`,
-    nopal: `<ellipse cx="30" cy="40" rx="14" ry="18" fill="#5f9a54" ${O}/><ellipse cx="45" cy="20" rx="9" ry="12" transform="rotate(25 45 20)" fill="#6fae60" ${O}/><ellipse cx="51" cy="9" rx="4" ry="5" fill="#c2307a" ${O}/>`,
-    cempa: `${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<ellipse cx="32" cy="18" rx="7" ry="12" transform="rotate(${a} 32 32)" fill="#f29a1e" ${O}/>`).join('')}<circle cx="32" cy="32" r="10" fill="#f6b81e" ${O}/>`,
-    obsidiana: `<path d="M32 4 L46 30 L32 60 L18 30Z" fill="#2a2a3a" ${O}/><path d="M32 8 L40 30 L32 52" stroke="#6a6a8a" stroke-width="2" fill="none"/>`,
+  // Item icons, 64×64: ink outline, flat colour, one shade and one highlight each.
+  const hl = (d, c = '#fff', w = 2.6, o = .85) => `<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round" opacity="${o}"/>`;
+  const shaft = (d, c = '#b07a3a', w = 4.4) => `<path d="${d}" stroke="${K}" stroke-width="${w + 4}" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  const cob = (fill, kern, kernLine, shine) => {
+    let k = '';
+    for (let y = 15; y <= 45; y += 4.6) for (let x = 27; x <= 41; x += 4.6) { const dx = (x - 34) / 9.4, dy = (y - 30) / 17.4; if (dx * dx + dy * dy <= 1) k += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.9" fill="${kern}" stroke="${kernLine}" stroke-width=".8"/>`; }
+    return `<path d="M14 58 C 12 40 20 28 30 22 C 28 36 26 46 26 58Z" fill="#5fa040" ${O}/><g transform="rotate(22 34 30)"><ellipse cx="34" cy="30" rx="11" ry="20" fill="${fill}" ${O}/>${k}${hl('M27.6 16 C 25 24 25 34 27 42', shine, 2.2)}</g><path d="M22 60 C 30 46 40 40 52 36 C 44 46 38 54 34 62Z" fill="#7cb04a" ${O}/>${hl('M27 57 C 33 48 40 43 47 39.6', '#c4e69a', 1.6)}<path d="M44 10 C 46 5 50 3 54 3 M43 11 C 47 8 51 8 55 8" stroke="#d9a35a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
   };
+  const IC = {
+    coa: `${shaft('M50 6 L21 43')}${hl('M48.6 8 L22.6 41', '#e8c08a', 1.4)}${shaft('M29 32.6 L35 37.4', '#b07a3a', 2.6)}<path d="M19.3 39.8 L24.7 44.2 L17.1 60 C 13 63 6 58 6.9 52 Z" fill="#7a4a24" ${O}/>${hl('M19 45 L11.6 55', '#b8804a', 1.6)}`,
+    cantaro: `<path d="M48 24 C 58 24 58 40 50 42" stroke="${K}" stroke-width="5" fill="none"/><path d="M48 24 C 58 24 58 40 50 42" stroke="#c46a32" stroke-width="2" fill="none"/><path d="M32 16 C 18 18 10 30 12 42 C 14 54 24 60 32 60 C 40 60 50 54 52 42 C 54 30 46 18 32 16Z" fill="#d07a3a" ${O}/><path d="M44 24 C 52 32 52 48 40 57" stroke="#a8521e" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M25 7 H39 L37 18 H27Z" fill="#b8622e" ${O}/><path d="M14 38 h4 v-4 h6 v4 h4 v-4 h6 v4 h4 v-4 h6 v4 h4" fill="none" stroke="#f6e2b8" stroke-width="2.4"/>${hl('M18 30 C 19 25 22 22 26 20', '#ffd0a0', 2.6)}`,
+    hacha: `${shaft('M22 60 L43 8')}${hl('M23.6 57 L42 11', '#e8c08a', 1.4)}<path d="M40.6 13 C 31 8 14 11 9 22 C 12 30 27 28 41 24 Z" fill="#3f8a6a" ${O}/><path d="M12 25 C 22 27 32 25 40 22" stroke="#2a6a4e" stroke-width="2.4" fill="none"/>${hl('M13 20 C 17 15 25 13 32 14', '#a8e0c4', 2.2)}<path d="M38.4 10.6 L45.6 17 M36.8 14.6 L44 21" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>`,
+    obsidiana: `<path d="M15 57 C 19 41 33 21 50 8 C 52.6 6.6 55 9 53.4 11.4 C 44 26 32 44 22 58 C 20 61.4 14 61 15 57 Z" fill="#2a2a3c" ${O}/><path d="M20 54 C 26 40 38 22 50 10.6" stroke="#6a6a92" stroke-width="1.8" fill="none"/><path d="M24 56 C 31 44 40 30 51 13" stroke="#14141e" stroke-width="1.6" fill="none"/>${hl('M30 34 L37.4 25', '#e8ecff', 2.6, 1)}${hl('M43 18 L46 14.4', '#e8ecff', 2, 1)}`,
+    maiz: cob('#f2c94c', '#f8dc74', '#c8962e', '#fff6c8'),
+    maizAzul: cob('#3d63b8', '#6f90e0', '#22397a', '#c8d8ff'),
+    frijol: [[22, 25, -18], [42, 30, 24], [29, 45, 6]].map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="10.4" ry="7.2" fill="#8f2a24" ${O}/><path d="M${x - 8} ${y + 2} C ${x - 4} ${y + 6} ${x + 4} ${y + 6} ${x + 8} ${y + 2}" stroke="#5e1a14" stroke-width="2.2" fill="none"/><ellipse cx="${x - 3}" cy="${y - 2.6}" rx="3.8" ry="1.7" fill="#e88a7a"/><path d="M${x + 1} ${y + 3.4} q 2.4 -.6 3.4 -3" stroke="#f1dcc0" stroke-width="1.5" fill="none"/></g>`).join(''),
+    calabaza: `<path d="M31 21 C 31 13 35 9 40 9" stroke="${K}" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M31 21 C 31 13 35 9 40 9" stroke="#6a8a36" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M39 17 C 45 9 55 11 57 17 C 51 21 43 21 39 17Z" fill="#6fa23e" ${O}/><ellipse cx="32" cy="39" rx="25" ry="18" fill="#e07a28" ${O}/><ellipse cx="32" cy="39" rx="14" ry="18" fill="#ee8d36" stroke="#a8521e" stroke-width="1.8"/><ellipse cx="32" cy="39" rx="5" ry="18" fill="#f6a24a" stroke="#a8521e" stroke-width="1.8"/><path d="M49 27 C 58 33 58 47 47 54" stroke="#b85a18" stroke-width="3.2" fill="none" stroke-linecap="round"/>${hl('M14 33 C 16 27 20 24 24 23', '#ffd6a0', 2.8)}`,
+    chile: `<path d="M42 14 C 52 18 52 32 44 42 C 36 54 22 59 10 58 C 20 52 28 44 32 34 C 35 26 36 18 42 14Z" fill="#d0342a" ${O}/><path d="M48 27 C 47 35 42 42 34 49" stroke="#9a2018" stroke-width="3" fill="none" stroke-linecap="round"/>${hl('M39 22 C 38 30 35 37 28.6 45', '#ff9a8a', 2.6)}<path d="M37 16 C 39 10 47 9 50 13 C 46 18 41 18 37 16Z" fill="#4f8a36" ${O}/>${shaft('M45 11 C 46 6 49 4 53 3', '#5f9a3e', 2.4)}`,
+    cacao: `<path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="#8f4a22" ${O}/><path d="M32 6 C 50 14 50 50 32 58 C 40 46 41 20 32 6Z" fill="#6e3414"/><path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="none" ${O}/><path d="M32 11 C 38 22 38 42 32 53" stroke="#4a2008" stroke-width="2" fill="none"/>${hl('M24.6 17 C 21 27 21 38 24.6 47', '#d8946a', 2.8)}`,
+    tlaxcalli: `<path d="M6 43 L32 58 L58 43 L32 32Z" fill="#f6efe0" ${O}/><path d="M12 46 L38 35 M19 50 L45 39 M26 54 L52 43" stroke="#c0392b" stroke-width="2.2"/>${[44, 38, 32].map(y => `<ellipse cx="32" cy="${y}" rx="21" ry="7.6" fill="#ecd3a0" ${O}/>`).join('')}${[[24, 31], [36, 30], [42, 33.6], [30, 34]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.6" ry="1.3" fill="#c8955a"/>`).join('')}${hl('M18 30 C 24 27 34 26.4 42 27.6', '#fff6dc', 2)}`,
+    octli: `<path d="M13 28 C 7 44 17 60 32 60 C 47 60 57 44 51 28 Z" fill="#b8622e" ${O}/><path d="M47 33 C 51 45 47 54 37 58" stroke="#8a3e18" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M11.6 41 H52.4" stroke="#f6e2b8" stroke-width="2.4"/><path d="M11.4 47 h4 v-3 h5 v3 h4 v-3 h5 v3 h4 v-3 h5 v3 h4 v-3 h5" stroke="#f6e2b8" stroke-width="1.8" fill="none"/>${hl('M16 33 C 15 40 17 47 20 51', '#ffc89a', 2.4)}<ellipse cx="32" cy="27" rx="20" ry="6" fill="#8a3e18" ${O}/><path d="M12 26 C 10 18 18 14 24 18 C 26 12 36 11 39 17 C 44 13 54 17 52 25 C 54 29 50 32 46.4 30 C 44 33 40.6 32.6 40 30.6 C 38 35 33.6 35 32 31 C 28 33.6 24 33.4 22 30.4 C 18 32 12 30 12 26Z" fill="#fbf8f0" ${O}/><path d="M46 30.6 C 47 35 49 37.6 48.2 41 C 47.4 43.4 44.8 42.8 45 40.4 C 45.2 37 44.2 34 44 31.4" fill="#fbf8f0" stroke="${K}" stroke-width="2" stroke-linejoin="round"/>${[[20, 22, 1.6], [30, 19, 1.4], [42, 21, 1.8], [36, 25, 1.1]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#c9c0ae" stroke-width="1"/>`).join('')}`,
+    nopal: `<ellipse cx="17" cy="20" rx="7.6" ry="10.4" transform="rotate(-28 17 20)" fill="#6fae60" ${O}/><ellipse cx="46" cy="22" rx="9.6" ry="12.6" transform="rotate(28 46 22)" fill="#6fae60" ${O}/><ellipse cx="30" cy="42" rx="15" ry="19" transform="rotate(-8 30 42)" fill="#5f9a54" ${O}/>${hl('M20 32 C 18 40 19 48 22 54', '#a8d690', 2.4)}${hl('M41 16 C 40 20 40 24 41 27', '#c4e6a8', 2)}${[[25, 33], [35, 31], [28, 44], [38, 47], [23, 52], [33, 54], [44, 17], [49, 26], [15, 16], [19, 23]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.5" fill="#f1e8c8"/><path d="M${x - 2} ${y - 2} l-1.6 -1.6 M${x + 2} ${y - 2} l1.6 -1.6" stroke="#f1e8c8" stroke-width="1"/>`).join('')}<ellipse cx="52" cy="9.6" rx="4.6" ry="5.6" fill="#c2307a" ${O}/><ellipse cx="11" cy="8" rx="3.8" ry="4.8" fill="#e0507a" ${O}/>`,
+    cempa: `${Array.from({ length: 12 }, (_, i) => `<ellipse cx="32" cy="15" rx="6.4" ry="10" transform="rotate(${i * 30} 32 32)" fill="#f29a1e" ${O}/>`).join('')}${Array.from({ length: 8 }, (_, i) => `<ellipse cx="32" cy="22" rx="5" ry="7" transform="rotate(${i * 45 + 22} 32 32)" fill="#f6b81e" stroke="${K}" stroke-width="1.8"/>`).join('')}<circle cx="32" cy="32" r="6.4" fill="#e07a12" ${O}/>${[[30, 30], [34, 31], [31, 34.4], [35, 34.6]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="#8a3a08"/>`).join('')}`,
+    sal: `<path d="M8 38 C 8 54 20 60 32 60 C 44 60 56 54 56 38Z" fill="#c46a32" ${O}/><path d="M11.6 47 h5 v-4 h6 v4 h6 v-4 h6 v4 h6 v-4 h6 v4 h4" stroke="#f6e2b8" stroke-width="2" fill="none"/><path d="M48 42 C 50 50 44 56 36 58" stroke="#8a3e18" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M10 38 C 12 28 20 22 26 24 C 30 16 38 16 42 22 C 48 22 54 30 54 38Z" fill="#fbfbf8" ${O}/><path d="M41 24 C 47 26.6 51 32 51.4 37" stroke="#c8d4e6" stroke-width="3.4" fill="none" stroke-linecap="round"/>${[[22, 31], [34, 25], [30, 33], [44, 32]].map(([x, y]) => `<rect x="${x - 2}" y="${y - 2}" width="4" height="4" transform="rotate(45 ${x} ${y})" fill="#e6eef8" stroke="#8aa0c0" stroke-width=".9"/>`).join('')}<path d="M49 7 v9 M44.6 11.6 h9" stroke="#8aa0c0" stroke-width="2.2" stroke-linecap="round"/>`,
+    copal: `<path d="M17 29 c -6 -8 6 -12 0 -20 M27 29 c -6 -8 6 -12 0 -21 M37 29 c -5 -6 5 -10 0 -16" stroke="#8a96b4" stroke-width="2.8" fill="none" stroke-linecap="round"/>${shaft('M34 46 L59 56', '#c46a32', 3.6)}<circle cx="59" cy="56" r="3.6" fill="#e9b33e" ${O}/><path d="M8 33 H42 L37.6 51 C 35.6 56 14.4 56 12.4 51 Z" fill="#c46a32" ${O}/>${[[17, 41], [25, 43], [33, 41]].map(([x, y]) => `<path d="M${x - 3} ${y + 3} l3 -6 l3 6Z" fill="${K}"/>`).join('')}<path d="M36 36 C 36 44 34 50 31 53" stroke="#8a3e18" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M14 33 C 17 28 32 28 36 33" fill="#f2c94c" stroke="${K}" stroke-width="2"/><path d="M6 33 H44" stroke="${K}" stroke-width="3.4" stroke-linecap="round"/>${hl('M13 38 C 13.6 43 15 47 17 50', '#ffc89a', 2.2)}`,
+    chimalli: `${['#2f8f8a', '#c0392b', '#e9b33e', '#c0392b', '#2f8f8a'].map((c, i) => `<path d="M${20 + i * 6} 45 l-3.6 15 h7.2Z" fill="${c}" ${O}/>`).join('')}<circle cx="32" cy="28" r="21" fill="#f3ede2" ${O}/><circle cx="32" cy="28" r="15" fill="#2f5fa8" ${O}/><path d="M18.6 31 h6.4 v-6 h7 v6 h7 v-6 h6.4" stroke="#f3ede2" stroke-width="3" fill="none"/><path d="M41 15 C 47 20 49 28 45 36" stroke="#1e3c78" stroke-width="3" fill="none" stroke-linecap="round"/>${hl('M15.4 20 C 18.6 13 24.6 9 31 8.4', '#fff', 2.4)}`,
+    costal: `<path d="M16 22 C 9 34 9 52 18 59 H46 C 55 52 55 34 48 22 Z" fill="#d8b47a" ${O}/><path d="M46 26 C 52 36 52 50 44 57" stroke="#a8824a" stroke-width="3" fill="none" stroke-linecap="round"/>${[[24, 14, '#f2c94c'], [32, 12, '#3d63b8'], [40, 14, '#c0392b']].map(([x, y, c]) => `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="3" fill="${c}" ${O}/>`).join('')}<path d="M18 19 C 24 13 40 13 46 19 L44 25 C 38 21 26 21 20 25Z" fill="#c49a5a" ${O}/><path d="M20 25.6 C 28 28.6 36 28.6 44 25.6" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 53 V41 M32 47 C 27 43 23 44.6 22 45 M32 45 C 37 41 41 42.6 42 43" stroke="#3f7a2e" stroke-width="2.4" fill="none" stroke-linecap="round"/>${hl('M17 36 C 16 44 17 50 20 54', '#f6e2b8', 2.4)}`,
+  };
+  // Small glyphs: stats (tonalli = energy, heart = life, flower = spirit) and fame (quetzal feather).
+  const STAT = {
+    tonalli: `${Array.from({ length: 8 }, (_, i) => `<path transform="rotate(${i * 45} 32 32)" d="M26 12 L32 2 L38 12Z" fill="#e9b33e" ${O}/>`).join('')}<circle cx="32" cy="32" r="18" fill="#f2c94c" ${O}/><circle cx="32" cy="32" r="9" fill="#e07a28" ${O}/>${hl('M20 26 C 22 21 26 18 30 17', '#fff8d8', 2.6)}`,
+    vida: `<path d="M32 58 C 14 44 6 34 6 22 C 6 13 13 7 21 7 C 27 7 30 10 32 14 C 34 10 37 7 43 7 C 51 7 58 13 58 22 C 58 34 50 44 32 58Z" fill="#d0342a" ${O}/><path d="M47 14 C 53 18 54 28 48 36" stroke="#9a2018" stroke-width="3.4" fill="none" stroke-linecap="round"/>${hl('M14 18 C 15 14 18 12 22 12', '#ffb0a4', 3)}`,
+    animo: `${[0, 90, 180, 270].map(a => `<ellipse cx="32" cy="16" rx="10" ry="13" transform="rotate(${a} 32 32)" fill="#d9443a" ${O}/>`).join('')}${[45, 135, 225, 315].map(a => `<ellipse cx="32" cy="19" rx="6" ry="9" transform="rotate(${a} 32 32)" fill="#f2c94c" stroke="${K}" stroke-width="2.2"/>`).join('')}<circle cx="32" cy="32" r="7.6" fill="#f6efe0" ${O}/><circle cx="32" cy="32" r="3.4" fill="#e07a28"/>`,
+  };
+  const stat = (k, cls = 'st') => `<svg class="${cls}" viewBox="0 0 64 64" aria-hidden="true">${STAT[k]}</svg>`;
+  const feather = on => `<svg class="qz" viewBox="0 0 14 30" aria-hidden="true"><path d="M7 29 V24" stroke="${K}" stroke-width="2"/><path d="M7 24 C 1 18 1 8 7 1 C 13 8 13 18 7 24Z" fill="${on ? '#2f9a6a' : '#e6dcc4'}" stroke="${K}" stroke-width="1.6"/><path d="M7 22 V6" stroke="${on ? '#a8e0c0' : '#fff'}" stroke-width="1.2"/>${on ? '<circle cx="7" cy="8" r="2" fill="#2f5fa8"/>' : ''}</svg>`;
+  const feathers = (n, of = 10) => `<span class="qzs">${Array.from({ length: of }, (_, i) => feather(i < n)).join('')}</span>`;
   const icon = (k, cls = 'ic') => `<svg class="${cls}" viewBox="0 0 64 64">${IC[k]}</svg>`;
   const bean = '<svg class="mini" viewBox="0 0 64 64"><path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="#a8521e" stroke="#1a1410" stroke-width="4"/></svg>';
   // Dots-and-bars numeral (1–19).
@@ -1058,14 +1193,16 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   const tabs = on => `<div class="tabs">${TABS.map(t => `<div class="cb tab${t === on ? ' cb--on' : ''}" data-sel="cb">${t}</div>`).join('')}</div>`;
 
   // ---------- Bolsa ----------
-  const BAR = [['coa', 225], ['cantaro', 8], ['hacha', ''], ['obsidiana', 12], ['coa', ''], ['maizAzul', 19], ['frijol', 14], ['chile', 8], ['maiz', 12], ['calabaza', 3]];
+  const BAR = [['coa', 225], ['cantaro', 8], ['hacha', ''], ['obsidiana', 12], ['costal', 24], ['maizAzul', 19], ['frijol', 14], ['chile', 8], ['maiz', 12], ['calabaza', 3]];
   const BAG = [['calabaza', 12], ['nopal', 5], ['tlaxcalli', 6], ['octli', 2], ['cacao', 18], ['maiz', 19], ['cempa', 9], ['frijol', 7]];
   const slot = (s, i, bar, on) => `<div class="sl${s ? '' : ' sl--e'}${on ? ' sl--on' : ''}" data-sel="sl">${s ? icon(s[0]) : ''}${bar ? `<span class="sl__k">${dots(i + 1 > 9 ? 10 : i + 1, 'nd nd--k')}</span>` : ''}${s && s[1] !== '' ? `<span class="sl__n">${s[1]}</span>` : ''}</div>`;
-  const meter = (l, v, c) => `<label>${l}</label><div class="m"><i style="width:${v}%;background:${c}"></i></div><em>${v}</em>`;
+  const meter = (k, l, v, c) => `<label>${stat(k)}${l}</label><div class="m"><i style="width:${v}%;background:${c}"></i></div><em>${v}</em>`;
   function bolsa(T) {
     return `<div class="ab">${bg(T.milpa)}${tabs('Bolsa')}
-      ${page('bag', `<div class="bag__l">${frame(F.borgia(PLAYER), 'cf--tall')}<div class="who"><b>Tú</b><span>Macehualli ${flowers(3).replace('xos', 'xos xos--s')}</span></div>
-          <div class="ms">${meter('Energía', 92, '#2f7ac0')}${meter('Vida', 85, '#c0392b')}${meter('Ánimo', 70, '#3f9a3a')}</div></div>
+      ${page('bag', `<div class="bag__l">${frame(F.borgia(PLAYER, { tight: true }), 'cf--tall')}<div class="who"><b>Tú</b><span>Macehualli · campesino</span></div>
+          <div class="fame"><span>Fama</span>${feathers(3)}</div>
+          <div class="ms">${meter('tonalli', 'Energía', 92, '#2f7ac0')}${meter('vida', 'Vida', 85, '#c0392b')}${meter('animo', 'Ánimo', 70, '#3f9a3a')}</div>
+          <div class="purse purse--bag">${bean}<b>900 300</b><small>cacao</small></div></div>
         <div class="bag__r">
           <div class="item"><div class="item__ic">${icon('coa')}</div><div class="item__t"><b>Coa</b><small>Huictli · herramienta de labranza</small><p>Abre la tierra frente a ti. Pulsa Espacio con la coa en la mano.</p></div>
             <div class="item__s"><div class="kv"><span>Usos</span><b>225 / 225</b></div><div class="m m--s"><i style="width:100%;background:#3f9a3a"></i></div><div class="row2"><div class="cb cb--on">Usar</div><div class="cb">Soltar</div></div></div></div>
@@ -1080,26 +1217,26 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   // ---------- Tianguis ----------
   function tianguis(T) {
     const seller = CAST[12];
-    const rows = [['maizAzul', 'Maíz azul', 'Semilla · brota en 6 días', 12, 3], ['frijol', 'Frijol ayocote', 'Semilla · trepa por la caña', 6, 0], ['calabaza', 'Calabaza', 'Semilla · cubre la milpa', 10, 0], ['chile', 'Chilli', 'Semilla · para el molli', 8, 0], ['obsidiana', 'Navaja de obsidiana', 'Filo para la macuahuitl', 20, 0]]
+    const rows = [['maizAzul', 'Maíz azul', 'Semilla · brota en 6 días', 12, 3], ['frijol', 'Frijol ayocote', 'Semilla · trepa por la caña', 6, 0], ['calabaza', 'Calabaza', 'Semilla · cubre la milpa', 10, 0], ['chile', 'Chile', 'Semilla · para el molli', 8, 0], ['obsidiana', 'Navaja de obsidiana', 'Filo para la macuahuitl', 20, 0]]
       .map(([k, n, d, p, q], i) => `<div class="pr${i ? '' : ' pr--on'}" data-sel="pr"><div class="pr__ic">${icon(k)}</div><div class="pr__t"><b>${n}</b><small>${d}</small></div><span class="pr__p">${bean} ${p}</span><div class="qty"><u>−</u><b>${q}</b><u>+</u></div></div>`).join('');
     return `<div class="ab">${bg(T.plaza)}
-      <div class="seller">${frame(F.borgia(seller), 'cf--seller')}
+      <div class="seller">${frame(F.borgia(seller, { tight: true, speaking: true }), 'cf--seller')}
         ${page('talk', `<div class="talk__n">${seller.name}<small>${seller.role}</small></div><p>Llegaron cargadores de la costa con cacao. La sal ya no pasa: los mexicas cerraron los caminos.</p><div class="talk__f">${flowers(6)}<span>▼</span></div>`)}</div>
       ${page('shop', `<div class="shop__h"><b>Tianguis de Ocotelulco</b><span class="purse">${bean} 900 300</span></div>
         <div class="chips"><span class="cb chip cb--on" data-sel="cb">Semillas</span><span class="cb chip" data-sel="cb">Comida</span><span class="cb chip" data-sel="cb">Ofrendas</span><span class="cb chip" data-sel="cb">Armas</span></div>
         <div class="prs">${rows}</div>
-        <div class="shop__f"><span>Total <b>${bean} 36</b></span><div class="row2"><div class="cb">Vender</div><div class="cb cb--on">Trocar</div></div></div>`)}
-      ${keys(['▲▼', 'producto'], ['◂ ▸', 'cantidad'], ['Enter', 'trocar'], ['Esc', 'salir'])}</div>`;
+        <div class="shop__f"><span>Total <b>${bean} 36</b></span><div class="row2"><div class="cb">Vender</div><div class="cb cb--on">Comprar</div></div></div>`)}
+      ${keys(['▲▼', 'producto'], ['◂ ▸', 'cantidad'], ['Enter', 'comprar'], ['Esc', 'salir'])}</div>`;
   }
 
   // ---------- Vecinos ----------
   const HOME = ['Tepetícpac', 'Ocotelulco', 'Tizatlán', 'Quiahuiztlán'];
   function vecinos(T) {
     const sel = 4, p = CAST[sel];
-    const cards = CAST.map((c, i) => `<div class="vc${i === sel ? ' vc--on' : ''}" data-sel="vc"><div class="vc__a">${F.borgia(c)}</div><b>${c.name}${c.romance ? ' <i class="love">♥</i>' : ''}</b></div>`).join('');
+    const cards = CAST.map((c, i) => `<div class="vc${i === sel ? ' vc--on' : ''}" data-sel="vc"><div class="vc__a">${F.borgia(c, { top: -26 })}</div><b>${c.name}${c.romance ? ' <i class="love">♥</i>' : ''}</b></div>`).join('');
     return `<div class="ab">${bg(T.plaza)}${tabs('Vecinos')}
       ${page('vec', `<div class="vec__g">${cards}</div>
-        <div class="vec__s">${frame(F.borgia(p), 'cf--big')}
+        <div class="vec__s">${frame(F.borgia(p, { tight: true }), 'cf--big')}
           <div class="vec__n">${p.name}</div><div class="vec__r">${p.role}</div>${flowers(9)}
           <p class="vec__l">«${p.line}»</p>
           <div class="facts"><span>Vive en</span><b>${HOME[sel % 4]}</b><span>Le encanta</span><b>${icon('octli', 'mini')} Octli</b><span>Nació</span><b>${calli} 7-Calli</b></div>
@@ -1119,7 +1256,7 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
       ${keys(['Esc', 'volver'], ['Enter', 'aceptar'], ['◂ ▸', 'cambiar'])}</div>`;
   }
 
-  window.TlaxMenus4 = { inicio, bolsa, tianguis, vecinos, pausa, kit: { icon, bean, dots, flower, flowers, calli, keys, bg, page, frame, IC } };
+  window.TlaxMenus4 = { inicio, bolsa, tianguis, vecinos, pausa, kit: { icon, bean, dots, flower, flowers, calli, keys, bg, page, frame, IC, stat, feathers } };
 })();
 </script>
 <script>
@@ -1127,21 +1264,21 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
 // Códice Borgia figures): in-game HUD, dialogue, Oficios, Amoxtli (journal) and Mapa.
 "use strict";
 (function () {
-  const { CAST, PLAYER } = window.TlaxChars, F = window.TlaxFigs4, { icon, bean, dots, flower, flowers, calli, keys, bg, page, frame } = window.TlaxMenus4.kit;
+  const { CAST, PLAYER } = window.TlaxChars, F = window.TlaxFigs4, { icon, bean, dots, flower, flowers, calli, keys, bg, page, frame, stat } = window.TlaxMenus4.kit;
   const K = '#1a1410', O = `stroke="${K}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
   const TABS = ['Bolsa', 'Oficios', 'Vecinos', 'Amoxtli', 'Mapa'];
   const tabs = on => `<div class="tabs">${TABS.map(t => `<div class="cb tab${t === on ? ' cb--on' : ''}" data-sel="cb">${t}</div>`).join('')}</div>`;
   const sun = `<svg class="sun" viewBox="0 0 40 40"><g transform="translate(20 20)">${Array.from({ length: 8 }, (_, i) => `<path transform="rotate(${i * 45})" d="M-4 -12 L0 -19 L4 -12Z" fill="#e9b33e" ${O.replace('2.6', '1.6')}/>`).join('')}<circle r="10" fill="#e9b33e" ${O.replace('2.6', '1.8')}/><circle r="5" fill="#c0392b"/></g></svg>`;
 
   // ---------- HUD en partida ----------
-  const BAR = [['coa', 225], ['cantaro', 8], ['hacha', ''], ['obsidiana', 12], ['coa', ''], ['maizAzul', 19], ['frijol', 14], ['chile', 8], ['maiz', 12], ['calabaza', 3]];
+  const BAR = [['coa', 225], ['cantaro', 8], ['hacha', ''], ['obsidiana', 12], ['costal', 24], ['maizAzul', 19], ['frijol', 14], ['chile', 8], ['maiz', 12], ['calabaza', 3]];
   function hud(T) {
-    const vbar = (v, c, g) => `<div class="vb"><span>${g}</span><div class="vb__t"><i style="height:${v}%;background:${c}"></i></div></div>`;
+    const vbar = (v, c, k, l) => `<div class="vb" title="${l}">${stat(k)}<div class="vb__t"><i style="height:${v}%;background:${c}"></i></div></div>`;
     return `<div class="ab">
       <div class="gbg gbg--sharp" style="background-image:url('${T.milpa}')"></div>
       ${page('clock', `${sun}<div><b>3-Calli</b><small>Tlacaxipehualiztli · 1-Ácatl</small><em>10:00 · ${bean} 900 300</em></div>`)}
-      ${page('tut', `<b>Amoxtli 1 de 8</b><span>Abre la tierra: elige la coa (tecla ${dots(1, 'nd nd--in')}) y pulsa Espacio frente a la hierba.</span>`)}
-      <div class="vbs">${vbar(92, '#2f7ac0', '⚡')}${vbar(85, '#c0392b', '♥')}${vbar(70, '#3f9a3a', '☺')}</div>
+      ${page('tut', `<b>Amoxtli 1 de 8</b><span>Abre la tierra: elige la coa (tecla <kbd>1</kbd>) y pulsa <kbd>Espacio</kbd> frente a la hierba.</span>`)}
+      ${page('vbs', `${vbar(92, 'linear-gradient(#5fb0f0,#2f7ac0)', 'tonalli', 'Energía')}${vbar(85, 'linear-gradient(#f07060,#c0392b)', 'vida', 'Vida')}${vbar(70, 'linear-gradient(#7cd070,#3f9a3a)', 'animo', 'Ánimo')}`)}
       ${page('hot', `<div class="hot__n">Coa · 225 usos</div><div class="sls sls--hot">${BAR.map((s, i) => `<div class="sl${i === 0 ? ' sl--on' : ''}" data-sel="sl">${icon(s[0])}<span class="sl__k">${dots(i + 1, 'nd nd--k')}</span>${s[1] !== '' ? `<span class="sl__n">${s[1]}</span>` : ''}</div>`).join('')}</div>`)}
     </div>`;
   }
@@ -1150,7 +1287,7 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   function dialogo(T) {
     const p = CAST[4];
     return `<div class="ab">${bg(T.plaza).replace('dim"', 'dim dim--soft"')}
-      <div class="dlg-fig">${frame(F.borgia(p), 'cf--dlg')}</div>
+      <div class="dlg-fig">${frame(F.borgia(p, { tight: true, speaking: true }), 'cf--dlg')}</div>
       ${page('dlg', `<div class="dlg__h"><b>${p.name}</b><small>${p.role} · Tepetícpac</small>${flowers(9)}</div>
         <p>Dicen que los extranjeros ya pelearon con los otomíes en la frontera. Mi padre fue a Tizatlán a escuchar al consejo. ¿Te quedarás conmigo a ver la puesta del sol junto al río?</p>
         <div class="dlg__o"><div class="cb cb--on" data-sel="cb">▸ Me quedo contigo</div><div class="cb" data-sel="cb">Primero iré al consejo</div><div class="cb" data-sel="cb">Regalarle una flor de cempasúchil</div></div>`)}
@@ -1162,15 +1299,15 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
     ['maiz', 'Milpa', 'Siembra, riega y cosecha maíz, frijol y calabaza.', 3, 65, 'Las semillas brotan un día antes.'],
     ['cempa', 'Recolección', 'Flores, quelites, tunas y hierbas del monte.', 2, 30, 'A veces encuentras doble.'],
     ['cantaro', 'Alfarería', 'Cántaros, comales y ofrendas de barro.', 1, 55, 'Desbloquea: comal de barro.'],
-    ['obsidiana', 'Guerra', 'Macuahuitl, escudo y arco. Defiende la frontera.', 2, 10, 'Más vida en combate.'],
-    ['octli', 'Ofrendas', 'Templos a Camaxtli y a Matlalcueye.', 1, 17, 'Templos restaurados: 1 de 6.'],
+    ['chimalli', 'Guerra', 'Macuahuitl, escudo y arco. Defiende la frontera.', 2, 10, 'Más vida en combate.'],
+    ['copal', 'Ofrendas', 'Templos a Camaxtli y a Matlalcueye.', 1, 17, 'Templos restaurados: 1 de 6.'],
   ];
   function oficios(T) {
     const rows = SKILLS.map(([k, n, d, lv, pr, perk], i) => `<div class="sk${i === 0 ? ' pr--on' : ''}" data-sel="pr"><div class="pr__ic">${icon(k)}</div>
       <div class="sk__t"><b>${n}</b><small>${d}</small><div class="m m--s"><i style="width:${pr}%;background:#3f9a3a"></i></div></div>
       <div class="sk__lv"><small>Nivel</small>${dots(lv, 'nd nd--lv')}</div><div class="sk__p">${perk}</div></div>`).join('');
     return `<div class="ab">${bg(T.milpa)}${tabs('Oficios')}
-      ${page('ofi', `<div class="ofi__h"><b>Oficios de Tú</b><span>Los niveles se cuentan con puntos y barras: ● = 1, ▬ = 5</span></div><div class="sks">${rows}</div>`)}
+      ${page('ofi', `<div class="ofi__h"><b>Tus oficios</b><span>Los niveles se cuentan con puntos y barras: ● = 1, ▬ = 5</span></div><div class="sks">${rows}</div>`)}
       ${keys(['Q', 'cerrar'], ['▲▼', 'oficio'], ['◂ ▸', 'pestaña'])}</div>`;
   }
 
@@ -1178,16 +1315,17 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   function amoxtli(T) {
     const Q = [
       ['octli', 'Ofrenda para Camaxtli', 'Lleva 3 jarras de octli al templo de Ocotelulco antes de la fiesta.', '2 / 3', true],
-      ['cacao', 'Sal para Tizatlán', 'El cerco mexica no deja pasar sal. Busca a los cargadores de la costa.', '0 / 1', false],
+      ['sal', 'Sal para Tizatlán', 'El cerco mexica no deja pasar sal. Busca a los cargadores de la costa.', '0 / 1', false],
       ['obsidiana', 'Navajas para la frontera', 'Nalin necesita 12 navajas de obsidiana para las macuahuitl.', '12 / 12', false],
       ['cempa', 'Flores para Kaya', 'Siembra cempasúchil en la orilla del río Zahuapan.', '0 / 5', false],
     ];
     const list = Q.map(([k, n, d, pr, on], i) => `<div class="qe${on ? ' pr--on' : ''}" data-sel="pr">${icon(k)}<div><b>${n}</b><small>${pr}</small></div></div>`).join('');
     const [k, n, d, pr] = Q[0];
     return `<div class="ab">${bg(T.milpa)}${tabs('Amoxtli')}
-      ${page('amo', `<div class="amo__l"><div class="amo__h">Encargos</div>${list}</div>
+      ${page('amo', `<div class="amo__l"><div class="amo__h">Encargos</div>${list}<div class="amo__done">Encargos cumplidos: 3</div></div>
         <div class="amo__r"><div class="amo__glyph">${icon(k)}</div><h4>${n}</h4><p>${d}</p>
-          <div class="amo__step"><span>${dots(2, 'nd nd--in')} de ${dots(3, 'nd nd--in')} jarras</span><div class="m"><i style="width:66%;background:#3f9a3a"></i></div></div>
+          <div class="amo__step"><span>2 de 3 jarras de octli</span><div class="m"><i style="width:66%;background:#3f9a3a"></i></div></div>
+          <ul class="amo__todo"><li class="ok">Raspa el aguamiel de tus magueyes</li><li class="ok">Déjalo fermentar en el cántaro</li><li>Lleva las 3 jarras al templo de Ocotelulco</li></ul>
           <div class="amo__rw"><span>Recompensa</span><b>${bean} 120</b><b>${flower(true)} con el sacerdote</b></div>
           <div class="amo__f"><span>${calli} Plazo: día 8-Calli</span><div class="cb cb--on">Seguir encargo</div></div></div>`)}
       ${keys(['Q', 'cerrar'], ['▲▼', 'encargo'], ['Enter', 'seguir'])}</div>`;
@@ -1202,23 +1340,25 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
     const path = (a, b, n) => { const out = []; for (let i = 1; i < n; i++) { const t = i / n; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI + 90]); } return steps(out); };
     const map = `<svg class="map" viewBox="0 0 640 380">
       <path d="M0 260 C 120 250 200 300 330 280 C 430 266 520 300 640 290" stroke="#4f86b8" stroke-width="10" fill="none"/><path d="M200 0 C 220 80 260 150 330 280" stroke="#4f86b8" stroke-width="8" fill="none"/>
-      <text x="560" y="312" class="gl">Atoyac</text><text x="232" y="70" class="gl">Zahuapan</text>
+      <text x="392" y="306" class="gl">Atoyac</text><text x="232" y="70" class="gl">Zahuapan</text>
       <path d="M30 80 L80 20 L130 80Z" fill="#c8d4ee" ${O}/><path d="M64 38 L80 20 L96 38 L88 44 L80 36 L72 44Z" fill="#fff" ${O}/><path d="M20 140 C 50 110 120 110 150 140Z" fill="#c8d4ee" ${O}/>
       <text x="80" y="160" text-anchor="middle" class="gl">Popocatépetl e Iztaccíhuatl</text>
       ${path([300, 150], [380, 110], 6)}${path([300, 150], [190, 250], 9)}${path([300, 150], [392, 196], 6)}${path([380, 110], [560, 70], 9)}${path([190, 250], [80, 330], 7)}
       <path d="M380 210 C 380 170 410 140 450 140 C 490 140 520 170 520 210Z" fill="#7aa45a" ${O}/><path d="M384 196 C 420 186 480 186 516 196 L520 210 H380Z" fill="#4f86b8" ${O}/><text x="450" y="232" text-anchor="middle" class="pln">Matlalcueye</text>
       ${place(300, 150, 'Tlaxcallan', `<g>${[[-14, -10], [14, -10], [-14, 12], [14, 12]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#f6efe0" ${O}/>`).join('')}<circle r="6" fill="#c0392b" ${O}/></g>`, 'pl--home')}
-      <text x="276" y="212" text-anchor="end" class="gl">Tepetícpac · Ocotelulco · Tizatlán · Quiahuiztlán</text>
       ${place(380, 110, 'Tu milpa', `<g>${[[-8, 0], [0, -4], [8, 0]].map(([x, y]) => `<path d="M${x} ${y + 12} V${y - 10}" ${O}/><ellipse cx="${x + 3}" cy="${y - 2}" rx="3" ry="6" fill="#f2c94c" ${O}/>`).join('')}</g>`, 'pl--you')}
       ${place(560, 70, 'Tecoac', hill('#c8b48a'), 'pl--war')}
       ${place(190, 250, 'Cacaxtla', temple)}
       ${place(80, 330, 'Cholollan', temple)}
       ${place(590, 190, 'Huamantla', hill())}
-      <g transform="translate(40 230)"><path d="M0 0 h56 v30 h-56Z" fill="#f6efe0" ${O}/><path d="M6 24 C 16 6 40 6 50 24" stroke="#4f86b8" stroke-width="4" fill="none"/><text x="28" y="48" text-anchor="middle" class="pln">Tenochtitlan ←</text></g>
+      <g transform="translate(26 194)"><path d="M0 0 h56 v30 h-56Z" fill="#f6efe0" ${O}/><path d="M6 24 C 16 6 40 6 50 24" stroke="#4f86b8" stroke-width="4" fill="none"/><text x="28" y="48" text-anchor="middle" class="pln">Tenochtitlan ←</text></g>
       <g transform="translate(560 40)"><circle r="8" fill="#c0392b" ${O}/><text x="14" y="5" class="gl gl--war">extranjeros</text></g>
+      <g class="you" transform="translate(398 92)"><circle r="11" fill="#2f5fa8" opacity=".25"/><circle r="6.4" fill="#2f5fa8" stroke="#fff" stroke-width="2.6"/></g>
+      <g transform="translate(604 340)"><path d="M0 -20 L5 -5 L20 0 L5 5 L0 20 L-5 5 L-20 0 L-5 -5Z" fill="#f6efe0" ${O}/><path d="M0 -20 L5 -5 L0 0Z M20 0 L5 5 L0 0Z M0 20 L-5 5 L0 0Z M-20 0 L-5 -5 L0 0Z" fill="#1b3a8a"/><text y="-25" text-anchor="middle" class="pln">N</text></g>
     </svg>`;
     return `<div class="ab">${bg(T.milpa)}${tabs('Mapa')}
       ${page('mapa', `${map}<div class="mapa__s"><b>Tlaxcallan</b><p>Los cuatro señoríos gobiernan juntos desde el consejo. Al poniente, tras los volcanes, está Tenochtitlan. Por el oriente, en Tecoac, ya se vio a los extranjeros.</p>
+        <ul class="seno"><li>Tepetícpac</li><li>Ocotelulco</li><li>Tizatlán</li><li>Quiahuiztlán</li></ul>
         <div class="leg"><span>${steps([[8, 8, 90]]).replace('<path', '<svg viewBox="0 0 16 16" class="mini"><path') + '</svg>'} Camino</span><span><i class="dot dot--you"></i> Tú</span><span><i class="dot dot--war"></i> Frontera</span></div>
         <div class="cb cb--on">Viajar a Ocotelulco</div></div>`)}
       ${keys(['Q', 'cerrar'], ['▲▼◂▸', 'mover'], ['Enter', 'viajar'])}</div>`;
@@ -1245,7 +1385,7 @@ kbd { border-radius: 3px; color: var(--navy); background: var(--plain) 0 0 / 60p
   const glyph = `<svg class="glyph" viewBox="0 0 120 110"><path d="M60 104 C 20 92 2 60 18 30 C 26 14 44 8 50 26" fill="#7cb04a" stroke="#1a1410" stroke-width="3.4" stroke-linejoin="round"/><path d="M60 104 C 100 92 118 60 102 30 C 94 14 76 8 70 26" fill="#5fa040" stroke="#1a1410" stroke-width="3.4" stroke-linejoin="round"/><path d="M60 96 C 30 78 16 58 20 40 C 24 24 44 18 60 34 C 76 18 96 24 100 40 C 104 58 90 78 60 96 Z" fill="#e9b33e" stroke="#1a1410" stroke-width="4" stroke-linejoin="round"/><g clip-path="url(#hc)"><clipPath id="hc"><path d="M60 92 C 32 76 20 58 23 41 C 27 27 44 22 60 38 C 76 22 93 27 97 41 C 100 58 88 76 60 92 Z"/></clipPath><ellipse cx="18" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="26" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="34" cy="28" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="42" cy="28" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="50" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="58" cy="28" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="66" cy="28" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="74" cy="28" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="82" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="90" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="98" cy="28" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="22" cy="35" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="30" cy="35" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="38" cy="35" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="46" cy="35" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="54" cy="35" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="62" cy="35" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="70" cy="35" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="78" cy="35" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="86" cy="35" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="94" cy="35" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="102" cy="35" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="18" cy="42" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="26" cy="42" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="34" cy="42" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="42" cy="42" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="50" cy="42" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="58" cy="42" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="66" cy="42" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="74" cy="42" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="82" cy="42" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="90" cy="42" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="98" cy="42" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="22" cy="49" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="30" cy="49" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="38" cy="49" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="46" cy="49" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="54" cy="49" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="62" cy="49" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="70" cy="49" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="78" cy="49" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="86" cy="49" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="94" cy="49" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="102" cy="49" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="18" cy="56" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="26" cy="56" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="34" cy="56" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="42" cy="56" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="50" cy="56" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="58" cy="56" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="66" cy="56" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="74" cy="56" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="82" cy="56" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="90" cy="56" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="98" cy="56" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="22" cy="63" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="30" cy="63" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="38" cy="63" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="46" cy="63" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="54" cy="63" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="62" cy="63" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="70" cy="63" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="78" cy="63" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="86" cy="63" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="94" cy="63" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="102" cy="63" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="18" cy="70" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="26" cy="70" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="34" cy="70" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="42" cy="70" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="50" cy="70" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="58" cy="70" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="66" cy="70" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="74" cy="70" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="82" cy="70" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="90" cy="70" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="98" cy="70" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="22" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="30" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="38" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="46" cy="77" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="54" cy="77" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="62" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="70" cy="77" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="78" cy="77" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="86" cy="77" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="94" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="102" cy="77" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="18" cy="84" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="26" cy="84" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="34" cy="84" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="42" cy="84" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="50" cy="84" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="58" cy="84" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="66" cy="84" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="74" cy="84" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="82" cy="84" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="90" cy="84" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="98" cy="84" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="22" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="30" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="38" cy="91" rx="3.6" ry="3.1" fill="#3d63b8" stroke="#1a1410" stroke-width="1"/><ellipse cx="46" cy="91" rx="3.6" ry="3.1" fill="#e9a83a" stroke="#1a1410" stroke-width="1"/><ellipse cx="54" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="62" cy="91" rx="3.6" ry="3.1" fill="#7a2a6a" stroke="#1a1410" stroke-width="1"/><ellipse cx="70" cy="91" rx="3.6" ry="3.1" fill="#f6efe0" stroke="#1a1410" stroke-width="1"/><ellipse cx="78" cy="91" rx="3.6" ry="3.1" fill="#c0392b" stroke="#1a1410" stroke-width="1"/><ellipse cx="86" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="94" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/><ellipse cx="102" cy="91" rx="3.6" ry="3.1" fill="#f2c94c" stroke="#1a1410" stroke-width="1"/></g><path d="M60 34 C 58 18 64 6 72 2" stroke="#e9b33e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60 34 C 54 20 46 12 38 10" stroke="#d39a26" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>`;
   const inicio = () => `<div class="ab">${T.lienzo}
     <div class="cx ti-logo">${glyph}<div><div class="ti-logo__n">Corazón de Maíz</div><div class="ti-logo__t">Tlaxcallan · año 1-Ácatl · 1519 · llegan extranjeros por el oriente</div></div></div>
-    <div class="cx ti-menu"><div class="cb cb--on" data-sel="cb"><span>Continuar</span><small>Día 3 · veintena Tlacaxipehualiztli · ${M.kit.bean} 900 300</small></div>
+    <div class="cx ti-menu"><div class="cb cb--on" data-sel="cb"><span>Continuar</span><small>Día 3-Calli · ${M.kit.bean} 900 300</small></div>
       <div class="cb" data-sel="cb"><span>Nueva partida</span><small>Hereda la milpa de tu padre</small></div>
       <div class="cb" data-sel="cb"><span>Opciones</span><small>Volumen, idioma y mensajes</small></div></div>
     <div class="ti-foot">Señorío de Tlaxcallan · Tepetícpac · Ocotelulco · Tizatlán · Quiahuiztlán · en guerra con Tenochtitlan</div></div>`;
