@@ -18,6 +18,7 @@
     // Props behind the body.
     if (p.prop === 'lanza') g += `<path d="M112 196 V14" stroke="${K}" stroke-width="6"/><path d="M112 196 V14" stroke="#b07a3a" stroke-width="3"/><path d="M112 0 l-7 18 h14Z" fill="#3a3a4a" ${ink}/><path d="M106 26 l-6 8 M118 26 l6 8" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>`;
     if (p.prop === 'arco') g += `<path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="${K}" stroke-width="6"/><path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="#9a6438" stroke-width="3"/><path d="M112 70 V190" stroke="${K}" stroke-width="1.2"/>`;
+    if (p.prop === 'baston') g += `<path d="M112 196 V28" stroke="${K}" stroke-width="6"/><path d="M112 196 V28" stroke="#b07a3a" stroke-width="3"/>${['#2f8f8a', '#3fa37a', '#c0392b'].map((c, i) => `<path transform="rotate(${-24 + i * 24} 112 30)" d="M112 30 C 107 18 108 6 112 0 C 116 6 117 18 112 30Z" fill="${c}" ${ink}/>`).join('')}<circle cx="112" cy="31" r="4" fill="#e9b33e" ${ink}/>`;
     // Feathers behind the head.
     if (p.head === 'plumas') g += ['#2f8f8a', '#3fa37a', '#7cb04a', '#e9b33e', '#c0392b', '#3fa37a', '#2f8f8a'].map((c, i) => `<g transform="rotate(${-78 + i * 15} 46 26)"><path d="M46 26 C 38 8 40 -18 46 -32 C 52 -18 54 8 46 26Z" fill="${c}" ${ink}/><path d="M46 20 V-24" stroke="${K}" stroke-width="1.2"/><circle cx="46" cy="-22" r="3.4" fill="#f6efe0" stroke="${K}" stroke-width="1.4"/></g>`).join('');
     // Hair mass behind.
@@ -31,11 +32,21 @@
     g += `<path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${K}" stroke-width="12" stroke-linecap="round"/><path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${sh(sk, .85)}" stroke-width="7.4" stroke-linecap="round"/>`;
     // Legs and feet in profile, stepping forward.
     const foot = x => `<path d="M${x} 182 h9 v6 h14 c 5 0 5 8 0 8 h-25Z" fill="${sk}" ${ink}/><path d="M${x} 190 H${x + 26}" stroke="#7a4a24" stroke-width="3.4"/><path d="M${x + 4} 182 v6" stroke="#7a4a24" stroke-width="3"/>`;
-    g += foot(42) + foot(74);
-    // Cueitl.
-    g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
+    if (p.legs) {
+      // Tilmatli: cape knotted on the front shoulder, hanging behind to the knees.
+      if (p.style === 'tilma') g += `<path d="M${46 - bw} 86 C ${28 - bw} 112 ${22 - bw} 150 ${26 - bw} 174 L62 174 L68 94Z" fill="${top}" ${ink}/><path d="M${27 - bw} 162 L62 162 L62 174 L${26 - bw} 174Z" fill="${trim}" ${ink}/>${fret(29 - bw, 62, 163, 10, '#f3ede2')}`;
+      g += `<path d="M48 132 L46 186 L57 186 L61 132Z" fill="${sh(sk, .86)}" ${ink}/><path d="M70 132 L75 186 L86 186 L83 132Z" fill="${sk}" ${ink}/>`;
+      g += foot(42) + foot(74);
+      // Maxtlatl: loincloth band with the front end hanging.
+      g += `<path d="M${40 - bw} 126 H${88 + bw} L${88 + bw} 140 H${40 - bw}Z" fill="#f3ede2" ${ink}/><path d="M73 138 L90 138 L88 168 L75 168Z" fill="#f3ede2" ${ink}/><path d="M75 160 H88" stroke="${trim}" stroke-width="4"/>`;
+    } else {
+      g += foot(42) + foot(74);
+      // Cueitl.
+      g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
+    }
     // Torso.
     if (p.style === 'quech') g += `<path d="M${42 - bw} 88 H${86 + bw} L${90 + bw} 132 H${38 - bw}Z" fill="#f3ede2" ${ink}/><path d="M${34 - bw} 88 H${94 + bw} L64 146Z" fill="${top}" ${ink}/><path d="M${42 - bw} 94 L64 136 L${86 + bw} 94" fill="none" stroke="${trim}" stroke-width="4"/>${Array.from({ length: 7 }, (_, i) => `<path d="M${58 + i * 2} 142 v8" stroke="${trim}" stroke-width="2"/>`).join('')}`;
+    else if (p.style === 'tilma') g += `<path d="M${40 - bw} 86 H${88 + bw} L${88 + bw} 128 H${40 - bw}Z" fill="${sk}" ${ink}/><path d="M60 104 C 66 110 76 110 82 104" stroke="${sh(sk, .78)}" stroke-width="2" fill="none"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${K}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${top}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="86" cy="94" r="5.5" fill="${top}" ${ink}/><path d="M84 98 L80 112 M88 98 L90 112" stroke="${K}" stroke-width="2.4"/>`;
     else if (p.style === 'armadura') { g += `<path d="M${40 - bw} 86 H${88 + bw} L${90 + bw} 136 H${38 - bw}Z" fill="${top}" ${ink}/>`; for (let y = 94; y < 134; y += 8) g += `<path d="M${40 - bw} ${y} H${88 + bw}" stroke="${K}" stroke-width="1.2"/>`; for (let x = 46 - bw; x < 88 + bw; x += 8) g += `<path d="M${x} 86 V136" stroke="${K}" stroke-width=".8"/>`; g += `<rect x="${38 - bw}" y="130" width="${52 + 2 * bw}" height="8" fill="${trim}" ${ink}/>`; }
     else { g += `<path d="M${38 - bw} 86 H${90 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${top}" ${ink}/><path d="M54 86 V100 H74 V86" fill="none" stroke="${trim}" stroke-width="3.4"/><path d="M${35 - bw} 126 H${93 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${p.band2 || trim}" ${ink}/>${fret(37 - bw, 93 + bw, 127, 10, p.hem2 || '#f3ede2')}`; if (p.stars) g += [[50, 112], [78, 108]].map(([x, y]) => `<path d="M${x} ${y - 4} l1.4 2.6 l2.6 1.4 l-2.6 1.4 l-1.4 2.6 l-1.4 -2.6 l-2.6 -1.4 l2.6 -1.4Z" fill="#f2c94c" stroke="${K}" stroke-width=".8"/>`).join(''); }
     if (p.jade) g += [52, 58, 64, 70, 76].map((x, i) => `<circle cx="${x}" cy="${90 + [0, 3, 4, 3, 0][i]}" r="3.4" fill="#3fa37a" ${ink}/>`).join('');

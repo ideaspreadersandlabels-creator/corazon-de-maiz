@@ -137,7 +137,7 @@
     { id: 'iyari', name: 'Iyari', role: 'Apicultora', line: 'Cuida abejas meliponas sin aguijón.', skin: '#a8683a', hair: '#2a1a14', hairStyle: 'rizos', build: 2, style: 'quech', top: '#c0392b', trim: '#f2c94c', skirt: '#6a2a1e', prop: 'panal' },
     { id: 'ayelen', name: 'Ayelen', role: 'Floricultora', line: 'Siembra cempasúchil para la ofrenda.', skin: '#b07a48', hair: '#1a1210', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e9b33e', trim: '#c0392b', band2: '#c0392b', skirt: '#a8522e', head: 'cempa', prop: 'flores' },
   ];
-  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesina de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
+  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesino de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'tilma', legs: true, top: '#efe6d2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
 
   window.TlaxChars = { chibi, CAST, PLAYER };
 })();

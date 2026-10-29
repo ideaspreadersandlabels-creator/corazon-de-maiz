@@ -16,7 +16,7 @@
   const inicio = () => `<div class="ab">${T.lienzo}
     <div class="cx ti-logo">${glyph}<div><div class="ti-logo__n">Corazón de Maíz</div><div class="ti-logo__t">Tlaxcallan · año 1-Ácatl · 1519 · llegan extranjeros por el oriente</div></div></div>
     <div class="cx ti-menu"><div class="cb cb--on" data-sel="cb"><span>Continuar</span><small>Día 3 · veintena Tlacaxipehualiztli · ${M.kit.bean} 900 300</small></div>
-      <div class="cb" data-sel="cb"><span>Nueva partida</span><small>Hereda la milpa de tu abuela</small></div>
+      <div class="cb" data-sel="cb"><span>Nueva partida</span><small>Hereda la milpa de tu padre</small></div>
       <div class="cb" data-sel="cb"><span>Opciones</span><small>Volumen, idioma y mensajes</small></div></div>
     <div class="ti-foot">Señorío de Tlaxcallan · Tepetícpac · Ocotelulco · Tizatlán · Quiahuiztlán · en guerra con Tenochtitlan</div></div>`;
   const board = (html, cap) => `<figure class="board"><div class="fit">${html}</div><figcaption>${cap}</figcaption></figure>`;

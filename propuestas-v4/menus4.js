@@ -41,7 +41,7 @@
     return `<div class="ab">${T.lienzo}
       ${page('logo', `<svg class="glyph" viewBox="0 0 120 110"><path d="M14 104 C 14 60 34 30 60 30 C 86 30 106 60 106 104 Z" fill="#7aa45a" ${O}/><path d="M14 92 H106 V104 H14Z" fill="#e9b33e" ${O}/><ellipse cx="60" cy="30" rx="26" ry="7" fill="#f3e2b8" ${O}/><path d="M30 10 C 34 6 50 8 56 22 L48 24 C 44 18 38 16 32 18 Z" fill="#c48a5a" ${O}/><path d="M90 50 C 86 54 70 52 64 38 L72 36 C 76 42 82 44 88 42 Z" fill="#c48a5a" ${O}/></svg>
         <div><div class="logo__n">Tlaxcallan</div><div class="logo__t">${calli} Año 1-Ácatl · 1519 · llegan extranjeros por el oriente</div></div>`)}
-      ${page('tmenu', `<div class="cb cb--on" data-sel="cb"><span>Continuar</span><small>Día 3-Calli · ${bean} 900 300</small></div><div class="cb" data-sel="cb"><span>Nueva partida</span><small>Hereda la milpa de tu abuela</small></div><div class="cb" data-sel="cb"><span>Opciones</span><small>Volumen, idioma y mensajes</small></div>`)}
+      ${page('tmenu', `<div class="cb cb--on" data-sel="cb"><span>Continuar</span><small>Día 3-Calli · ${bean} 900 300</small></div><div class="cb" data-sel="cb"><span>Nueva partida</span><small>Hereda la milpa de tu padre</small></div><div class="cb" data-sel="cb"><span>Opciones</span><small>Volumen, idioma y mensajes</small></div>`)}
       <div class="foot">Señorío de Tlaxcallan · Tepetícpac · Ocotelulco · Tizatlán · Quiahuiztlán · en guerra con Tenochtitlan</div></div>`;
   }
 

@@ -8,71 +8,161 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500;1,600;1,700&family=Alegreya+Sans:wght@500;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
 <style>
-/* Corazón de Maíz · intro. 960×540 stage scaled to the window; Talavera caption panel. */
+/* Corazón de Maíz · intro. 960×540 stage scaled to the window. Chapters are
+   stacks of camera planes (parallax by --d); every animation's delay is in
+   chapter seconds and intro.js pins them to the song. */
 :root { --cob: #1b3a8a; --och: #d39a26; --navy: #16306e; }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: #0d1124; overflow: hidden; font-family: 'Alegreya Sans', system-ui, sans-serif; }
-#stage { position: fixed; left: 50%; top: 50%; width: 960px; height: 540px; overflow: hidden; transform-origin: center; background: #f6f1e6; cursor: pointer; user-select: none; }
-.layer { position: absolute; inset: 0; opacity: 0; transition: opacity .9s ease; }
-.layer.on { opacity: 1; }
-.mural { position: absolute; inset: 0; width: 100%; height: 100%; transform: scale(1.07); transition: transform 11s linear; }
-.layer.on .mural { transform: scale(1) translateX(var(--pan, 0)); }
-.fig { position: absolute; transform: translateX(-50%) translateY(14px); opacity: 0; transition: opacity 1s ease .5s, transform 1.4s ease .5s; }
-.layer.on .fig { opacity: 1; transform: translateX(-50%); }
-.fig svg { height: 100%; width: auto; display: block; filter: drop-shadow(0 4px 3px rgba(20,20,40,.25)); }
-.fig--paint svg { filter: url(#cobalt); }
-.fig--flip svg { transform: scaleX(-1); }
+#stage { position: fixed; left: 50%; top: 50%; width: 960px; height: 540px; overflow: hidden; transform-origin: center; background: #f6f1e6; cursor: pointer; user-select: none; --beat: 0; }
 
-/* Talavera panel (same as the game menus). */
+/* ---------- Chapters, camera, tile glaze ---------- */
+.chaps, .chap, .plane, .ui { position: absolute; inset: 0; }
+/* On drum-heavy chapters the whole picture pumps a little on every beat. */
+.chaps { scale: calc(1 + var(--beat) * var(--punch, 0)); }
+.chap { opacity: 0; transition: opacity .9s ease; }
+.chap.on { opacity: 1; }
+.chap.cut { transition: none; }
+.plane { transform-origin: var(--ox) var(--oy); animation: cam var(--dur) linear 0s 1 normal both; will-change: transform; }
+@keyframes cam {
+  from { transform: translateX(calc(var(--d) * var(--px0) * 1px)) scale(calc(1 + var(--d) * var(--z0))); }
+  to { transform: translateX(calc(var(--d) * var(--px1) * 1px)) scale(calc(1 + var(--d) * var(--z1))); }
+}
+/* The mural is painted on glazed tiles: grout lines and a soft glaze over every scene. */
+.chaps::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.28), rgba(255,255,255,0) 48%, rgba(90,74,48,.06)) 0 0 / 60px 60px,
+    linear-gradient(90deg, rgba(201,191,168,.95) 1.5px, transparent 1.5px) 0 0 / 60px 60px,
+    linear-gradient(rgba(201,191,168,.95) 1.5px, transparent 1.5px) 0 0 / 60px 60px; }
+.it { position: absolute; }
+.it > img { display: block; width: 100%; height: 100%; }
+.fig svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.figi, .flip { width: 100%; height: 100%; transform-origin: 50% 100%; }
+.flip { transform: scaleX(-1); }
+.paint svg { filter: url(#cobalt); }
+.dim svg { filter: brightness(.8) saturate(.85); }
+.pulse { scale: calc(1 + var(--beat) * .045); }
+.heron img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ff { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle, #fff6c8 0 30%, rgba(242,201,76,.85) 42%, rgba(242,201,76,0) 70%); box-shadow: 0 0 12px 4px rgba(242,201,76,.4); }
+
+/* ---------- Motion vocabulary ---------- */
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes fadeOut { from { opacity: 1 } to { opacity: 0 } }
+@keyframes popIn { from { opacity: 0; transform: scale(.3) } to { opacity: 1; transform: scale(1) } }
+@keyframes popOut { to { opacity: 0; transform: scale(.6) } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(26px) } to { opacity: 1; transform: none } }
+@keyframes twinkle { from { opacity: .5 } to { opacity: 1 } }
+@keyframes sway { from { transform: skewX(-1.6deg) } to { transform: skewX(1.6deg) } }
+@keyframes gust { 0% { transform: skewX(0) } 35% { transform: skewX(-9deg) } 70% { transform: skewX(3deg) } 100% { transform: skewX(0) } }
+@keyframes drift { from { transform: translateX(0) } to { transform: translateX(var(--dx)) } }
+@keyframes flow { from { transform: translateX(0) } to { transform: translateX(-240px) } }
+@keyframes bob { from { transform: translateY(0) } to { transform: translateY(-3px) } }
+@keyframes rock { from { transform: rotate(-1.4deg) translateY(1px) } to { transform: rotate(1.4deg) translateY(-3px) } }
+@keyframes flick { from { transform: scale(1.06, .9) } to { transform: scale(.94, 1.1) } }
+@keyframes smoke { 0% { transform: translateY(6px) scale(.8); opacity: 0 } 25% { opacity: .9 } 100% { transform: translateY(-28px) scale(1.25); opacity: 0 } }
+@keyframes flapA { 0%, 49.9% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes flapB { 0%, 49.9% { opacity: 0 } 50%, 100% { opacity: 1 } }
+@keyframes fly { from { transform: translate(0, 0) } to { transform: translate(var(--dx), var(--dy)) } }
+@keyframes sink { from { transform: translateY(0) } to { transform: translateY(var(--dy)) } }
+@keyframes sunRise { from { transform: translateY(0) } to { transform: translateY(var(--dy)) } }
+@keyframes rise { from { transform: translateY(var(--dy)) } to { transform: none } }
+@keyframes walkIn { from { transform: translateX(var(--dx)) } to { transform: none } }
+@keyframes step { from { transform: translateY(0) } to { transform: translateY(-5px) } }
+@keyframes hop3 { 0%, 33%, 66%, 100% { transform: translateY(0) } 12%, 45%, 78% { transform: translateY(-14px) } }
+@keyframes breathe { from { transform: scaleY(1) } to { transform: scaleY(1.012) } }
+@keyframes wave { from { transform: rotate(-2.5deg) } to { transform: rotate(2.5deg) } }
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes vir { 0% { opacity: 0; transform: scale(.4) } 30% { opacity: 1 } 100% { opacity: 0; transform: translate(6px, -10px) scale(1.3) } }
+@keyframes grow { from { opacity: 0; transform: scaleY(0) } to { opacity: 1; transform: none } }
+@keyframes xdraw { from { stroke-dashoffset: 120 } to { stroke-dashoffset: 0 } }
+@keyframes shipIn { from { opacity: 0; transform: translateX(70px) } to { opacity: 1; transform: none } }
+@keyframes ffly { 0% { transform: translate(0, 0) } 50% { transform: translate(9px, -12px) } 100% { transform: translate(-7px, 5px) } }
+@keyframes kinIn { from { opacity: 0; transform: translateX(-50%) scale(1.7) } to { opacity: 1; transform: translateX(-50%) scale(1) } }
+@keyframes kinOut { to { opacity: 0; transform: translateX(-50%) translateY(-18px) } }
+@keyframes titleIn { from { opacity: .1; clip-path: inset(-30px 50% -40px 50%) } to { opacity: 1; clip-path: inset(-30px -40px -40px -40px) } }
+@keyframes shine { from { background-position: 100% 0 } to { background-position: 0 0 } }
+@keyframes kpop { from { opacity: 0; transform: scale(0) } to { opacity: 1; transform: scale(1) } }
+@keyframes leaf { from { opacity: 0; transform: scale(.15) } to { opacity: 1; transform: scale(1) } }
+@keyframes flipIn { from { opacity: 0; transform: perspective(700px) rotateY(90deg) } to { opacity: 1; transform: perspective(700px) rotateY(0) } }
+@keyframes flipOut { to { opacity: 0; transform: perspective(700px) rotateY(-90deg) } }
+
+/* ---------- Story elements ---------- */
+.heart { display: block; width: 100%; overflow: visible; }
+.heart .k, .heart .hb { transform-box: fill-box; transform-origin: center; }
+.heart .lf { transform-box: fill-box; transform-origin: 50% 100%; }
+.tc { position: absolute; left: 50%; display: flex; flex-direction: column; align-items: center; text-align: center; transform: translateX(-50%); white-space: nowrap; }
+.tc__h { width: 170px; filter: drop-shadow(0 6px 14px rgba(10, 20, 60, .45)); }
+.tc__n { padding: 4px 14px; font: 700 66px/1 'Cinzel', serif; letter-spacing: 1px; filter: drop-shadow(0 3px 0 #14285e) drop-shadow(0 8px 12px rgba(10, 20, 60, .5)); }
+/* The shine sweeps through the letters' own fill, so it never shows as a box. */
+.tc__w { display: inline-block; color: transparent; -webkit-text-stroke: 1px #d39a26; background: linear-gradient(100deg, #fbf3df 0 40%, #fffef8 47%, #ffe39a 50%, #fffef8 53%, #fbf3df 60% 100%) 100% 0 / 300% 100% no-repeat; -webkit-background-clip: text; background-clip: text; }
+.tc__s { margin-top: 6px; font: italic 600 18px 'Alegreya', serif; color: #fbf3df; text-shadow: 0 2px 4px rgba(10, 20, 60, .8); }
+.tc--hero { top: 64px; }
+.tc--end { top: 10px; }
+.tc--end .tc__h { width: 92px; }
+.tc--end .tc__n { font-size: 48px; }
+.tc--end .tc__s { font-size: 15px; margin-top: 2px; color: #16306e; font-weight: 700; text-shadow: 0 0 6px #fff, 0 0 3px #fff, 0 0 1px #fff; }
+.kin { position: absolute; left: 50%; top: 88px; display: flex; align-items: center; gap: 14px; white-space: nowrap; transform: translateX(-50%); font: 700 44px/1 'Cinzel', serif; color: #fbf3df; -webkit-text-stroke: 1px #d39a26; text-shadow: 0 3px 0 #14285e, 0 8px 20px rgba(10, 20, 60, .5); }
+.kin__ic svg { display: block; width: 66px; height: 66px; filter: drop-shadow(0 3px 0 #14285e); }
+.rdw { width: 92px; height: 92px; }
+.rd { position: relative; width: 92px; height: 92px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 10px solid transparent;
+  background: radial-gradient(circle at 40% 35%, #fff, #f1ead8) padding-box, var(--deco) 0 0 / 18px border-box; box-shadow: 0 0 0 2px #6a4a2e, 0 6px 12px rgba(0, 0, 0, .35), inset 0 0 0 2px var(--cob); }
+.rd > svg { width: 54px; height: 54px; }
+.rd__x { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; }
+.rd__x path { fill: none; stroke: #b8402e; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 120; }
+.ft { top: 132px; width: 132px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.ft__t { width: 132px; height: 132px; display: flex; align-items: center; justify-content: center; border: 14px solid transparent; border-radius: 4px;
+  background: radial-gradient(circle at 40% 35%, #fff, #f1ead8) padding-box, var(--deco) -1px -1px / 18px border-box;
+  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 4px #f8f2e4, inset 0 0 0 5px var(--och), 0 10px 18px rgba(0, 0, 0, .35); }
+.ft__t svg { width: 76px; height: 76px; }
+.ft__l { padding: 4px 10px; border-radius: 3px; font: italic 700 16px/1.15 'Alegreya', serif; color: #fff; text-align: center; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); background: var(--cobalt) 0 0 / 120px; box-shadow: inset 0 0 0 1.5px #0f2458, inset 0 0 0 3px var(--och), 0 3px 6px rgba(0, 0, 0, .3); }
+
+/* ---------- Tile wipe and jump flash ---------- */
+.wipe { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-columns: repeat(16, 60px); grid-template-rows: repeat(9, 60px); pointer-events: none; }
+.wipe i { background: var(--plain); background-size: 120px 120px; box-shadow: inset 0 0 0 1px #c9bfa8; transform: scale(0); }
+.wipe.go i { animation: wIn .42s cubic-bezier(.3, 0, .3, 1) calc(var(--i) * 13ms) both, wOut .42s cubic-bezier(.7, 0, .7, 1) calc(760ms + var(--i) * 13ms) forwards; }
+@keyframes wIn { from { transform: scale(0) rotate(-45deg) } to { transform: scale(1.02) rotate(0) } }
+@keyframes wOut { from { transform: scale(1.02) } to { transform: scale(0) rotate(45deg) } }
+.flash { position: absolute; inset: 0; z-index: 3; background: #f6f1e6; opacity: 0; pointer-events: none; }
+
+/* ---------- Talavera panel (same as the game menus) ---------- */
 .cx { position: absolute; border: 20px solid transparent; border-radius: 4px; color: var(--navy);
   background: linear-gradient(rgba(255,252,245,.86), rgba(255,250,240,.9)) padding-box, var(--plain) 0 0 / 120px padding-box, var(--deco) -1px -1px / 20px border-box;
-  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 5px #f8f2e4, inset 0 0 0 7px var(--och), 0 14px 24px rgba(0,0,0,.45); }
-.cap { left: 70px; right: 70px; bottom: 34px; min-height: 104px; padding: 12px 22px 10px; transition: opacity .4s; }
-.cap__y { font: italic 700 14px 'Alegreya', serif; color: #8a5a14; letter-spacing: .5px; }
-.cap__t { margin-top: 2px; font: 500 20px/1.35 'Alegreya', serif; text-wrap: pretty; min-height: 54px; }
+  box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, inset 0 0 0 2px var(--cob), inset 0 0 0 5px #f8f2e4, inset 0 0 0 7px var(--och), 0 14px 24px rgba(0, 0, 0, .45); }
+.cap { left: 60px; right: 60px; bottom: 8px; z-index: 4; border-width: 16px; padding: 6px 18px; transition: opacity .5s, transform .5s; }
+.cap.hide { opacity: 0; transform: translateY(18px); pointer-events: none; }
+.cap__y { font: italic 700 13px 'Alegreya', serif; color: #8a5a14; letter-spacing: .5px; }
+.cap__t { margin-top: 2px; min-height: 47px; font: 500 18px/1.3 'Alegreya', serif; text-wrap: pretty; }
 .cap__t i { font-style: normal; opacity: 0; }
-.cap__more { position: absolute; right: 12px; bottom: 6px; color: var(--cob); font-size: 14px; animation: bob 1s ease-in-out infinite alternate; opacity: 0; }
+.cap__more { position: absolute; right: 12px; bottom: 6px; color: var(--cob); font-size: 14px; opacity: 0; animation: nudge 1s ease-in-out infinite alternate; }
 .cap.done .cap__more { opacity: 1; }
-@keyframes bob { to { transform: translateY(3px); } }
-.dots { position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; gap: 6px; }
-.dots i { width: 12px; height: 12px; border-radius: 2px; background: #f6f1e6; box-shadow: inset 0 0 0 1.5px var(--cob), 0 1px 0 rgba(0,0,0,.3); transition: background .3s; }
-.dots i.on { background: var(--cobalt) 0 0 / 40px; box-shadow: inset 0 0 0 1.5px #0f2458, inset 0 0 0 3px var(--och); }
-.keys { position: absolute; right: 14px; bottom: 10px; display: flex; gap: 12px; font-size: 13px; color: #fff; text-shadow: 0 1px 3px #000; }
-kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px; font: 700 12px 'Alegreya Sans', sans-serif; color: var(--navy); text-align: center; border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #8a7a60; text-shadow: none; }
-.skip { position: absolute; right: 14px; top: 12px; }
-
-/* Title card on the last scene. */
-.title { left: 50%; top: 24px; width: 560px; display: flex; gap: 14px; align-items: center; padding: 8px 18px; transform: translateX(-50%) scale(.92); opacity: 0; transition: opacity 1.2s ease 1.2s, transform 1.2s ease 1.2s; }
-.layer.on .title { opacity: 1; transform: translateX(-50%); }
-.title svg { width: 64px; flex: none; }
-.title__n { font: 700 38px/1 'Cinzel', serif; color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
-.title__t { font: italic 600 14px 'Alegreya', serif; color: #8a5a14; margin-top: 4px; }
-.start { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); padding: 8px 22px; border-radius: 3px; font: italic 700 18px 'Alegreya', serif; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.5); background: var(--cobalt) 0 0 / 120px; box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 6px 12px rgba(0,0,0,.4); opacity: 0; transition: opacity .6s; }
-.start.on { opacity: 1; animation: glow 1.6s ease-in-out infinite alternate; }
-@keyframes glow { to { box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255,255,255,.18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 0 22px rgba(211,154,38,.8); } }
-/* Compact caption at the very bottom so the mural and figures stay visible. */
-.cap { left: 60px; right: 60px; bottom: 8px; min-height: 0; border-width: 16px; padding: 6px 18px 6px; }
-.cap__y { font-size: 13px; }
-.cap__t { font-size: 18px; line-height: 1.3; min-height: 47px; }
-.dots { top: 14px; bottom: auto; justify-content: flex-start; left: 16px; }
-.keys { top: 12px; bottom: auto; }
-.start { bottom: 132px; }
-.title { top: 18px; }
-
-/* Caption header: place/year on the left, the line being sung on the right. */
-.cap__h { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-.cap__l { font: italic 600 13px 'Alegreya', serif; color: var(--cob); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .9; }
-.mute { all: unset; cursor: pointer; display: inline-flex; align-items: center; color: #fff; text-shadow: 0 1px 3px #000; font-size: 13px; }
+@keyframes nudge { to { transform: translateY(3px) } }
+.lyr { position: absolute; left: 50%; top: 11px; z-index: 4; max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transform: translateX(-50%); font: italic 600 14px 'Alegreya', serif; color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .85); opacity: 0; transition: opacity .3s; }
+.lyr.on { opacity: 1; }
+.dots { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; gap: 6px; }
+.dots button { all: unset; cursor: pointer; width: 12px; height: 12px; border-radius: 2px; background: #f6f1e6; box-shadow: inset 0 0 0 1.5px var(--cob), 0 1px 0 rgba(0, 0, 0, .3); transition: background .3s; }
+.dots button.on { background: var(--cobalt) 0 0 / 40px; box-shadow: inset 0 0 0 1.5px #0f2458, inset 0 0 0 3px var(--och); scale: calc(1 + var(--beat) * .25); }
+.dots button:focus-visible { outline: 2px solid var(--och); outline-offset: 2px; }
+.keys { position: absolute; right: 14px; top: 10px; z-index: 4; display: flex; gap: 12px; font-size: 13px; color: #fff; text-shadow: 0 1px 3px #000; }
+kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px; font: 700 12px 'Alegreya Sans', sans-serif; color: var(--navy); text-align: center; text-shadow: none; border-radius: 3px; background: var(--plain) 0 0 / 60px; box-shadow: inset 0 0 0 1.5px var(--cob), 0 2px 0 #8a7a60; }
+.mute { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
 .mute[aria-pressed="true"] span { text-decoration: line-through; opacity: .8; }
+.start { all: unset; position: absolute; left: 50%; top: 196px; z-index: 4; padding: 8px 24px; border-radius: 3px; cursor: pointer; transform: translateX(-50%); font: italic 700 19px 'Alegreya', serif; color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+  background: var(--cobalt) 0 0 / 120px; box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255, 255, 255, .18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 6px 12px rgba(0, 0, 0, .4); opacity: 0; pointer-events: none; transition: opacity .6s; }
+.start.on { opacity: 1; pointer-events: auto; animation: glow 1.6s ease-in-out infinite alternate; }
+@keyframes glow { to { box-shadow: inset 0 0 0 2px #0f2458, inset 0 0 0 4px rgba(255, 255, 255, .18), inset 0 0 0 5px var(--och), 0 3px 0 #0b1a44, 0 0 22px rgba(211, 154, 38, .85); } }
 
-/* Start cover: browsers only allow sound after a click or key press. */
-.cover { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; background: rgba(14,22,52,.55); transition: opacity .8s; }
+/* ---------- Start cover (browsers only allow sound after a click or key) ---------- */
+.cover { position: absolute; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; background: rgba(14, 22, 52, .5); transition: opacity .8s; }
 .cover.off { opacity: 0; pointer-events: none; }
 .cover__p { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 40px 16px; text-align: center; }
-.cover__p svg { width: 96px; }
-.cover__n { font: 700 42px/1 'Cinzel', serif; color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27,58,138,.25); }
-.cover__t { margin-top: 6px; font: italic 700 18px 'Alegreya', serif; animation: bob 1.1s ease-in-out infinite alternate; }
+.cover__p .heart { width: 96px; }
+.cover__n { font: 700 42px/1 'Cinzel', serif; color: var(--cob); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(27, 58, 138, .25); }
+.cover__t { margin-top: 6px; font: italic 700 18px 'Alegreya', serif; animation: nudge 1.1s ease-in-out infinite alternate; }
 .cover__s { font: 500 13px 'Alegreya Sans', sans-serif; color: #8a5a14; }
+
+@media (prefers-reduced-motion: reduce) {
+  .plane { animation: none !important; }
+  .pulse, .dots button.on { scale: 1; }
+}
 </style>
 </head>
 <body>
@@ -220,7 +310,7 @@ kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px;
     { id: 'iyari', name: 'Iyari', role: 'Apicultora', line: 'Cuida abejas meliponas sin aguijón.', skin: '#a8683a', hair: '#2a1a14', hairStyle: 'rizos', build: 2, style: 'quech', top: '#c0392b', trim: '#f2c94c', skirt: '#6a2a1e', prop: 'panal' },
     { id: 'ayelen', name: 'Ayelen', role: 'Floricultora', line: 'Siembra cempasúchil para la ofrenda.', skin: '#b07a48', hair: '#1a1210', hairStyle: 'rizos', build: 2, style: 'huipil', top: '#e9b33e', trim: '#c0392b', band2: '#c0392b', skirt: '#a8522e', head: 'cempa', prop: 'flores' },
   ];
-  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesina de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'huipil', top: '#f3ede2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
+  const PLAYER = { id: 'tu', name: 'Tú', role: 'Campesino de la milpa', skin: '#a8683a', hair: '#1a1210', hairStyle: 'largo', style: 'tilma', legs: true, top: '#efe6d2', trim: '#c0392b', skirt: '#8a5a34', head: 'pluma', band: '#c0392b', acc2: '#e07a28' };
 
   window.TlaxChars = { chibi, CAST, PLAYER };
 })();
@@ -428,6 +518,7 @@ kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px;
     // Props behind the body.
     if (p.prop === 'lanza') g += `<path d="M112 196 V14" stroke="${K}" stroke-width="6"/><path d="M112 196 V14" stroke="#b07a3a" stroke-width="3"/><path d="M112 0 l-7 18 h14Z" fill="#3a3a4a" ${ink}/><path d="M106 26 l-6 8 M118 26 l6 8" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>`;
     if (p.prop === 'arco') g += `<path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="${K}" stroke-width="6"/><path d="M112 70 C 134 100 134 160 112 190" fill="none" stroke="#9a6438" stroke-width="3"/><path d="M112 70 V190" stroke="${K}" stroke-width="1.2"/>`;
+    if (p.prop === 'baston') g += `<path d="M112 196 V28" stroke="${K}" stroke-width="6"/><path d="M112 196 V28" stroke="#b07a3a" stroke-width="3"/>${['#2f8f8a', '#3fa37a', '#c0392b'].map((c, i) => `<path transform="rotate(${-24 + i * 24} 112 30)" d="M112 30 C 107 18 108 6 112 0 C 116 6 117 18 112 30Z" fill="${c}" ${ink}/>`).join('')}<circle cx="112" cy="31" r="4" fill="#e9b33e" ${ink}/>`;
     // Feathers behind the head.
     if (p.head === 'plumas') g += ['#2f8f8a', '#3fa37a', '#7cb04a', '#e9b33e', '#c0392b', '#3fa37a', '#2f8f8a'].map((c, i) => `<g transform="rotate(${-78 + i * 15} 46 26)"><path d="M46 26 C 38 8 40 -18 46 -32 C 52 -18 54 8 46 26Z" fill="${c}" ${ink}/><path d="M46 20 V-24" stroke="${K}" stroke-width="1.2"/><circle cx="46" cy="-22" r="3.4" fill="#f6efe0" stroke="${K}" stroke-width="1.4"/></g>`).join('');
     // Hair mass behind.
@@ -441,11 +532,21 @@ kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px;
     g += `<path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${K}" stroke-width="12" stroke-linecap="round"/><path d="M44 96 C 36 112 36 124 40 134" fill="none" stroke="${sh(sk, .85)}" stroke-width="7.4" stroke-linecap="round"/>`;
     // Legs and feet in profile, stepping forward.
     const foot = x => `<path d="M${x} 182 h9 v6 h14 c 5 0 5 8 0 8 h-25Z" fill="${sk}" ${ink}/><path d="M${x} 190 H${x + 26}" stroke="#7a4a24" stroke-width="3.4"/><path d="M${x + 4} 182 v6" stroke="#7a4a24" stroke-width="3"/>`;
-    g += foot(42) + foot(74);
-    // Cueitl.
-    g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
+    if (p.legs) {
+      // Tilmatli: cape knotted on the front shoulder, hanging behind to the knees.
+      if (p.style === 'tilma') g += `<path d="M${46 - bw} 86 C ${28 - bw} 112 ${22 - bw} 150 ${26 - bw} 174 L62 174 L68 94Z" fill="${top}" ${ink}/><path d="M${27 - bw} 162 L62 162 L62 174 L${26 - bw} 174Z" fill="${trim}" ${ink}/>${fret(29 - bw, 62, 163, 10, '#f3ede2')}`;
+      g += `<path d="M48 132 L46 186 L57 186 L61 132Z" fill="${sh(sk, .86)}" ${ink}/><path d="M70 132 L75 186 L86 186 L83 132Z" fill="${sk}" ${ink}/>`;
+      g += foot(42) + foot(74);
+      // Maxtlatl: loincloth band with the front end hanging.
+      g += `<path d="M${40 - bw} 126 H${88 + bw} L${88 + bw} 140 H${40 - bw}Z" fill="#f3ede2" ${ink}/><path d="M73 138 L90 138 L88 168 L75 168Z" fill="#f3ede2" ${ink}/><path d="M75 160 H88" stroke="${trim}" stroke-width="4"/>`;
+    } else {
+      g += foot(42) + foot(74);
+      // Cueitl.
+      g += `<path d="M${42 - bw} 132 H${88 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="${skirt}" ${ink}/><path d="M${35 - bw} 170 H${95 + bw} L${96 + bw} 184 H${34 - bw}Z" fill="#f3ede2" ${ink}/>${fret(37 - bw, 95 + bw, 171, 12, trim)}`;
+    }
     // Torso.
     if (p.style === 'quech') g += `<path d="M${42 - bw} 88 H${86 + bw} L${90 + bw} 132 H${38 - bw}Z" fill="#f3ede2" ${ink}/><path d="M${34 - bw} 88 H${94 + bw} L64 146Z" fill="${top}" ${ink}/><path d="M${42 - bw} 94 L64 136 L${86 + bw} 94" fill="none" stroke="${trim}" stroke-width="4"/>${Array.from({ length: 7 }, (_, i) => `<path d="M${58 + i * 2} 142 v8" stroke="${trim}" stroke-width="2"/>`).join('')}`;
+    else if (p.style === 'tilma') g += `<path d="M${40 - bw} 86 H${88 + bw} L${88 + bw} 128 H${40 - bw}Z" fill="${sk}" ${ink}/><path d="M60 104 C 66 110 76 110 82 104" stroke="${sh(sk, .78)}" stroke-width="2" fill="none"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${K}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M44 90 C 58 102 74 102 86 94" stroke="${top}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="86" cy="94" r="5.5" fill="${top}" ${ink}/><path d="M84 98 L80 112 M88 98 L90 112" stroke="${K}" stroke-width="2.4"/>`;
     else if (p.style === 'armadura') { g += `<path d="M${40 - bw} 86 H${88 + bw} L${90 + bw} 136 H${38 - bw}Z" fill="${top}" ${ink}/>`; for (let y = 94; y < 134; y += 8) g += `<path d="M${40 - bw} ${y} H${88 + bw}" stroke="${K}" stroke-width="1.2"/>`; for (let x = 46 - bw; x < 88 + bw; x += 8) g += `<path d="M${x} 86 V136" stroke="${K}" stroke-width=".8"/>`; g += `<rect x="${38 - bw}" y="130" width="${52 + 2 * bw}" height="8" fill="${trim}" ${ink}/>`; }
     else { g += `<path d="M${38 - bw} 86 H${90 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${top}" ${ink}/><path d="M54 86 V100 H74 V86" fill="none" stroke="${trim}" stroke-width="3.4"/><path d="M${35 - bw} 126 H${93 + bw} L${94 + bw} 138 H${34 - bw}Z" fill="${p.band2 || trim}" ${ink}/>${fret(37 - bw, 93 + bw, 127, 10, p.hem2 || '#f3ede2')}`; if (p.stars) g += [[50, 112], [78, 108]].map(([x, y]) => `<path d="M${x} ${y - 4} l1.4 2.6 l2.6 1.4 l-2.6 1.4 l-1.4 2.6 l-1.4 -2.6 l-2.6 -1.4 l2.6 -1.4Z" fill="#f2c94c" stroke="${K}" stroke-width=".8"/>`).join(''); }
     if (p.jade) g += [52, 58, 64, 70, 76].map((x, i) => `<circle cx="${x}" cy="${90 + [0, 3, 4, 3, 0][i]}" r="3.4" fill="#3fa37a" ${ink}/>`).join('');
@@ -557,252 +658,647 @@ kbd { display: inline-block; min-width: 20px; padding: 0 6px; margin-right: 4px;
 window.CdmLyrics = [[3.51,13.51,"¡Corazón de Maíz!"],[21.78,31.78,"¡Que retumbe el huéhuetl!"],[51.94,54.57,"Sobre el valle se levanta"],[54.57,57.13,"la mañana de obsidiana,"],[57.13,59.76,"la Matlalcueye nos cuida"],[59.76,62.47,"y en el cielo va la garza."],[62.47,65.03,"Tengo tierra y tengo coa,"],[65.03,67.74,"tengo un pueblo y un camino;"],[67.74,70.21,"aunque nos cierren la sal,"],[70.21,72.77,"nunca habremos de rendirnos."],[72.77,75.24,"Siembra la milpa, cuida tu hogar,"],[75.24,79.95,"suena el caracol: ¡ven a luchar!"],[79.95,84.5,"¡Ven, ven, ven! Que la historia va a empezar,"],[84.5,88.96,"con corazón de maíz nadie nos podrá quebrar."],[88.96,94.71,"¡Ven, ven, ven! Que la tierra canta así:"],[94.71,104.71,"Tlaxcallan abre sus caminos… ¡Corazón de Maíz!"],[121.83,124.47,"Pluma, piedra, paso fuerte,"],[124.47,127.02,"jade y flor para el altar;"],[127.02,129.41,"las del valle ya te esperan,"],[129.41,132.45,"tu nombre empiezan a cantar."],[132.45,134.76,"Dicen que por el oriente"],[134.76,137.31,"vienen casas sobre el mar;"],[137.31,139.87,"lo que venga, que nos halle"],[139.87,142.34,"sembrando junto al hogar."],[142.34,144.81,"Siembra la milpa, cuida tu hogar,"],[144.81,153.43,"suena el caracol: ¡ven a luchar!"],[153.43,157.02,"Sobre el valle se levanta"],[157.02,159.18,"la mañana de obsidiana,"],[159.18,161.49,"la Matlalcueye nos cuida"],[161.49,171.49,"Tlaxcallan abre sus caminos… ¡Corazón de Maíz!"],[191.81,197.15,"¡Corazón de Maíz!"],[197.15,203.79,"Tu historia empieza al amanecer."]];
 </script>
 <script>
-// Intro cinematic for Corazón de Maíz: seven scenes painted as Talavera murals
-// (cobalt brushwork, ochre and green, on glazed tiles with grout). 960×540 SVG.
-// Each returns { svg, figs } — figs are Borgia characters placed over the mural.
+// Painted-tile art for the Corazón de Maíz intro. Every piece is a small SVG
+// sprite (cobalt brushwork on glazed tile, with a brush-wobble filter baked in)
+// returned as { url, box } in local coordinates; intro-story.js places and
+// animates them. As <img> sprites the browser rasterizes each once and the
+// animations only move layers, so motion stays smooth.
 "use strict";
 (function () {
-  const C = '#1b3a8a', C2 = '#2f56b4', W = '#9fb4e0', L = '#c8d4ee', L2 = '#e6ecf8', O = '#d39a26', Y = '#f2c94c', G = '#3d7a46', R = '#b8402e', BG = '#f6f1e6';
+  const P = { C: '#1b3a8a', C2: '#2f56b4', CD: '#14285e', W: '#9fb4e0', L: '#c8d4ee', L2: '#e6ecf8', O: '#d39a26', Y: '#f2c94c', G: '#3d7a46', G2: '#5f9a54', GL: '#9cc28a', R: '#b8402e', OR: '#e07a28', CR: '#fbf8f0', BG: '#f6f1e6', BR: '#8a5a34' };
+  const br = (w = 3, c = P.C) => `stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
   const rnd = s => () => (s = (s * 9301 + 49297) % 233280) / 233280;
-  const br = (w = 3.2) => `stroke="${C}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
-  const wave = (y0, amp, f, ph, bottom = 560) => { let d = `M-10 ${bottom}L-10 ${y0}`; for (let x = -10; x <= 970; x += 10) d += `L${x} ${(y0 + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.7 + ph * 2) * amp * .35).toFixed(1)}`; return d + `L970 ${bottom}Z`; };
-  // Wraps a scene: brush wobble filter, tile grid with glaze on top.
-  function mural(id, body, sky = BG) {
-    return `<svg class="mural" viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice"><defs>
-      <filter id="${id}b" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
-      <radialGradient id="${id}g" cx=".3" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#5a4a30" stop-opacity=".08"/></radialGradient>
-      <pattern id="${id}t" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="url(#${id}g)"/><path d="M0 .75H60M.75 0V60" stroke="#c9bfa8" stroke-width="1.5"/></pattern></defs>
-      <rect width="960" height="540" fill="${sky}"/><g filter="url(#${id}b)">${body}</g><rect width="960" height="540" fill="url(#${id}t)"/></svg>`;
+  const n1 = v => +v.toFixed(1);
+
+  function sprite(markup, box, { wobble = 3.5, defs = '' } = {}) {
+    const [x, y, w, h] = box.map(n1);
+    const filter = wobble ? `<filter id="b" x="${x - 30}" y="${y - 30}" width="${w + 60}" height="${h + 60}" filterUnits="userSpaceOnUse"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9"/><feDisplacementMap in="SourceGraphic" scale="${wobble}"/></filter>` : '';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x} ${y} ${w} ${h}" width="${w}" height="${h}"><defs>${defs}${filter}</defs><g${wobble ? ' filter="url(#b)"' : ''}>${markup}</g></svg>`;
+    return { url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg), box: [x, y, w, h] };
   }
-  const skyStrokes = (R0, n, col, y0 = 30, op = .5) => Array.from({ length: n }, (_, i) => `<rect x="${R0() * 760}" y="${y0 + i * 13}" width="${120 + R0() * 220}" height="7" rx="3.5" fill="${col}" opacity="${.08 + (n - i) / n * op * .4}"/>`).join('');
-  const sun = (x, y, r, rays = 16) => `<g transform="translate(${x} ${y})">${Array.from({ length: rays }, (_, i) => `<path transform="rotate(${i * 360 / rays})" d="M0 ${-r - 6} L0 ${-r - 26}" ${br()}/>`).join('')}<circle r="${r}" fill="${O}" ${br()}/><circle r="${r * .55}" fill="${Y}" stroke="${C}" stroke-width="2"/></g>`;
-  const moon = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r + 26}" fill="${L}" opacity=".5"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fbf8f0" ${br()}/><circle cx="${x - 8}" cy="${y - 4}" r="5" fill="${L}"/><circle cx="${x + 9}" cy="${y + 8}" r="3.5" fill="${L}"/>`;
-  const MAL = (dx = 0, s = 1) => `M${150 * s + dx} 432 C ${250 * s + dx} 360 ${330 * s + dx} 280 ${400 * s + dx} 220 C ${430 * s + dx} 196 ${452 * s + dx} 184 ${472 * s + dx} 182 C ${492 * s + dx} 184 ${512 * s + dx} 194 ${540 * s + dx} 214 C ${610 * s + dx} 266 ${700 * s + dx} 360 ${820 * s + dx} 432 Z`;
-  function malinche(dx = 0) {
-    const hatch = Array.from({ length: 26 }, (_, i) => `<path d="M${330 + dx + i * 6} ${330 - i * 4} l-26 ${60 + i}" stroke="${C}" stroke-width="1.6" opacity=".55"/>`).join('');
-    return `<path d="${MAL(dx)}" fill="${W}" ${br()}/>${hatch}
-      <path d="M${400 + dx} 220 C ${430 + dx} 196 ${452 + dx} 184 ${472 + dx} 182 C ${492 + dx} 184 ${512 + dx} 194 ${540 + dx} 214 C ${528 + dx} 226 ${516 + dx} 222 ${506 + dx} 232 C ${494 + dx} 222 ${484 + dx} 238 ${472 + dx} 228 C ${460 + dx} 238 ${450 + dx} 224 ${438 + dx} 232 C ${428 + dx} 222 ${414 + dx} 228 ${400 + dx} 220Z" fill="#fbf8f0" ${br()}/>
-      <path d="M${472 + dx} 186 L${455 + dx} 300 M${472 + dx} 186 L${520 + dx} 290 M${472 + dx} 186 L${600 + dx} 330" stroke="${C}" stroke-width="2" opacity=".7"/>`;
+
+  // ---------- Sky washes ----------
+  const SKY = {
+    night: [[0, '#16285e'], [.6, '#24397a'], [1, '#3e5a9c']],
+    predawn: [[0, '#1b2e68'], [.5, '#4a5f9e'], [.82, '#b9a8b4'], [1, '#efc58c']],
+    dawn: [[0, '#cdd8ee'], [.45, '#f3efe6'], [.8, '#f7ddab'], [1, '#f2c07a']],
+    day: [[0, '#c3d1ec'], [.55, '#eef0f2'], [1, '#f7f2e8']],
+    sunset: [[0, '#e6e1e2'], [.45, '#f3d5a8'], [.8, '#eeaa70'], [1, '#df8650']],
+    dusk: [[0, '#6f80bc'], [.45, '#c3a6ba'], [.8, '#eeb37f'], [1, '#e48f5a']],
+    ember: [[0, '#e9d9d0'], [.45, '#efb592'], [.8, '#e28656'], [1, '#c45c38']],
+  };
+  function sky(kind, seed = 3) {
+    const R = rnd(seed), dark = kind === 'night' || kind === 'predawn';
+    const defs = `<linearGradient id="g" x1="0" y1="-60" x2="0" y2="430" gradientUnits="userSpaceOnUse">${SKY[kind].map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+    let m = `<rect x="-120" y="-80" width="1200" height="700" fill="url(#g)"/>`;
+    for (let i = 0; i < 18; i++) m += `<rect x="${n1(-110 + R() * 1060)}" y="${n1(6 + R() * 360)}" width="${n1(150 + R() * 340)}" height="${n1(6 + R() * 9)}" rx="5" fill="${dark ? '#ffffff' : P.C}" opacity="${n1((dark ? .04 : .035) + R() * .05)}"/>`;
+    return sprite(m, [-120, -80, 1200, 700], { defs, wobble: 6 });
   }
-  const volcanoes = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 120 L90 20 L104 16 L118 22 L210 120Z" fill="${L}" ${br()}/><path d="M90 20 L104 16 L118 22 L110 32 L102 26 L94 34Z" fill="#fbf8f0" ${br(2.4)}/><path d="M190 120 C 220 80 280 70 330 80 C 360 86 380 100 400 120Z" fill="${L}" ${br()}/><path d="M250 76 C 270 70 300 70 320 78 L300 86 L282 80 L266 88Z" fill="#fbf8f0" ${br(2.4)}/></g>`;
-  const heron = (x, y, s) => `<path transform="translate(${x} ${y}) scale(${s})" d="M-26 -8 C -16 -14 -6 -12 0 0 C 6 -12 16 -14 26 -8 C 16 -8 8 -4 2 4 L14 6 L2 7 C -4 4 -14 -6 -26 -8 Z" fill="#fbf8f0" ${br(2.6 / s)}/>`;
-  const corn = (x, y, s, ripe = true) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-46" stroke="${C}" stroke-width="3.4"/><path d="M0 -12 C -10 -20 -18 -18 -22 -10 C -14 -14 -8 -12 0 -8Z M0 -22 C 10 -30 18 -28 22 -20 C 14 -24 8 -22 0 -18Z M0 -32 C -9 -40 -16 -38 -19 -31 C -12 -34 -6 -32 0 -28Z" fill="${G}" stroke="${C}" stroke-width="1.2"/>${ripe ? `<ellipse cx="4" cy="-24" rx="3" ry="7" fill="${O}" transform="rotate(15 4 -24)"/><path d="M0 -46 l-5 -6 M0 -46 l0 -8 M0 -46 l5 -6" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>` : ''}</g>`;
-  const sprout = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-16" stroke="${C}" stroke-width="2.4"/><path d="M0 -8 C -8 -14 -14 -12 -16 -6 C -10 -9 -5 -8 0 -5Z M0 -12 C 8 -18 14 -16 16 -10 C 10 -13 5 -12 0 -9Z" fill="${G}" stroke="${C}" stroke-width="1"/></g>`;
-  const agave = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">${[-64, 64, -40, 40, -18, 18, 0].map((a, i) => `<path transform="rotate(${a})" d="M-6 0 C -6 -24 -2 -40 0 -46 C 2 -40 6 -24 6 0Z" fill="${[C, C2, G][Math.min(2, Math.floor(i / 2))]}" stroke="${C}" stroke-width="1.6"/>`).join('')}</g>`;
-  const jacal = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-24" y="-30" width="48" height="30" fill="#fbf8f0" ${br(2.4)}/><path d="M-10 0 V-16 H10 V0Z" fill="${C}"/><path d="M-34 -28 L0 -62 L34 -28Z" fill="${O}" ${br(2.4)}/>${[-20, -10, 0, 10, 20].map(d => `<path d="M${d} -32 L${d * .4} -56" stroke="${C}" stroke-width="1.4"/>`).join('')}</g>`;
-  const smoke = (x, y) => `<path d="M${x} ${y} c -8 -12 8 -18 0 -30 c -7 -10 7 -16 2 -26" fill="none" stroke="${C}" stroke-width="2.2" opacity=".6"/>`;
-  function teocalli(x, y, s, shrine = O) {
+  function stars(seed = 5, n = 60, [ax, ay, aw, ah] = [-80, -40, 1120, 330]) {
+    const R = rnd(seed); let m = '';
+    for (let i = 0; i < n; i++) {
+      const x = n1(ax + R() * aw), y = n1(ay + R() * ah), r = n1(1.1 + R() * 2.3);
+      m += `<path d="M${x} ${y - 2 * r}L${x + r * .45} ${y - r * .45}L${x + 2 * r} ${y}L${x + r * .45} ${y + r * .45}L${x} ${y + 2 * r}L${x - r * .45} ${y + r * .45}L${x - 2 * r} ${y}L${x - r * .45} ${y - r * .45}Z" fill="#fdfaf2" opacity="${n1(.5 + R() * .5)}"/>`;
+    }
+    return sprite(m, [ax - 10, ay - 10, aw + 20, ah + 20], { wobble: 0 });
+  }
+  function cloud(s = 1, fill = P.CR, line = P.C) {
+    const m = `<g transform="scale(${s})"><path d="M-62 4 C -66 -12 -50 -20 -38 -14 C -36 -34 -8 -40 2 -22 C 12 -36 40 -32 42 -14 C 58 -18 68 -4 58 4 Z" fill="${fill}" ${br(3, line)}/><path d="M-38 -14 c 8 -3 12 6 6 9 c -4 2 -7 -1 -5 -4 M2 -22 c 9 -3 14 7 7 11 c -5 2 -8 -2 -6 -5 M42 -14 c 6 0 8 6 3 8" fill="none" ${br(2.2, line)}/><path d="M-54 1 H52" stroke="${P.W}" stroke-width="4" opacity=".7"/></g>`;
+    return sprite(m, [-76 * s, -48 * s, 152 * s, 62 * s], { wobble: 2.5 });
+  }
+  function sun(r = 34, rays = 16, core = P.Y) {
+    let m = '';
+    for (let i = 0; i < rays; i++) m += `<path transform="rotate(${n1(i * 360 / rays)})" d="M0 ${-r - 7} L0 ${-r - 26}" ${br(3.2)}/>`;
+    m += `<circle r="${r}" fill="${P.O}" ${br(3.2)}/><circle r="${n1(r * .56)}" fill="${core}" stroke="${P.C}" stroke-width="2"/>`;
+    return sprite(m, [-r - 34, -r - 34, 2 * r + 68, 2 * r + 68], { wobble: 3 });
+  }
+  function moon(r = 32) {
+    const m = `<circle r="${r + 30}" fill="${P.L}" opacity=".35"/><circle r="${r + 14}" fill="${P.L}" opacity=".35"/><circle r="${r}" fill="#fbf8f0" ${br(3)}/><circle cx="-8" cy="-5" r="5.5" fill="${P.L}"/><circle cx="10" cy="9" r="3.6" fill="${P.L}"/><circle cx="6" cy="-12" r="2.4" fill="${P.L}"/>`;
+    return sprite(m, [-r - 34, -r - 34, 2 * r + 68, 2 * r + 68], { wobble: 2 });
+  }
+
+  // ---------- Land ----------
+  // La Matlalcueye (La Malinche): origin at the base center, peak 250·s above.
+  function malinche(s = 1, { fill = P.W, snow = true, night = false } = {}) {
+    const k = v => n1(v * s), body = `M${k(-322)} 0 C ${k(-222)} ${k(-72)} ${k(-142)} ${k(-152)} ${k(-72)} ${k(-212)} C ${k(-42)} ${k(-236)} ${k(-20)} ${k(-248)} 0 ${k(-250)} C ${k(20)} ${k(-248)} ${k(40)} ${k(-238)} ${k(68)} ${k(-218)} C ${k(138)} ${k(-166)} ${k(228)} ${k(-72)} ${k(348)} 0 Z`;
+    const lit = `M0 ${k(-250)} C ${k(20)} ${k(-248)} ${k(40)} ${k(-238)} ${k(68)} ${k(-218)} C ${k(138)} ${k(-166)} ${k(228)} ${k(-72)} ${k(348)} 0 L${k(60)} 0 C ${k(48)} ${k(-90)} ${k(20)} ${k(-170)} 0 ${k(-250)}Z`;
+    let m = `<path d="${body}" fill="${fill}" ${br(3.2)}/><path d="${lit}" fill="${night ? P.C2 : '#fff'}" opacity="${night ? .25 : .32}"/>`;
+    for (let i = 0; i < 26; i++) m += `<path d="M${k(-142 + 6 * i)} ${k(-102 - 4 * i)} l${k(-26)} ${k(60 + i)}" stroke="${P.C}" stroke-width="1.6" opacity=".5"/>`;
+    m += `<path d="M0 ${k(-246)} L${k(-17)} ${k(-132)} M0 ${k(-246)} L${k(48)} ${k(-142)} M0 ${k(-246)} L${k(128)} ${k(-102)}" stroke="${P.C}" stroke-width="2" opacity=".7"/>`;
+    if (snow) m += `<path d="M${k(-72)} ${k(-212)} C ${k(-42)} ${k(-236)} ${k(-20)} ${k(-248)} 0 ${k(-250)} C ${k(20)} ${k(-248)} ${k(40)} ${k(-238)} ${k(68)} ${k(-218)} L${k(56)} ${k(-206)} L${k(44)} ${k(-210)} L${k(34)} ${k(-200)} L${k(22)} ${k(-210)} L${k(12)} ${k(-194)} L0 ${k(-204)} L${k(-12)} ${k(-194)} L${k(-22)} ${k(-208)} L${k(-34)} ${k(-200)} L${k(-44)} ${k(-210)} L${k(-58)} ${k(-204)}Z" fill="#fbf8f0" ${br(3)}/>`;
+    return sprite(m, [k(-334), k(-262), k(694), k(270)], { wobble: 3.5 });
+  }
+  // Popocatépetl and Iztaccíhuatl far to the west. Origin at the left base.
+  function volcanoes(s = 1, fill = P.L) {
+    const m = `<g transform="scale(${s})"><path d="M0 0 L90 -100 L104 -104 L118 -98 L210 0Z" fill="${fill}" ${br(3)}/><path d="M90 -100 L104 -104 L118 -98 L110 -88 L102 -94 L94 -86Z" fill="#fbf8f0" ${br(2.4)}/><path d="M104 -96 c -6 -10 4 -16 0 -26 c -4 -8 4 -12 2 -18" fill="none" stroke="${P.C}" stroke-width="1.8" opacity=".6"/><path d="M190 0 C 220 -40 280 -50 330 -40 C 360 -34 380 -20 400 0Z" fill="${fill}" ${br(3)}/><path d="M250 -44 C 270 -50 300 -50 320 -42 L300 -34 L282 -40 L266 -32Z" fill="#fbf8f0" ${br(2.4)}/></g>`;
+    return sprite(m, [-10, -150 * s, 420 * s, 156 * s], { wobble: 3 });
+  }
+  // A ridge of hills across the stage; origin at y = ridge baseline.
+  function hills({ amp = 10, freq = .012, ph = 0, fill = P.L, trees = 0, treeFill = P.G, depth = 240, seed = 1, x0 = -160, x1 = 1120 } = {}) {
+    const R = rnd(seed), ry = x => n1(amp * Math.sin(x * freq + ph) + amp * .35 * Math.sin(x * freq * 2.7 + ph * 2));
+    let ridge = '';
+    for (let x = x0; x <= x1; x += 10) ridge += `${x === x0 ? 'M' : 'L'}${x} ${ry(x)}`;
+    let m = `<path d="${ridge}L${x1} ${depth}L${x0} ${depth}Z" fill="${fill}"/><path d="${ridge}" fill="none" ${br(3)}/>`;
+    for (let i = 0; i < trees; i++) {
+      const x = n1(x0 + 20 + (i + R() * .6) * (x1 - x0 - 40) / trees), r = n1(10 + R() * 6), y = ry(x) - r * .55;
+      m += `<circle cx="${x}" cy="${n1(y)}" r="${r}" fill="${treeFill}" ${br(2.6)}/><path d="M${n1(x - r * .4)} ${n1(y - r * .2)} q ${n1(r * .3)} ${n1(-r * .4)} ${n1(r * .7)} 0" fill="none" stroke="${P.GL}" stroke-width="2"/>`;
+    }
+    return sprite(m, [x0 - 10, -amp * 1.5 - 30, x1 - x0 + 20, depth + amp * 1.5 + 40], { wobble: 3.5 });
+  }
+  // Ground band with grass strokes; origin at its top edge.
+  function ground(fill = '#f3e6cc', { w0 = -160, w1 = 1120, depth = 260, seed = 2, strokes = P.G2 } = {}) {
+    const R = rnd(seed); let m = `<rect x="${w0}" y="0" width="${w1 - w0}" height="${depth}" fill="${fill}"/><path d="M${w0} 0 H${w1}" ${br(3)}/>`;
+    for (let i = 0; i < 70; i++) { const x = n1(w0 + R() * (w1 - w0)), y = n1(8 + R() * (depth - 20)); m += `<path d="M${x} ${y} q 3 -8 7 -10 M${n1(x + 5)} ${y} q 2 -6 0 -11" fill="none" stroke="${strokes}" stroke-width="1.8" opacity="${n1(.35 + R() * .4)}"/>`; }
+    return sprite(m, [w0 - 6, -8, w1 - w0 + 12, depth + 12], { wobble: 3 });
+  }
+
+  // ---------- Plants ----------
+  function cornPlant(x, y, s, { stem = P.C, leaf = P.G, cob = P.O, tassel = P.O, ripe = true } = {}) {
+    return `<g transform="translate(${n1(x)} ${n1(y)}) scale(${n1(s)})"><path d="M0 0 C -1 -16 1 -30 0 -46" fill="none" stroke="${stem}" stroke-width="3.4"/><path d="M0 -12 C -10 -20 -18 -18 -22 -10 C -14 -14 -8 -12 0 -8Z M0 -22 C 10 -30 18 -28 22 -20 C 14 -24 8 -22 0 -18Z M0 -32 C -9 -40 -16 -38 -19 -31 C -12 -34 -6 -32 0 -28Z M0 -40 C 6 -46 12 -46 14 -42 C 9 -43 5 -41 0 -37Z" fill="${leaf}" stroke="${stem}" stroke-width="1.2"/>${ripe ? `<path d="M2 -20 C 6 -30 9 -30 9 -22 C 9 -16 5 -14 2 -16Z" fill="${cob}" stroke="${stem}" stroke-width="1.1"/><path d="M0 -46 l-5 -6 M0 -46 l0 -8 M0 -46 l5 -6" stroke="${tassel}" stroke-width="2.4" stroke-linecap="round"/>` : ''}</g>`;
+  }
+  // A row of corn from x0 to x1; origin at the row's base line.
+  function cornRow(x0, x1, s, { gap = 30, seed = 4, ...colors } = {}) {
+    const R = rnd(seed); let m = '';
+    for (let x = x0; x <= x1; x += gap * s * (.85 + R() * .3)) m += cornPlant(x, 0, s * (.9 + R() * .2), colors);
+    return sprite(m, [x0 - 30 * s, -66 * s, x1 - x0 + 60 * s, 70 * s], { wobble: 3 });
+  }
+  function sprout(s = 1) {
+    const m = `<g transform="scale(${s})"><path d="M0 0 V-16" stroke="${P.C}" stroke-width="2.4"/><path d="M0 -8 C -8 -14 -14 -12 -16 -6 C -10 -9 -5 -8 0 -5Z M0 -12 C 8 -18 14 -16 16 -10 C 10 -13 5 -12 0 -9Z" fill="${P.G}" stroke="${P.C}" stroke-width="1.1"/></g>`;
+    return sprite(m, [-20 * s, -22 * s, 40 * s, 24 * s], { wobble: 1.5 });
+  }
+  function maguey(s = 1, cs = [P.C, P.C2, P.G]) {
+    const m = `<g transform="scale(${s})">${[-64, 64, -40, 40, -18, 18, 0].map((a, i) => `<path transform="rotate(${a})" d="M-6 0 C -6 -24 -2 -40 0 -46 C 2 -40 6 -24 6 0Z" fill="${cs[Math.min(2, Math.floor(i / 2))]}" stroke="${P.C}" stroke-width="1.6"/>`).join('')}</g>`;
+    return sprite(m, [-50 * s, -50 * s, 100 * s, 54 * s], { wobble: 2 });
+  }
+  function reeds(s = 1, seed = 6) {
+    const R = rnd(seed); let m = '';
+    for (let i = 0; i < 9; i++) { const x = n1((i - 4) * 7 + R() * 4), h = n1(40 + R() * 30); m += `<path d="M${x} 0 Q ${n1(x + (R() - .5) * 10)} ${n1(-h * .6)} ${n1(x + (R() - .5) * 16)} ${-h}" fill="none" stroke="${i % 3 ? P.G : P.C}" stroke-width="2.6"/>${i % 3 === 0 ? `<ellipse cx="${n1(x + (R() - .5) * 8)}" cy="${n1(-h * .8)}" rx="2.6" ry="7" fill="${P.BR}"/>` : ''}`; }
+    return sprite(`<g transform="scale(${s})">${m}</g>`, [-46 * s, -80 * s, 92 * s, 84 * s], { wobble: 1.5 });
+  }
+
+  // ---------- Buildings ----------
+  function jacal(s = 1) {
+    const m = `<g transform="scale(${s})"><rect x="-24" y="-30" width="48" height="30" fill="#fbf8f0" ${br(2.4)}/><path d="M-6 0 V-16 H6 V0Z" fill="${P.C}"/><path d="M-34 -28 L0 -62 L34 -28Z" fill="${P.O}" ${br(2.4)}/>${[-20, -10, 0, 10, 20].map(d => `<path d="M${d} -32 L${n1(d * .4)} -56" stroke="${P.C}" stroke-width="1.4"/>`).join('')}</g>`;
+    return sprite(m, [-40 * s, -68 * s, 80 * s, 72 * s], { wobble: 2 });
+  }
+  function smoke() {
+    return sprite(`<path d="M0 0 c -8 -12 8 -18 0 -30 c -7 -10 7 -16 2 -26" fill="none" stroke="${P.C}" stroke-width="2.4" opacity=".55"/>`, [-14, -62, 28, 66], { wobble: 1.5 });
+  }
+  // Teocalli: origin at the base center; shrine roof color by deity.
+  function teocalli(s = 1, shrine = P.O, { wall = '#fbf8f0', shade = P.L } = {}) {
     let g = '';
-    [[120, 0], [98, 1], [76, 2], [54, 3]].forEach(([w, i]) => { const ty = y - (i + 1) * 15 * s; g += `<path d="M${x - w / 2 * s} ${ty + 15 * s} L${x - (w / 2 - 6) * s} ${ty} L${x + (w / 2 - 6) * s} ${ty} L${x + w / 2 * s} ${ty + 15 * s} Z" fill="#fbf8f0" ${br(2.6)}/><path d="M${x + (w / 2 - 14) * s} ${ty} L${x + (w / 2 - 6) * s} ${ty} L${x + w / 2 * s} ${ty + 15 * s} L${x + (w / 2 - 12) * s} ${ty + 15 * s}Z" fill="${L}"/>`; });
-    g += `<path d="M${x - 12 * s} ${y} L${x - 8 * s} ${y - 60 * s} L${x + 8 * s} ${y - 60 * s} L${x + 12 * s} ${y}Z" fill="${C}"/>`;
-    for (let k = 1; k < 12; k++) g += `<path d="M${x - (12 - k * .35) * s} ${y - k * 5 * s} H${x + (12 - k * .35) * s}" stroke="#fbf8f0" stroke-width="${1.2 * s}"/>`;
-    const ty = y - 60 * s;
-    g += `<rect x="${x - 16 * s}" y="${ty - 22 * s}" width="${32 * s}" height="${22 * s}" fill="#fbf8f0" ${br(2.6)}/><path d="M${x - 5 * s} ${ty} V${ty - 12 * s} H${x + 5 * s} V${ty}Z" fill="${C}"/><path d="M${x - 20 * s} ${ty - 22 * s} L${x} ${ty - 40 * s} L${x + 20 * s} ${ty - 22 * s}Z" fill="${shrine}" ${br(2.6)}/>`;
-    return g;
+    [[120, 0], [98, 1], [76, 2], [54, 3]].forEach(([w, i]) => { const ty = -(i + 1) * 15; g += `<path d="M${-w / 2} ${ty + 15} L${-(w / 2 - 6)} ${ty} L${w / 2 - 6} ${ty} L${w / 2} ${ty + 15} Z" fill="${wall}" ${br(2.6)}/><path d="M${w / 2 - 14} ${ty} L${w / 2 - 6} ${ty} L${w / 2} ${ty + 15} L${w / 2 - 12} ${ty + 15}Z" fill="${shade}"/>`; });
+    g += `<path d="M-12 0 L-8 -60 L8 -60 L12 0Z" fill="${P.C}"/>`;
+    for (let k = 1; k < 12; k++) g += `<path d="M${n1(-(12 - k * .35))} ${-k * 5} H${n1(12 - k * .35)}" stroke="#fbf8f0" stroke-width="1.2"/>`;
+    g += `<rect x="-16" y="-82" width="32" height="22" fill="${wall}" ${br(2.6)}/><path d="M-5 -60 V-72 H5 V-60Z" fill="${P.C}"/><path d="M-20 -82 L0 -100 L20 -82Z" fill="${shrine}" ${br(2.6)}/>`;
+    return sprite(`<g transform="scale(${s})">${g}</g>`, [-66 * s, -106 * s, 132 * s, 112 * s], { wobble: 2.5 });
   }
-  const banner = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V-120" ${br(5)}/><circle cx="0" cy="-130" r="20" fill="${O}" ${br(3)}/>${heron(0, -132, .55)}${[G, C2, R, C2, G].map((c, i) => `<path transform="rotate(${(i - 2) * 22} 0 -130)" d="M0 -150 C -5 -162 -3 -172 0 -178 C 3 -172 5 -162 0 -150Z" fill="${c}" stroke="${C}" stroke-width="1.6"/>`).join('')}</g>`;
-  const torch = (x, y) => `<path d="M${x} ${y} V${y - 50}" ${br(4)}/><path d="M${x} ${y - 50} c -12 -8 -8 -22 0 -34 c 2 10 10 12 6 24 c 6 -4 6 -10 4 -14 c 8 10 4 22 -10 24Z" fill="${O}" ${br(2)}/><path d="M${x} ${y - 56} c -4 -4 -2 -10 1 -14 c 2 6 4 8 2 14Z" fill="${Y}"/>`;
-
-  // Guards and villagers: Borgia params reused for background figures (painted cobalt by CSS).
-  const guard = (i) => ({ id: 'g' + i, name: 'Guerrero', skin: '#a8683a', hair: '#1a1210', hairStyle: ['coleta', 'largo', 'trenzas'][i % 3], style: 'armadura', top: '#efe3c8', trim: '#2f5fa8', skirt: '#1e3c78', head: i % 2 ? 'plumas' : 'pluma', prop: i % 2 ? 'escudo' : 'lanza', shield: '#2f5fa8' });
-
-  // ---------- 1 · El valle ----------
-  function valle() {
-    const R0 = rnd(3); let huts = '';
-    [[150, 444, .8], [230, 452, .7], [330, 448, .75], [600, 450, .7], [690, 444, .8], [780, 452, .7]].forEach(([x, y, s]) => { huts += jacal(x, y, s) + smoke(x + 6, y - 50 * s); });
-    return mural('a', `${skyStrokes(R0, 12, C, 26)}${sun(640, 196, 34)}
-      ${volcanoes(-30, 300, 1.1)}${malinche()}
-      <path d="${wave(410, 8, .014, 1)}" fill="${L}" ${br()}/>${Array.from({ length: 22 }, (_, i) => `<circle cx="${10 + i * 46}" cy="${404 + Math.sin(i) * 6}" r="12" fill="${G}" opacity=".85" ${br()}/>`).join('')}
-      <path d="${wave(446, 6, .02, 2)}" fill="${L2}" ${br()}/>${huts}
-      ${Array.from({ length: 34 }, (_, i) => corn(10 + i * 29, 520 + (i % 2) * 8, .9)).join('')}
-      ${heron(300, 130, 1)}${heron(350, 152, .8)}${heron(262, 160, .65)}`);
+  // Templo Mayor of Tenochtitlan: twin shrines of Tláloc (blue) and Huitzilopochtli (red).
+  function temploMayor(s = 1) {
+    let g = '';
+    [[170, 0], [146, 1], [122, 2], [98, 3]].forEach(([w, i]) => { const ty = -(i + 1) * 16; g += `<path d="M${-w / 2} ${ty + 16} L${-(w / 2 - 7)} ${ty} L${w / 2 - 7} ${ty} L${w / 2} ${ty + 16} Z" fill="#fbf8f0" ${br(2.6)}/><path d="M${w / 2 - 16} ${ty} L${w / 2 - 7} ${ty} L${w / 2} ${ty + 16} L${w / 2 - 14} ${ty + 16}Z" fill="${P.L}"/>`; });
+    [-22, 22].forEach(x => { g += `<path d="M${x - 10} 0 L${x - 7} -64 L${x + 7} -64 L${x + 10} 0Z" fill="${P.C}"/>`; for (let k = 1; k < 12; k++) g += `<path d="M${n1(x - 9 + k * .25)} ${-k * 5.3} H${n1(x + 9 - k * .25)}" stroke="#fbf8f0" stroke-width="1.2"/>`; });
+    g += `<rect x="-44" y="-88" width="34" height="24" fill="#fbf8f0" ${br(2.6)}/><path d="M-48 -88 L-27 -108 L-6 -88Z" fill="${P.C2}" ${br(2.6)}/><path d="M-40 -94 H-14 M-36 -100 H-18" stroke="#fbf8f0" stroke-width="2"/>`;
+    g += `<rect x="10" y="-88" width="34" height="24" fill="#fbf8f0" ${br(2.6)}/><path d="M6 -88 L27 -108 L48 -88Z" fill="${P.R}" ${br(2.6)}/>${[16, 27, 38].map(x => `<circle cx="${x}" cy="-93" r="2.2" fill="#fbf8f0"/>`).join('')}`;
+    return sprite(`<g transform="scale(${s})">${g}</g>`, [-92 * s, -114 * s, 184 * s, 120 * s], { wobble: 2.5 });
   }
-
-  // ---------- 2 · Tenochtitlan ----------
-  function tenochtitlan() {
-    const R0 = rnd(5), lake = Array.from({ length: 24 }, (_, i) => `<rect x="${R0() * 860}" y="${372 + i * 7}" width="${60 + R0() * 160}" height="3" rx="1.5" fill="${C}" opacity="${.25 + R0() * .3}"/>`).join('');
-    const glints = Array.from({ length: 9 }, (_, i) => `<rect x="${150 + (i % 3) * 12 - i * 2}" y="${380 + i * 12}" width="${60 - i * 4}" height="3" rx="1.5" fill="${O}" opacity=".8"/>`).join('');
-    const city = `${Array.from({ length: 14 }, (_, i) => `<rect x="${470 + i * 26}" y="${352 - (i % 3) * 6}" width="22" height="${16 + (i % 3) * 6}" fill="#fbf8f0" ${br(2)}/>`).join('')}
-      <path d="M440 372 H880 L870 380 H450Z" fill="${O}" ${br(2.4)}/>${teocalli(660, 352, 1.15, R)}<rect x="644" y="252" width="14" height="14" fill="${C}"/><rect x="664" y="252" width="14" height="14" fill="${R}"/>${teocalli(540, 360, .55)}${teocalli(800, 360, .55)}`;
-    const canoe = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-30 0 C -20 8 20 8 30 0Z" fill="${C}"/><path d="M-4 0 V-16 M-4 -16 a5 5 0 1 0 0.1 0 M6 -6 L20 6" ${br(2.4)}/></g>`;
-    return mural('b', `${skyStrokes(R0, 14, O, 40, .7)}${sun(170, 300, 30, 14)}
-      <path d="M-10 340 C 80 300 160 290 260 316 C 330 280 420 270 500 300 C 600 272 720 280 820 304 C 880 290 930 296 970 306 V372 H-10Z" fill="${L}" ${br()}/>
-      <rect x="-10" y="366" width="980" height="180" fill="${L2}"/>${lake}${glints}
-      <path d="M200 520 L470 378 M960 470 L860 378" stroke="${O}" stroke-width="6"/><path d="M200 520 L470 378 M960 470 L860 378" stroke="${C}" stroke-width="1.6" stroke-dasharray="4 8"/>
-      ${city}${canoe(120, 470, 1.3)}${canoe(360, 500, 1.1)}${canoe(760, 450, .9)}`);
+  // Island city: rows of white houses on a platform; origin at the platform's left top.
+  function city(w = 420, seed = 8) {
+    const R = rnd(seed); let m = `<path d="M-14 0 H${w + 14} L${w + 4} 10 H-4Z" fill="${P.O}" ${br(2.4)}/>`;
+    for (let x = 0; x < w; x += 20 + R() * 10) { const h = n1(12 + R() * 14); m += `<rect x="${n1(x)}" y="${-h}" width="${n1(16 + R() * 6)}" height="${h}" fill="#fbf8f0" ${br(2)}/>`; if (R() < .4) m += `<rect x="${n1(x + 5)}" y="${n1(-h + 4)}" width="5" height="6" fill="${P.C}"/>`; }
+    return sprite(m, [-20, -32, w + 40, 46], { wobble: 2 });
   }
-
-  // ---------- 3 · El cerco ----------
-  function cerco() {
-    const R0 = rnd(7); let wall = '';
-    for (let x = -10; x < 970; x += 48) wall += `<path d="M${x} 330 h44 v-12 h-12 v-10 h-20 v10 h-12Z" fill="#fbf8f0" ${br(2.4)}/>`;
-    for (let r = 0; r < 6; r++) for (let x = -20 + (r % 2) * 24; x < 970; x += 48) wall += `<rect x="${x}" y="${330 + r * 20}" width="46" height="20" rx="3" fill="${r % 2 ? L : '#fbf8f0'}" ${br(1.8)}/>`;
-    return mural('c', `${skyStrokes(R0, 16, R, 20, .9)}${sun(480, 250, 52, 20)}
-      <path d="M-10 330 C 100 290 180 300 260 316 L340 300 L420 320 L520 296 L640 318 L760 300 L860 320 L970 304 V340 H-10Z" fill="${L}" ${br()}/>
-      ${wall}${torch(60, 330)}${torch(900, 330)}<rect x="-10" y="450" width="980" height="100" fill="${C}" opacity=".85"/>`, '#f1e4dc');
+  // The frontier wall; origin at the top of the wall, x across the stage.
+  function wall(seed = 3) {
+    let m = '';
+    for (let x = -160; x < 1130; x += 48) m += `<path d="M${x} 0 h44 v-12 h-12 v-10 h-20 v10 h-12Z" fill="#fbf8f0" ${br(2.4)}/>`;
+    for (let r = 0; r < 6; r++) for (let x = -170 + (r % 2) * 24; x < 1130; x += 48) m += `<rect x="${x}" y="${r * 20}" width="46" height="20" rx="3" fill="${r % 2 ? P.L : '#fbf8f0'}" ${br(1.8)}/>`;
+    return sprite(m, [-176, -26, 1312, 150], { wobble: 2.5 });
+  }
+  function torchPole() { return sprite(`<path d="M0 0 V-56" ${br(4.4)}/><path d="M-7 -56 h14 l-3 6 h-8Z" fill="${P.O}" ${br(2)}/>`, [-10, -60, 20, 64], { wobble: 1 }); }
+  function flame(s = 1) {
+    const m = `<g transform="scale(${s})"><path d="M0 0 c -12 -8 -8 -22 0 -34 c 2 10 10 12 6 24 c 6 -4 6 -10 4 -14 c 8 10 4 22 -10 24Z" fill="${P.OR}" ${br(2)}/><path d="M0 -6 c -4 -4 -2 -12 1 -16 c 2 6 5 9 2 16Z" fill="${P.Y}"/></g>`;
+    return sprite(m, [-16 * s, -38 * s, 32 * s, 40 * s], { wobble: 1 });
+  }
+  function heronShape(up) {
+    return up ? 'M-26 -8 C -16 -14 -6 -12 0 0 C 6 -12 16 -14 26 -8 C 16 -8 8 -4 2 4 L14 6 L2 7 C -4 4 -14 -6 -26 -8 Z'
+      : 'M-26 8 C -16 2 -6 -2 0 0 C 6 -2 16 2 26 8 C 16 4 8 2 2 4 L14 6 L2 7 C -4 5 -14 4 -26 8 Z';
+  }
+  function heron(up = true, s = 1) {
+    return sprite(`<path transform="scale(${s})" d="${heronShape(up)}" fill="#fbf8f0" ${br(2.6 / s)}/>`, [-30 * s, -18 * s, 60 * s, 32 * s], { wobble: 1 });
+  }
+  // Garza standard of Tlaxcallan on its pole; origin at the pole base.
+  function banner(s = 1) {
+    const m = `<g transform="scale(${s})"><path d="M0 0 V-120" ${br(5)}/><circle cx="0" cy="-130" r="20" fill="${P.O}" ${br(3)}/><path transform="translate(0 -132) scale(.55)" d="${heronShape(true)}" fill="#fbf8f0" ${br(4)}/>${[P.G, P.C2, P.R, P.C2, P.G].map((c, i) => `<path transform="rotate(${(i - 2) * 22} 0 -130)" d="M0 -150 C -5 -162 -3 -172 0 -178 C 3 -172 5 -162 0 -150Z" fill="${c}" stroke="${P.C}" stroke-width="1.6"/>`).join('')}</g>`;
+    return sprite(m, [-40 * s, -186 * s, 80 * s, 192 * s], { wobble: 2 });
   }
 
-  // ---------- 4 · Tu milpa ----------
-  function milpa() {
-    const R0 = rnd(11); let rows = '';
-    for (let r = 0; r < 5; r++) { const y = 420 + r * 26; rows += `<path d="M-10 ${y + 4} H970" stroke="${C}" stroke-width="1.6" opacity=".6"/>`; for (let x = 20 + (r % 2) * 20; x < 960; x += 44 + r * 4) rows += sprout(x, y, .8 + r * .12); }
-    return mural('d', `${skyStrokes(R0, 8, C, 30, .4)}${sun(820, 110, 30)}
-      ${malinche(-230)}<path d="${wave(392, 10, .012, .5)}" fill="${G}" opacity=".85" ${br()}/>
-      <rect x="-10" y="400" width="980" height="150" fill="#f3e6cc"/>${rows}
-      ${jacal(760, 404, 1.6)}${agave(900, 412, 1.1)}${agave(80, 410, .8)}`);
+  // ---------- Water ----------
+  function waterLines(w = 1440, h = 160, seed = 9, color = P.C, period = 240) {
+    const R = rnd(seed); let m = '';
+    for (let i = 0; i < 22; i++) { const y = n1(4 + R() * (h - 8)), x = R() * period, len = n1(40 + R() * 110); for (let k = -1; k < w / period + 1; k++) m += `<rect x="${n1(x + k * period)}" y="${y}" width="${len}" height="3" rx="1.5" fill="${color}" opacity="${n1(.25 + R() * .35)}"/>`; }
+    return sprite(m, [0, 0, w, h], { wobble: 1 });
+  }
+  function canoe(s = 1) {
+    const m = `<g transform="scale(${s})"><path d="M-30 0 C -20 8 20 8 30 0Z" fill="${P.C}"/><path d="M-4 0 V-16" ${br(2.6)}/><circle cx="-4" cy="-20" r="4.5" fill="${P.C}"/><path d="M4 -10 L20 6" ${br(2.4)}/></g>`;
+    return sprite(m, [-34 * s, -28 * s, 68 * s, 38 * s], { wobble: 1 });
+  }
+  function ship() {
+    const m = `<path d="M-110 0 L110 0 L84 34 L-90 34Z" fill="${P.C}" stroke="#fbf8f0" stroke-width="2"/><path d="M-122 -8 L-100 0 M110 0 L128 -16" stroke="#fbf8f0" stroke-width="3"/>${[[-50, 110], [10, 150], [66, 100]].map(([x, h]) => `<path d="M${x} 0 V${-h}" stroke="#fbf8f0" stroke-width="3"/>${[0, 1].map(k => `<path d="M${x - 30 + k * 4} ${-h + 18 + k * 46} h${60 - k * 8} v40 h${-60 + k * 8}Z" fill="#fbf8f0" ${br(2)}/><path d="M${x} ${-h + 28 + k * 46} v20 M${x - 10} ${-h + 38 + k * 46} h20" stroke="${P.R}" stroke-width="4"/>`).join('')}`).join('')}<path d="M10 -150 l18 6 l-18 6Z" fill="${P.R}"/><path d="M-96 18 H84" stroke="#fbf8f0" stroke-width="1.6" stroke-dasharray="4 8"/>`;
+    return sprite(m, [-134, -162, 268, 204], { wobble: 2.5 });
+  }
+  function fog(w = 520, h = 34) {
+    return sprite(`<rect x="0" y="0" width="${w}" height="${h}" rx="${h / 2}" fill="#e9edf6" opacity=".85"/><rect x="${w * .15}" y="${h * .25}" width="${w * .6}" height="${h * .5}" rx="${h / 4}" fill="#fff" opacity=".6"/>`, [-10, -10, w + 20, h + 20], { wobble: 6 });
+  }
+  function shore(fill = P.CD) {
+    return sprite(`<path d="M-160 40 C 0 18 160 14 330 30 C 420 38 470 60 500 80 L500 240 L-160 240Z" fill="${fill}" stroke="#fbf8f0" stroke-width="2"/>`, [-166, 10, 672, 236], { wobble: 3 });
+  }
+  function campfire() { return sprite(`<path d="M-16 0 L12 -6 M-12 -6 L16 0" ${br(5, P.BR)}/><ellipse cx="0" cy="2" rx="20" ry="4" fill="${P.C}" opacity=".5"/>`, [-24, -12, 48, 18], { wobble: 1 }); }
+
+  // ---------- Story props ----------
+  function footprint(left = true) {
+    const m = `<g transform="scale(${left ? -1 : 1} 1)"><path d="M0 0 c -4 -9 6 -13 8 -5 c 1 5 -2 9 -8 5Z" fill="${P.C}"/><circle cx="1" cy="-10" r="1.6" fill="${P.C}"/><circle cx="5" cy="-11" r="1.4" fill="${P.C}"/></g>`;
+    return sprite(m, [-12, -14, 24, 18], { wobble: 0 });
+  }
+  function conchBlower(s = 1) {
+    const m = `<g transform="scale(${s})"><circle cx="0" cy="-38" r="6" fill="${P.C}"/><path d="M-6 -30 L-8 -8 L-4 0 M6 -30 L6 -8 L8 0 M-6 -30 H6" ${br(4 / s)}/><path d="M4 -32 L14 -40" ${br(3 / s)}/><path d="M12 -44 c 8 -4 14 0 12 6 c -2 5 -9 6 -12 2Z" fill="#fbf8f0" ${br(2 / s)}/></g>`;
+    return sprite(m, [-14 * s, -52 * s, 44 * s, 56 * s], { wobble: 1 });
+  }
+  function virgula(s = 1) {
+    return sprite(`<g transform="scale(${s})"><path d="M0 0 c 10 -2 14 -12 6 -16 c -6 -2 -9 4 -4 7" fill="none" stroke="${P.C}" stroke-width="2.6" stroke-linecap="round"/></g>`, [-6 * s, -20 * s, 24 * s, 24 * s], { wobble: 0 });
   }
 
-  // ---------- 5 · Xicohténcatl ----------
-  function tlatoani() {
-    const R0 = rnd(13);
-    return mural('e', `${skyStrokes(R0, 12, C, 20, .6)}
-      <path d="M-10 360 C 120 330 240 340 360 320 C 480 300 640 330 760 318 C 860 310 920 322 970 318 V420 H-10Z" fill="${L}" ${br()}/>
-      <rect x="-10" y="410" width="980" height="140" fill="#f3e6cc"/>${Array.from({ length: 12 }, (_, i) => `<rect x="${i * 84}" y="${430 + (i % 2) * 30}" width="70" height="4" rx="2" fill="${O}" opacity=".5"/>`).join('')}
-      ${teocalli(480, 430, 2.2, G)}${banner(200, 440, 1.1)}${banner(760, 440, 1.1)}`);
-  }
+  // ---------- Talavera icons (inline SVG, 64×64) ----------
+  const O = `stroke="${P.C}" stroke-width="2.6" stroke-linejoin="round"`;
+  const ICON = {
+    sal: `<path d="M10 40 C 10 54 54 54 54 40Z" fill="${P.O}" ${O}/><path d="M14 40 L22 26 L28 32 L34 20 L42 30 L46 26 L50 40Z" fill="#fff" ${O}/><path d="M24 34 l3 -3 M36 30 l2 3" stroke="${P.L}" stroke-width="2"/>`,
+    algodon: `<path d="M32 58 V40" stroke="${P.G}" stroke-width="3"/><path d="M20 44 C 24 40 28 40 32 44 C 36 40 40 40 44 44" fill="${P.G}" ${O}/>${[[24, 30], [40, 30], [32, 22], [32, 36]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#fff" ${O}/>`).join('')}`,
+    cacao: `<path d="M32 6 C 50 14 50 50 32 58 C 14 50 14 14 32 6Z" fill="#a8521e" ${O}/><path d="M32 10 V54 M24 14 C 20 28 20 40 24 50 M40 14 C 44 28 44 40 40 50" fill="none" stroke="#5a2a10" stroke-width="2"/>`,
+    milpa: `<path d="M32 58 V14" stroke="${P.C}" stroke-width="3"/><path d="M32 46 C 20 40 12 42 8 48 C 18 44 24 46 32 50Z M32 34 C 44 28 52 30 56 36 C 46 32 40 34 32 38Z M32 24 C 22 18 16 20 14 24 C 22 22 26 24 32 28Z" fill="${P.G}" ${O}/><path d="M34 34 C 40 22 44 24 42 32 C 41 37 37 38 34 36Z" fill="${P.Y}" ${O}/><path d="M32 14 l-5 -7 M32 14 v-9 M32 14 l5 -7" stroke="${P.O}" stroke-width="2.6" stroke-linecap="round"/>`,
+    choza: `<rect x="16" y="32" width="32" height="22" fill="#fff" ${O}/><path d="M28 54 V42 H36 V54Z" fill="${P.C}"/><path d="M8 34 L32 10 L56 34Z" fill="${P.O}" ${O}/><path d="M20 30 L27 17 M32 30 V14 M44 30 L37 17" stroke="${P.C}" stroke-width="1.6"/>`,
+    semillas: `<path d="M14 24 C 14 16 50 16 50 24 L46 56 H18Z" fill="#e8d4a8" ${O}/><path d="M14 24 C 22 30 42 30 50 24" fill="none" ${O}/>${[[26, 40, P.C2], [36, 38, P.Y], [31, 47, P.R], [40, 47, P.Y], [23, 49, P.C2]].map(([x, y, c]) => `<ellipse cx="${x}" cy="${y}" rx="4" ry="3" fill="${c}" stroke="${P.C}" stroke-width="1.2"/>`).join('')}`,
+    coa: `<path d="M14 54 L48 10" stroke="${P.C}" stroke-width="8" stroke-linecap="round"/><path d="M14 54 L48 10" stroke="${P.BR}" stroke-width="4.4" stroke-linecap="round"/><path d="M6 50 C 4 58 8 62 16 60 L22 52 L12 44Z" fill="${P.L}" ${O}/>`,
+    escudo: `<circle cx="32" cy="28" r="20" fill="#fff" ${O}/><circle cx="32" cy="28" r="13" fill="${P.C2}" ${O}/><path d="M19 28 H45 M32 15 V41" stroke="#fff" stroke-width="3"/><circle cx="32" cy="28" r="4.4" fill="${P.Y}" ${O}/>${[20, 28, 36, 44].map((x, i) => `<path d="M${x} 46 l-3 13 h6Z" fill="${[P.G, P.R, P.Y, P.G][i]}" ${O}/>`).join('')}`,
+    copal: `<path d="M18 36 H46 L42 54 H22Z" fill="${P.O}" ${O}/><path d="M14 36 H50" ${O}/><path d="M26 32 c -6 -8 6 -12 0 -20 M34 32 c -6 -8 6 -12 0 -20 M42 32 c -5 -6 4 -10 0 -16" fill="none" stroke="${P.C}" stroke-width="2.4" stroke-linecap="round" opacity=".75"/>`,
+    xochitl: `${[0, 90, 180, 270].map(a => `<ellipse cx="32" cy="17" rx="9" ry="12" transform="rotate(${a} 32 32)" fill="${P.R}" ${O}/>`).join('')}${[45, 135, 225, 315].map(a => `<ellipse cx="32" cy="19" rx="5" ry="8" transform="rotate(${a} 32 32)" fill="${P.Y}" ${O}/>`).join('')}<circle cx="32" cy="32" r="7" fill="${P.Y}" ${O}/><circle cx="32" cy="32" r="3" fill="${P.C}"/>`,
+    huehuetl: `<path d="M18 14 H46 L42 50 L36 44 L32 52 L28 44 L22 50Z" fill="${P.O}" ${O}/><ellipse cx="32" cy="14" rx="14" ry="5" fill="#fff" ${O}/><path d="M20 26 H44 M21 34 H43" stroke="${P.C}" stroke-width="2"/><path d="M24 30 l4 -4 l4 4 l4 -4 l4 4" fill="none" stroke="${P.R}" stroke-width="2"/>`,
+  };
+  const icon = k => `<svg viewBox="0 0 64 64" aria-hidden="true">${ICON[k]}</svg>`;
 
-  // ---------- 6 · Casas que flotan ----------
-  function barco() {
-    const R0 = rnd(17), stars = Array.from({ length: 40 }, () => `<circle cx="${R0() * 960}" cy="${R0() * 260}" r="${1 + R0() * 1.4}" fill="${L}"/>`).join('');
-    const waves = Array.from({ length: 30 }, (_, i) => `<path d="M${R0() * 940} ${340 + i * 7} q 10 -6 20 0 q 10 -6 20 0" fill="none" stroke="${L}" stroke-width="2" opacity=".8"/>`).join('');
-    const ship = `<g transform="translate(470 330)"><path d="M-110 0 L110 0 L84 34 L-90 34Z" fill="${C}" stroke="#fbf8f0" stroke-width="2"/><path d="M-120 -6 L-100 0 M110 0 L126 -14" stroke="#fbf8f0" stroke-width="3"/>
-      ${[[-50, 110], [10, 150], [66, 100]].map(([x, h]) => `<path d="M${x} 0 V${-h}" stroke="#fbf8f0" stroke-width="3"/>${[0, 1].map(k => `<path d="M${x - 30 + k * 4} ${-h + 18 + k * 46} h${60 - k * 8} v40 h${-60 + k * 8}Z" fill="#fbf8f0" ${br(2)}/><path d="M${x} ${-h + 28 + k * 46} v20 M${x - 10} ${-h + 38 + k * 46} h20" stroke="${R}" stroke-width="4"/>`).join('')}`).join('')}
-      <path d="M10 -150 l18 6 l-18 6Z" fill="${R}"/></g>`;
-    return mural('f', `<rect width="960" height="330" fill="#22356e"/>${stars}${moon(780, 110, 34)}
-      <rect y="330" width="960" height="220" fill="#2f4a8a"/>${waves}<path d="M700 360 h120" stroke="${L}" stroke-width="3" opacity=".9"/>${ship}
-      <path d="M-10 470 C 120 448 260 452 380 470 V560 H-10Z" fill="${C}" stroke="#fbf8f0" stroke-width="2"/>`, '#22356e');
-  }
-
-  // ---------- 7 · Amanecer: título ----------
-  function amanecer() {
-    const R0 = rnd(19);
-    return mural('h', `${skyStrokes(R0, 12, O, 30, .8)}${sun(480, 300, 46, 20)}
-      ${volcanoes(40, 300, 1.25)}${malinche(150)}
-      <path d="${wave(424, 8, .016, 2)}" fill="${L2}" ${br()}/>${Array.from({ length: 34 }, (_, i) => corn(10 + i * 29, 530 + (i % 2) * 6, 1)).join('')}
-      ${heron(220, 120, 1.1)}${heron(270, 140, .8)}`);
-  }
-
-  // figs: [param or cast index, x%, bottom%, height%, painted?] — painted = cobalt background figure.
-  const SCENES = [
-    { scene: valle, year: 'Año 1-Ácatl · 1519', text: 'Año 1 Caña. En el valle, a la sombra de la Matlalcueye, vive un pueblo que nunca se ha rendido: el señorío libre de Tlaxcallan.', figs: [] },
-    { scene: tenochtitlan, year: 'Al poniente', text: 'Al poniente, Tenochtitlan brilla sobre su lago. Los mexicas cobran tributo a todos los pueblos de la tierra… a todos, menos a nosotros.', figs: [] },
-    { scene: cerco, year: 'La frontera', text: 'Por eso nos tienen cercados: sin sal, sin algodón, sin cacao. Cada año vienen por guerreros para sus altares. Pero Tlaxcallan resiste.', figs: [0, 1, 2, 3, 4, 5].map(i => [guard(i), 8 + i * 16.8, 21, 30, true]) },
-    { scene: milpa, year: 'Tu herencia', text: 'Tu padre te dejó una milpa pequeña al pie del monte, una choza, unas semillas y una coa. Es poco… pero es tuyo.', figs: [['PLAYER', 46, 21, 42, false]] },
-    { scene: tlatoani, year: 'Tizatlán', text: 'El tlatoani Xicohténcatl busca gente valiente: quien dé de comer a los guerreros, quien cuide la frontera, quien se gane un nombre.', figs: [[{ id: 'xico', name: 'Xicohténcatl', skin: '#9a6a44', hair: '#e8e2d8', hairStyle: 'largo', style: 'huipil', top: '#f6efe0', trim: '#b8402e', band2: '#b8402e', skirt: '#f6efe0', hem: '#b8402e', head: 'plumas', jade: true, orejeras: true, prop: 'lanza' }, 49, 38, 26, false], [guard(0), 12, 21, 28, true], [guard(1), 24, 21, 28, true], [guard(2), 74, 21, 28, true], [guard(3), 86, 21, 28, true]] },
-    { scene: barco, year: 'El mar del oriente', text: 'Y dicen los ancianos que en el mar del oriente se han visto casas que flotan, con hombres de barba y de piel pálida…', figs: [[guard(5), 8, 21, 24, true], [{ id: 'anc', name: 'Anciano', skin: '#9a6a44', hair: '#e8e2d8', hairStyle: 'chongo', style: 'quech', top: '#7a8a3a', trim: '#e9b33e', skirt: '#5a4a2a' }, 20, 21, 22, true]] },
-    { scene: amanecer, year: 'Tu historia', text: 'Los dioses te miran. Las mujeres del valle esperan conocerte. Tu historia empieza al amanecer.', title: true, figs: [4, 5, 8, 9, 12, 14].map((c, i) => [c, [8, 20, 32, 68, 80, 92][i], 21, 28, false]) },
-  ];
-
-  window.TlaxIntro = { SCENES, sun };
+  window.CdmArt = { P, rnd, sprite, sky, stars, cloud, sun, moon, malinche, volcanoes, hills, ground, cornPlant, cornRow, sprout, maguey, reeds, jacal, smoke, teocalli, temploMayor, city, wall, torchPole, flame, heron, banner, waterLines, canoe, ship, fog, shore, campfire, footprint, conchBlower, virgula, icon };
 })();
 </script>
 <script>
-// Intro player synced to the song: each mural starts at a cue in the track,
-// captions type in, the sung line shows in the caption panel. Enter/click jumps
-// to the next scene (and seeks the song), Esc jumps to the title, M mutes.
-// Fires `cdm:intro-end` when the player presses Enter on the title.
+// Corazón de Maíz · intro storyboard. Eleven chapters laid over the theme song:
+// chapter cuts land on song beats and story moments land on the sung lines
+// (herons on "va la garza", sprouts on "siembra la milpa", the ship on "vienen
+// casas sobre el mar", the path on "Tlaxcallan abre sus caminos"…).
+// Times are seconds into the song; builders turn them into chapter-relative delays.
 "use strict";
 (function () {
-  const X = window.TlaxTex, { SCENES } = window.TlaxIntro, F = window.TlaxFigs4, { CAST, PLAYER } = window.TlaxChars, LYRICS = window.CdmLyrics || [];
+  const A = window.CdmArt, F = window.TlaxFigs4, { CAST, PLAYER } = window.TlaxChars, P = A.P;
+
+  // Beat grid of the song (librosa beat tracking, ~92 BPM) for beat-synced pulses.
+  const BEATS = [0.3,1.09,1.72,2.35,3,3.67,4.32,4.97,5.64,6.29,6.92,7.57,8.22,8.87,9.54,10.22,10.87,11.49,12.19,12.82,13.47,14.1,14.74,15.37,16.02,16.67,17.32,17.97,18.62,19.25,19.9,20.55,21.2,21.83,22.52,23.17,23.82,24.45,25.1,25.73,26.38,27,27.66,28.28,28.93,29.56,30.19,30.84,31.46,32.09,32.76,33.39,34.04,34.67,35.32,35.97,36.59,37.24,37.87,38.52,39.17,39.82,40.45,41.1,41.75,42.4,43.05,43.68,44.33,44.95,45.6,46.23,46.88,47.53,48.16,48.78,49.44,50.06,50.71,51.34,51.99,52.64,53.31,53.96,54.61,55.26,55.91,56.56,57.21,57.84,58.51,59.16,59.81,60.47,61.12,61.77,62.41,63.06,63.72,64.39,65.04,65.69,66.34,66.99,67.64,68.29,68.94,69.59,70.24,70.91,71.54,72.19,72.84,73.47,74.12,74.77,75.42,76.07,76.74,77.39,78.04,78.67,79.32,79.95,80.62,81.27,81.92,82.59,83.24,83.89,84.52,85.19,85.82,86.47,87.12,87.77,88.42,89.07,89.72,90.35,91,91.65,92.32,92.95,93.6,94.27,94.92,95.57,96.22,96.87,97.52,98.17,98.8,99.47,100.1,100.73,101.38,102,102.66,103.28,103.93,104.56,105.19,105.81,106.46,107.09,107.74,108.37,109.02,109.67,110.32,110.94,111.59,112.25,112.87,113.52,114.15,114.8,115.45,116.1,116.75,117.4,118.03,118.65,119.3,119.95,120.58,121.21,121.86,122.53,123.18,123.83,124.46,125.11,125.76,126.39,127.04,127.69,128.34,128.99,129.61,130.26,130.91,131.54,132.19,132.84,133.49,134.14,134.77,135.4,136.05,136.7,137.35,138,138.62,139.27,139.9,140.55,141.2,141.85,142.5,143.13,143.78,144.43,145.08,145.71,146.35,147.01,147.66,148.26,148.91,149.56,150.21,150.84,151.49,152.14,152.76,153.41,154.06,154.69,155.34,155.99,156.64,157.29,157.92,158.57,159.2,159.85,160.5,161.12,161.77,162.4,163.05,163.7,164.35,164.98,165.63,166.25,166.88,167.51,168.16,168.79,169.44,170.06,170.71,171.34,171.99,172.64,173.27,173.92,174.57,175.19,175.84,176.47,177.12,177.75,178.4,179.03,179.68,180.3,180.95,181.6,182.23,182.88,183.51,184.13,184.76,185.41,186.06,186.71,187.34,187.99,188.62,189.24,189.89,190.52,191.17,191.82,192.45,193.07,193.72,194.37,195,195.65,196.28,196.91,197.56,198.18,198.86,199.51,200.16,200.81,201.43,202.08,202.71,203.36,203.99,204.64,205.26,205.91,206.54,207.19,207.84,208.47,209.1,209.72];
+
+  // ---------- Placement helpers ----------
+  // An animation shorthand: name, start (chapter seconds), duration…
+  const an = (name, at, dur = .7, ease = 'ease-out', fill = 'both', iter = 1, dir = 'normal') => `${name} ${dur}s ${ease} ${(+at).toFixed(2)}s ${iter} ${dir} ${fill}`;
+  const loop = (name, dur, ph = 0, ease = 'ease-in-out', dir = 'alternate') => `${name} ${dur}s ${ease} ${(-ph).toFixed(2)}s infinite ${dir}`;
+  // Places a sprite with its local origin at (x, y). o.anim animates the wrapper, o.loop the image.
+  function put(s, x, y, o = {}) {
+    const [bx, by, bw, bh] = s.box;
+    return `<div class="it${o.cls ? ' ' + o.cls : ''}" style="left:${(x + bx).toFixed(1)}px;top:${(y + by).toFixed(1)}px;width:${bw}px;height:${bh}px;${o.origin ? `transform-origin:${o.origin};` : ''}${o.anim ? `animation:${o.anim};` : ''}${o.vars || ''}"><img alt="" src="${s.url}" style="${o.loop ? `animation:${o.loop};` : ''}${o.lorigin ? `transform-origin:${o.lorigin};` : ''}"></div>`;
+  }
+  // Borgia figure with its feet at (x, feetY), h px tall.
+  function fig(p, x, feetY, h, o = {}) {
+    const w = h * 144 / 238, left = x - w * 68 / 144, top = feetY - h * 234 / 238;
+    const svg = o.flip ? `<div class="flip">${F.borgia(p)}</div>` : F.borgia(p);
+    return `<div class="it fig${o.paint ? ' paint' : ''}${o.dim ? ' dim' : ''}" style="left:${left.toFixed(1)}px;top:${top.toFixed(1)}px;width:${w.toFixed(1)}px;height:${h}px;${o.anim ? `animation:${o.anim};` : ''}${o.vars || ''}"><div class="figi" style="${o.loop ? `animation:${o.loop};` : ''}">${svg}</div></div>`;
+  }
+  const html = (markup, o = {}) => `<div class="it ${o.cls || ''}" style="${o.style || ''}${o.anim ? `animation:${o.anim};` : ''}${o.vars || ''}">${markup}</div>`;
+
+  // Logo: a heart of criollo maize kernels between two husk leaves. With t0 the
+  // leaves unfold and the kernels pop in from the tip up.
+  function heart(id, t0) {
+    const pal = ['#f2c94c', '#f2c94c', '#f2c94c', '#e9a83a', '#c0392b', '#3d63b8', '#f6efe0', '#f2c94c', '#7a2a6a'], ks = [];
+    let n = 0;
+    for (let r = 0, y = 28; y < 96; y += 7, r++) for (let x = 18 + (r % 2) * 4; x < 104; x += 8) ks.push([x, y, pal[(n++ * 7 + r * 3) % pal.length]]);
+    const order = ks.map((k, i) => [Math.hypot(k[0] - 60, (k[1] - 92) * 1.3), i]).sort((a, b) => a[0] - b[0]).map(([, i], rank) => [i, rank]);
+    const rank = []; order.forEach(([i, r]) => { rank[i] = r; });
+    const anim = (name, at, dur = .5, ease = 'cubic-bezier(.2,1.4,.4,1)') => t0 == null ? '' : ` style="animation:${an(name, t0 + at, dur, ease)}"`;
+    const kern = ks.map(([x, y, c], i) => `<ellipse class="k" cx="${x}" cy="${y}" rx="3.6" ry="3.1" fill="${c}" stroke="#1a1410" stroke-width="1"${anim('kpop', .3 + rank[i] * .0055, .32)}/>`).join('');
+    return `<svg class="heart" viewBox="0 0 120 110" aria-hidden="true"><g class="lf lf--l"${anim('leaf', 0, .7)}><path d="M60 104 C 20 92 2 60 18 30 C 26 14 44 8 50 26" fill="#7cb04a" stroke="#1a1410" stroke-width="3.4"/></g><g class="lf lf--r"${anim('leaf', .08, .7)}><path d="M60 104 C 100 92 118 60 102 30 C 94 14 76 8 70 26" fill="#5fa040" stroke="#1a1410" stroke-width="3.4"/></g><g class="hb"${anim('kpop', .12, .5)}><path d="M60 96 C 30 78 16 58 20 40 C 24 24 44 18 60 34 C 76 18 96 24 100 40 C 104 58 90 78 60 96 Z" fill="#e9b33e" stroke="#1a1410" stroke-width="4"/></g><clipPath id="${id}"><path d="M60 92 C 32 76 20 58 23 41 C 27 27 44 22 60 38 C 76 22 93 27 97 41 C 100 58 88 76 60 92 Z"/></clipPath><g clip-path="url(#${id})">${kern}</g><g class="silk"${anim('fadeIn', 1.1, .6, 'ease-out')}><path d="M60 34 C 58 18 64 6 72 2" stroke="#e9b33e" stroke-width="3" fill="none"/><path d="M60 34 C 54 20 46 12 38 10" stroke="#d39a26" stroke-width="2.4" fill="none"/></g></svg>`;
+  }
+  function titleCard(id, t0, extra = '') {
+    return `<div class="tc${extra}"><div class="tc__h pulse">${heart(id, t0)}</div><div class="tc__n" style="animation:${an('titleIn', t0 + .35, 1.1, 'cubic-bezier(.2,.8,.2,1)')}"><span class="tc__w" style="animation:${an('shine', t0 + 1.5, 1.6, 'ease-in-out', 'both')}">Corazón de Maíz</span></div><div class="tc__s" style="animation:${an('riseIn', t0 + 2.2, .9)}">Tlaxcallan · año 1-Ácatl · 1519</div></div>`;
+  }
+  // Talavera medallion with an icon; an optional red X is painted over it (the blockade).
+  function roundel(icon, x, y, at, out, cross) {
+    return html(`<div class="rd">${A.icon(icon)}${cross != null ? `<svg class="rd__x" viewBox="0 0 64 64"><path d="M12 12 L52 52 M52 12 L12 52" style="animation:${an('xdraw', cross, .45, 'ease-in')}"/></svg>` : ''}</div>`,
+      { cls: 'rdw', style: `left:${x - 46}px;top:${y - 46}px;`, anim: `${an('popIn', at, .55, 'cubic-bezier(.2,1.5,.4,1)')}, ${an('popOut', out, .5, 'ease-in', 'forwards')}` });
+  }
+  const sum = (...a) => a.join('');
+
+  // ---------- Reusable pieces ----------
+  const clouds = (seed, list) => list.map(([x, y, s, dx, dur]) => put(A.cloud(s), x, y, { anim: an('drift', 0, dur, 'linear'), vars: `--dx:${dx}px;` })).join('');
+  const herons = (at, y0, dur = 7) => [[-60, y0, 1.4], [-120, y0 + 30, 1.12], [-170, y0 - 18, .92]].map(([x, y, s], i) => html(
+    `<img alt="" class="flapA" src="${A.heron(true, s).url}" style="animation:${loop('flapA', .52, i * .17, 'steps(1)', 'normal')}"><img alt="" class="flapB" src="${A.heron(false, s).url}" style="animation:${loop('flapB', .52, i * .17, 'steps(1)', 'normal')}">`,
+    { cls: 'heron', style: `left:${x - 30 * s}px;top:${y - 18 * s}px;width:${60 * s}px;height:${32 * s}px;`, anim: an('fly', at + i * .35, dur, 'linear'), vars: `--dx:${1160 + i * 40}px;--dy:${-30 + i * 12}px;` })).join('');
+  const village = (list) => list.map(([x, y, s], i) => put(A.jacal(s), x, y) + put(A.smoke(), x + 8 * s, y - 56 * s, { loop: loop('smoke', 3.4, i * .9, 'ease-out', 'normal'), lorigin: '50% 100%' })).join('');
+  const segs = (x0, x1, n, s, y, o) => Array.from({ length: n }, (_, i) => {
+    const a = x0 + (x1 - x0) * i / n - 20, b = x0 + (x1 - x0) * (i + 1) / n + 20;
+    return put(A.cornRow(a, b, s, { seed: 11 + i * 3 + Math.round(s * 10), gap: o.gap || 28, ...(o.colors || {}) }), 0, y, {
+      loop: `${loop('sway', o.sway || 3.4, i * .45 + (o.ph || 0))}${o.gust != null ? `, ${an('gust', o.gust + i * .16, 1.5, 'ease-in-out', 'none')}` : ''}`, lorigin: '50% 100%' });
+  }).join('');
+  const cornNight = { colors: { stem: '#14285e', leaf: '#2a4486', cob: P.O, tassel: P.O } };
+  const valley = (y, opts = {}) => sum(
+    put(A.volcanoes(.9, opts.far || P.L), -40, y - 18, {}),
+    put(A.malinche(opts.ms || 1.05, { fill: opts.mal || P.W, night: opts.night }), opts.mx || 470, y));
+
+  // ---------- Chapters ----------
+  // Each build gets T(abs) → chapter seconds, returns planes from back to front.
+  const CH = [
+    { t0: 0, label: '', cam: [0, 0, 0, .05, '50% 38%'], build: T => ({
+      sky: sum(put(A.sky('predawn', 3), 0, 0), put(A.sky('dawn', 4), 0, 0, { anim: an('fadeIn', T(9), 12, 'linear') }),
+        put(A.stars(5, 80), 0, 0, { anim: an('fadeOut', T(10), 8, 'linear', 'both'), loop: loop('twinkle', 2.6) }),
+        put(A.sprite('<circle r="300" fill="url(#fl)"/>', [-300, -300, 600, 600], { wobble: 0, defs: '<radialGradient id="fl"><stop offset="0" stop-color="#ffe2a0" stop-opacity=".95"/><stop offset=".45" stop-color="#f7b878" stop-opacity=".45"/><stop offset="1" stop-color="#f7b878" stop-opacity="0"/></radialGradient>' }), 480, 300, { anim: an('fadeIn', T(8), 12, 'ease-in-out') })),
+      far: valley(402, { mal: '#7f95cf', far: '#9fb0dc', ms: 1, mx: 480, night: true }),
+      mid: put(A.hills({ amp: 9, fill: '#9fb0dc', trees: 20, treeFill: '#34508f', seed: 7 }), 0, 396),
+      front: segs(-160, 1120, 4, 1.45, 552, { ...cornNight, sway: 4 }),
+      ui: titleCard('h0', T(3.67), ' tc--hero'),
+    }) },
+    { t0: 21.83, label: 'Año 1-Ácatl · 1519', wipe: true, punch: .012, cam: [10, -30, 0, .06, '66% 62%'], build: T => ({
+      sky: sum(put(A.sky('sunset', 6), 0, 0), put(A.sun(30, 14), 210, 300, { cls: 'pulse', anim: an('sink', 0, 15, 'linear'), vars: '--dy:44px;' }),
+        clouds(6, [[150, 120, 1, 60, 15], [600, 84, 1.3, 50, 15], [860, 150, .9, 40, 15]])),
+      far: put(A.hills({ amp: 22, freq: .009, fill: '#c3cdea', seed: 4, depth: 120 }), 0, 316),
+      mid: sum(put(A.sprite(`<rect x="-160" y="0" width="1280" height="260" fill="#d6dff2"/><path d="M-160 0 H1120" stroke="${P.C}" stroke-width="3"/>`, [-166, -6, 1292, 270], { wobble: 3 }), 0, 334),
+        put(A.waterLines(1440, 200, 9), -120, 340, { loop: loop('flow', 9, 0, 'linear', 'normal') }),
+        put(A.sprite(`<path d="M-40 230 L330 30 M60 240 L380 36" stroke="${P.O}" stroke-width="7" stroke-linecap="round"/><path d="M-40 230 L330 30 M60 240 L380 36" stroke="${P.C}" stroke-width="1.6" stroke-dasharray="4 8"/>`, [-50, 20, 440, 230], { wobble: 2 }), 120, 330),
+        put(A.city(460), 420, 352), put(A.teocalli(.5, P.O), 500, 352), put(A.teocalli(.5, P.G), 800, 352), put(A.temploMayor(1.25), 650, 352),
+        put(A.smoke(), 616, 214, { loop: loop('smoke', 3.2, 0, 'ease-out', 'normal'), lorigin: '50% 100%' }), put(A.smoke(), 684, 214, { loop: loop('smoke', 3.2, 1.6, 'ease-out', 'normal'), lorigin: '50% 100%' })),
+      near: sum(put(A.canoe(1.2), 110, 394, { anim: an('drift', 0, 15, 'linear'), vars: '--dx:170px;', loop: loop('bob', 1.6) }),
+        put(A.canoe(1), 330, 408, { anim: an('drift', 0, 15, 'linear'), vars: '--dx:120px;', loop: loop('bob', 1.9, .5) }),
+        put(A.canoe(.8), 900, 380, { anim: an('drift', 0, 15, 'linear'), vars: '--dx:-150px;', loop: loop('bob', 1.7, .3) })),
+      front: sum(put(A.reeds(1.2, 3), 30, 430, { loop: loop('sway', 3, 0), lorigin: '50% 100%' }), put(A.reeds(1.3, 8), 940, 434, { loop: loop('sway', 3.3, .7), lorigin: '50% 100%' })),
+      ui: html(`<span class="kin__ic">${A.icon('huehuetl')}</span>¡Que retumbe el huéhuetl!`, { cls: 'kin pulse', anim: `${an('kinIn', T(22.0), .55, 'cubic-bezier(.2,1.4,.4,1)')}, ${an('kinOut', T(25.0), .6, 'ease-in', 'forwards')}` }),
+    }) },
+    { t0: 36.78, label: 'La frontera', cam: [40, -40, .02, .04, '50% 55%'], build: T => {
+      const guard = i => ({ id: 'g' + i, skin: ['#a8683a', '#9a5e34', '#b07a48'][i % 3], hair: '#1a1210', hairStyle: ['coleta', 'largo', 'trenzas'][i % 3], style: 'armadura', legs: true, top: '#efe3c8', trim: '#2f5fa8', head: i % 2 ? 'plumas' : 'pluma', prop: i % 2 ? 'escudo' : 'lanza', shield: '#2f5fa8' });
+      return {
+        sky: sum(put(A.sky('ember', 8), 0, 0), put(A.sun(54, 20), 480, 262, { cls: 'pulse', anim: an('sink', 0, 15.2, 'linear'), vars: '--dy:96px;' })),
+        far: sum(put(A.hills({ amp: 14, fill: '#c7cde6', seed: 9, depth: 80 }), 0, 300),
+          put(A.banner(.95), 480, 330, { anim: an('rise', T(46.1), 1.6, 'cubic-bezier(.2,.9,.2,1)'), vars: '--dy:150px;', loop: loop('wave', 2.4), lorigin: '50% 100%' })),
+        mid: sum(put(A.wall(), 0, 318), [60, 330, 630, 900].map((x, i) => put(A.torchPole(), x, 296) + put(A.flame(1.1), x, 242, { loop: loop('flick', .18 + i * .03, i * .1), lorigin: '50% 100%' })).join(''),
+          [150, 245, 410, 560, 735, 830].map((x, i) => fig(guard(i), x, 296, 104, { paint: true, flip: i % 2 === 1, loop: loop('breathe', 2.6, i * .4) })).join('')),
+        front: put(A.sprite(`<rect x="-160" y="0" width="1280" height="200" fill="${P.C}"/>`, [-166, -6, 1292, 210], { wobble: 3 }), 0, 438),
+        ui: sum(roundel('sal', 330, 132, T(38.0), T(43.9), T(38.45)), roundel('algodon', 480, 132, T(38.65), T(43.95), T(39.1)), roundel('cacao', 630, 132, T(39.3), T(44.0), T(39.75))),
+      };
+    } },
+    { t0: 51.99, label: 'Tlaxcallan', cam: [0, 0, 0, .07, '50% 46%'], build: T => ({
+      sky: sum(put(A.sky('dawn', 10), 0, 0), put(A.sun(34), 690, 340, { cls: 'pulse', anim: an('sunRise', T(52.1), 6.5, 'cubic-bezier(.3,.6,.3,1)'), vars: '--dy:-160px;' }),
+        clouds(10, [[140, 110, 1, 40, 10.5], [820, 90, 1.1, 30, 10.5]])),
+      far: valley(392),
+      mid: sum(put(A.hills({ amp: 8, fill: '#c9dcc0', trees: 22, seed: 12 }), 0, 382), village([[170, 404, .7], [252, 412, .62], [690, 406, .7], [772, 414, .6], [852, 406, .68]])),
+      near: sum(put(A.maguey(1.3), 60, 452), put(A.maguey(1.1), 905, 448)),
+      front: segs(-160, 1120, 4, 1.5, 548, { sway: 3.8 }),
+      ui: herons(T(59.5), 150, 7.5),
+    }) },
+    { t0: 62.41, label: 'Tu herencia', cam: [10, -40, 0, .04, '60% 60%'], build: T => {
+      const sprouts = []; [[372, 150, 640], [390, 135, 655], [408, 120, 670]].forEach(([y, x0, x1], r) => { for (let x = x0, k = 0; x <= x1; x += 58, k++) sprouts.push(put(A.sprout(.9 + r * .15), x + (r % 2) * 20, y, { anim: an('grow', T(72.84) + (k + r * 3) * .07, .7, 'cubic-bezier(.2,1.4,.4,1)'), origin: '50% 100%' })); });
+      const prints = Array.from({ length: 8 }, (_, i) => put(A.footprint(i % 2 === 0), 120 + i * 24, 414 - (i % 2) * 6, { anim: an('fadeIn', T(62.7) + i * .3, .3) })).join('');
+      return {
+        sky: sum(put(A.sky('day', 12), 0, 0), put(A.sun(28), 830, 96, { loop: loop('spin', 60, 0, 'linear', 'normal') }), clouds(12, [[300, 80, 1, 50, 17.5], [600, 140, .8, 40, 17.5]])),
+        far: sum(put(A.malinche(.75), 190, 360), put(A.hills({ amp: 16, freq: .01, fill: '#d7e3cf', trees: 10, seed: 14, x0: 600 }), 0, 342),
+          put(A.conchBlower(1.6), 878, 318, { anim: an('fadeIn', T(74.9), .8) }),
+          [0, 1, 2].map(i => put(A.virgula(1.2 + i * .35), 918 + i * 5, 236 - i * 18, { anim: an('fadeIn', T(75.3) + i * .65, .3), loop: loop('vir', 1.95, -i * .65, 'ease-out', 'normal'), lorigin: '0% 100%' })).join('')),
+        mid: sum(put(A.sprite(`<path d="M80 0 L700 0 L740 70 L40 70Z" fill="#d9b98a"/>${[14, 32, 50].map(y => `<path d="M${76 - y * .5} ${y} L${704 + y * .5} ${y}" stroke="${P.BR}" stroke-width="5" opacity=".7"/>`).join('')}<path d="M80 0 L700 0" stroke="${P.C}" stroke-width="2.4"/>`, [30, -8, 720, 86], { wobble: 3 }), 0, 352),
+          sprouts.join(''), put(A.jacal(1.5), 770, 408), put(A.smoke(), 782, 324, { loop: loop('smoke', 3.4, 0, 'ease-out', 'normal'), lorigin: '50% 100%' })),
+        near: sum(prints, fig(PLAYER, 330, 414, 196, { anim: an('walkIn', T(62.5), 2.6, 'cubic-bezier(.3,.6,.4,1)'), vars: '--dx:-220px;', loop: an('step', T(62.5), .325, 'ease-in-out', 'none', 8, 'alternate') })),
+        front: sum(put(A.maguey(1.4), 40, 460), put(A.maguey(1.2), 930, 456)),
+        ui: sum(roundel('milpa', 300, 96, T(63.4), T(68.6)), roundel('choza', 420, 96, T(64.05), T(68.65)), roundel('semillas', 540, 96, T(64.7), T(68.7)), roundel('coa', 660, 96, T(65.35), T(68.75))),
+      };
+    } },
+    { t0: 79.95, label: 'Tizatlán', punch: .009, cam: [0, 0, 0, .08, '50% 42%'], build: T => {
+      const xico = { id: 'xico', name: 'Xicohténcatl', skin: '#9a6a44', hair: '#e8e2d8', hairStyle: 'largo', style: 'tilma', legs: true, top: '#f6efe0', trim: '#b8402e', head: 'plumas', jade: true, orejeras: true, prop: 'baston' };
+      const war = i => ({ id: 'w' + i, skin: ['#a8683a', '#9a5e34', '#b07a48'][i % 3], hair: '#1a1210', hairStyle: ['coleta', 'largo', 'trenzas'][i % 3], style: 'armadura', legs: true, top: '#efe3c8', trim: '#2f5fa8', head: i % 2 ? 'plumas' : 'pluma', prop: i % 2 ? 'escudo' : 'lanza', shield: '#2f5fa8' });
+      const march = (i, x, from) => fig(war(i), x, 412, 112, { paint: true, flip: from > 0, anim: an('walkIn', T(80.3) + (i % 3) * .2, 3.2, 'cubic-bezier(.3,.6,.4,1)'), vars: `--dx:${from}px;`, loop: `${an('step', T(80.3), .325, 'ease-in-out', 'none', 10, 'alternate')}, ${an('hop3', T(89.0), 1.95, 'linear', 'none')}` });
+      return {
+        sky: sum(put(A.sky('day', 14), 0, 0), clouds(14, [[160, 90, 1.1, 40, 15], [760, 70, 1, 30, 15]])),
+        far: put(A.hills({ amp: 18, fill: '#d2dcef', trees: 14, seed: 16 }), 0, 336),
+        mid: sum(put(A.teocalli(2, P.G), 480, 404), fig(xico, 482, 286, 120, { loop: loop('breathe', 3, 0) }),
+          put(A.banner(1.1), 300, 404, { loop: loop('wave', 2.2), lorigin: '50% 100%' }), put(A.banner(1.1), 660, 404, { loop: loop('wave', 2.4, .6), lorigin: '50% 100%' })),
+        near: sum(march(0, 110, -320), march(1, 185, -320), march(2, 260, -320), march(3, 700, 320), march(4, 775, 320), march(5, 850, 320)),
+        front: put(A.ground('#eadcbc', { seed: 5 }), 0, 412),
+      };
+    } },
+    { t0: 94.92, label: 'Corazón de maíz', punch: .006, cam: [30, -40, 0, .05, '50% 70%'], build: T => ({
+      sky: sum(put(A.sky('day', 16), 0, 0), put(A.sky('dusk', 17), 0, 0, { anim: an('fadeIn', T(101), 16, 'linear') }),
+        put(A.stars(18, 40, [-80, -40, 1120, 200]), 0, 0, { anim: an('fadeIn', T(115), 6, 'linear'), loop: loop('twinkle', 2.4) }),
+        put(A.sun(30), 720, 130, { anim: an('sink', T(97), 24, 'linear'), vars: '--dy:240px;' })),
+      far: put(A.hills({ amp: 12, fill: '#c6d2ea', trees: 16, seed: 18 }), 0, 330),
+      mid: segs(-160, 1120, 5, 1.6, 372, { gap: 24, gust: T(96.6), sway: 3.2 }),
+      near: segs(-200, 1160, 4, 2.6, 456, { gap: 24, gust: T(96.9), sway: 3.6, ph: 1 }),
+      front: sum(segs(-260, 1220, 3, 4, 564, { gap: 26, gust: T(97.2), sway: 4.2, ph: 2 }),
+        Array.from({ length: 18 }, (_, i) => `<i class="ff" style="left:${60 + (i * 53) % 860}px;top:${150 + (i * 37) % 230}px;animation:${an('fadeIn', T(112) + i * .35, 1.2, 'ease-out')}, ${loop('ffly', 3 + (i % 4) * .7, i * .4)}"></i>`).join('')),
+    }) },
+    { t0: 121.86, label: 'El valle', cam: [-30, 30, .02, .03, '50% 60%'], build: T => {
+      const women = [4, 5, 8, 9, 12, 14];
+      return {
+        sky: sum(put(A.sky('dusk', 20), 0, 0), put(A.moon(24), 150, 120, { anim: an('sunRise', 0, 9, 'ease-out'), vars: '--dy:-40px;' })),
+        far: sum(put(A.malinche(.62, { fill: '#8a9ad0' }), 700, 322), put(A.sprite([0, 1, 2, 3, 4].map(i => `<g transform="translate(${i * 70} 0)"><path d="M0 0 V-22 M44 0 V-22" stroke="${P.C}" stroke-width="2.4"/><path d="M-6 -22 L50 -22 L42 -32 L2 -32Z" fill="${[P.R, P.O, P.C2, P.G, P.O][i]}" stroke="${P.C}" stroke-width="2"/></g>`).join(''), [-10, -40, 360, 46], { wobble: 2 }), 470, 330)),
+        mid: sum(put(A.sprite(`<rect x="-160" y="0" width="1280" height="44" fill="#cbd6ee"/><path d="M-160 0 H1120 M-160 44 H1120" stroke="${P.C}" stroke-width="2.6"/>`, [-166, -6, 1292, 56], { wobble: 3 }), 0, 330),
+          put(A.waterLines(1440, 36, 21), -120, 334, { loop: loop('flow', 7, 0, 'linear', 'normal') }), put(A.ground('#efe2c4', { seed: 9 }), 0, 374)),
+        near: sum(put(A.reeds(1.2, 4), 40, 400, { loop: loop('sway', 3, 0), lorigin: '50% 100%' }), put(A.reeds(1.3, 9), 920, 404, { loop: loop('sway', 3.4, .6), lorigin: '50% 100%' }),
+          women.map((c, i) => fig(CAST[c], 150 + i * 132, 412, 150, { anim: an('riseIn', T(122.5) + i * 1.3, .9), loop: loop('breathe', 2.8, i * .5) })).join('')),
+      };
+    } },
+    { t0: 132.19, label: 'El mar del oriente', cam: [0, 0, 0, .09, '49% 56%'], build: T => {
+      const elder = { id: 'anc', name: 'Anciano', skin: '#9a6a44', hair: '#e8e2d8', hairStyle: 'chongo', style: 'tilma', legs: true, top: '#7a8a3a', trim: '#e9b33e', prop: 'baston' };
+      const guard = { id: 'gs', skin: '#a8683a', hair: '#1a1210', hairStyle: 'coleta', style: 'armadura', legs: true, top: '#efe3c8', trim: '#2f5fa8', head: 'pluma', prop: 'lanza' };
+      return {
+        sky: sum(put(A.sky('night', 22), 0, 0), put(A.stars(23, 70), 0, 0, { loop: loop('twinkle', 2.2) }), put(A.moon(30), 790, 104)),
+        mid: sum(put(A.sprite(`<rect x="-160" y="0" width="1280" height="300" fill="#2a4486"/><path d="M-160 0 H1120" stroke="#fbf8f0" stroke-width="2"/>${Array.from({ length: 9 }, (_, i) => `<rect x="${770 - i * 3}" y="${10 + i * 12}" width="${40 + i * 6}" height="3" rx="1.5" fill="#fbf8f0" opacity="${.7 - i * .06}"/>`).join('')}`, [-166, -6, 1292, 310], { wobble: 2 }), 0, 302),
+          put(A.waterLines(1440, 240, 24, '#c8d4ee'), -120, 306, { loop: loop('flow', 12, 0, 'linear', 'normal') }),
+          put(A.ship(), 470, 330, { anim: an('shipIn', T(134.6), 3.2, 'ease-out'), loop: loop('rock', 3.2) }),
+          [[-60, 284, 560], [260, 304, 600], [-120, 324, 700]].map(([x, y, w], i) => put(A.fog(w), x, y, { anim: `${an('drift', T(134.4) + i * .3, 7, 'ease-in')}, ${an('fadeOut', T(135.2) + i * .4, 4, 'ease-in', 'both')}`, vars: `--dx:${i % 2 ? -260 : 280}px;` })).join('')),
+        front: sum(put(A.shore(), 0, 380), put(A.campfire(), 300, 426), put(A.flame(1.2), 300, 422, { loop: loop('flick', .2, 0), lorigin: '50% 100%' }),
+          fig(elder, 175, 420, 118, { dim: true, loop: loop('breathe', 3, 0) }), fig(guard, 238, 420, 124, { dim: true, loop: loop('breathe', 2.7, .8) })),
+      };
+    } },
+    { t0: 153.41, label: 'Amanecer', punch: .006, cam: [-20, 20, 0, .05, '52% 50%'], build: T => {
+      const bz = (t, a, b, c) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c, P0 = [205, 430], P1 = [380, 372], P2 = [690, 392];
+      const at3 = t => [bz(t, P0[0], P1[0], P2[0]), bz(t, P0[1], P1[1], P2[1])], halfW = t => 34 * (1 - t) + 6 * t;
+      const edge = side => Array.from({ length: 25 }, (_, k) => { const t = k / 24, [x, y] = at3(t), [x2, y2] = at3(Math.min(1, t + .01)), [x1, y1] = at3(Math.max(0, t - .01)), dx = x2 - x1, dy = y2 - y1, n = Math.hypot(dx, dy) || 1; return [x - side * dy / n * halfW(t), y + side * dx / n * halfW(t)]; });
+      const L = edge(1), Rr = edge(-1).reverse(), road = A.sprite(`<path d="M${[...L, ...Rr].map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}Z" fill="#e3c99a"/><path d="M${L.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}" fill="none" stroke="${P.C}" stroke-width="2.4"/><path d="M${Rr.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}" fill="none" stroke="${P.C}" stroke-width="2.4"/>`, [150, 340, 580, 120], { wobble: 2.5 });
+      const path = put(road, 0, 0) + Array.from({ length: 14 }, (_, i) => { const t = .06 + i * .066, [x, y] = at3(t), o = (i % 2 ? -1 : 1) * halfW(t) * .32; return put(A.footprint(i % 2 === 0), x, y + o, { anim: an('popIn', T(161.8) + i * .22, .35) }); }).join('');
+      return {
+        sky: sum(put(A.sky('predawn', 25), 0, 0), put(A.sky('dawn', 26), 0, 0, { anim: an('fadeIn', T(153.6), 6.5, 'linear') }),
+          put(A.stars(27, 60), 0, 0, { anim: an('fadeOut', T(153.6), 5, 'linear') }),
+          put(A.sun(36), 600, 330, { cls: 'pulse', anim: an('sunRise', T(154), 8, 'cubic-bezier(.3,.6,.3,1)'), vars: '--dy:-175px;' })),
+        far: valley(392, { mx: 520 }),
+        mid: sum(put(A.hills({ amp: 8, fill: '#c9dcc0', trees: 22, seed: 28 }), 0, 382), village([[700, 406, .7], [780, 414, .62], [860, 406, .66]])),
+        near: sum(put(A.sprite(`<path d="M-160 30 C 40 6 200 0 330 12 C 380 16 420 24 440 40 L440 200 L-160 200Z" fill="#d7c497" stroke="${P.C}" stroke-width="3"/>`, [-166, -6, 612, 212], { wobble: 3 }), 0, 384), path,
+          fig(PLAYER, 170, 412, 204, { loop: loop('breathe', 3, 0) })),
+        front: segs(-160, 1120, 4, 1.5, 552, { sway: 3.8 }),
+        ui: herons(T(157), 140, 8),
+      };
+    } },
+    { t0: 171.34, label: 'Corazón de Maíz', wipe: true, punch: .009, cam: [0, 0, 0, .03, '50% 50%'], build: T => {
+      const tiles = [['milpa', 'Siembra tu milpa'], ['cacao', 'Comercia en el tianguis'], ['escudo', 'Defiende la frontera'], ['copal', 'Honra a los dioses'], ['xochitl', 'Encuentra el amor']];
+      const at = [171.99, 175.89, 179.79, 183.69, 187.59];
+      const lineup = [[4, 150], [5, 250], [8, 350], ['P', 480], [9, 610], [12, 710], [14, 810]];
+      return {
+        sky: sum(put(A.sky('day', 30), 0, 0), clouds(30, [[150, 100, 1, 60, 41], [520, 70, 1.2, 50, 41], [850, 120, .9, 40, 41]])),
+        far: valley(392),
+        mid: sum(put(A.hills({ amp: 8, fill: '#c9dcc0', trees: 22, seed: 31 }), 0, 382), village([[170, 404, .7], [690, 406, .7], [852, 406, .68]])),
+        near: lineup.map(([c, x], i) => fig(c === 'P' ? PLAYER : CAST[c], x, 412, c === 'P' ? 178 : 150, { anim: an('riseIn', T(192.1) + i * .14, .8), loop: loop('breathe', 2.8, i * .4) })).join(''),
+        front: segs(-160, 1120, 4, 1.5, 552, { sway: 3.8 }),
+        ui: sum(tiles.map(([ic, label], i) => html(`<div class="ft__t pulse">${A.icon(ic)}</div><div class="ft__l">${label}</div>`, { cls: 'ft', style: `left:${180 + i * 150 - 66}px;`, anim: `${an('flipIn', T(at[i]), .8, 'cubic-bezier(.2,1.3,.4,1)')}, ${an('flipOut', T(190.6) + i * .08, .5, 'ease-in', 'forwards')}` })).join(''),
+          titleCard('h10', T(191.82), ' tc--end')),
+      };
+    } },
+  ];
+
+  // Narration, in story order. hold: seconds the panel stays up (default 15).
+  const CAPTIONS = [
+    { t: 25.0, text: 'Año 1 Caña. Al poniente, Tenochtitlan brilla sobre su lago. Los mexicas cobran tributo a todos los pueblos de la tierra… a todos, menos a nosotros.' },
+    { t: 37.0, text: 'Por eso nos tienen cercados: sin sal, sin algodón, sin cacao.' },
+    { t: 44.4, text: 'Cada año vienen por guerreros para sus altares. Pero Tlaxcallan resiste.' },
+    { t: 52.2, text: 'En el valle, a la sombra de la Matlalcueye, vive un pueblo que nunca se ha rendido: el señorío libre de Tlaxcallan.' },
+    { t: 62.6, text: 'Tu padre te dejó una milpa pequeña al pie del monte, una choza, unas semillas y una coa.' },
+    { t: 68.8, text: 'Es poco… pero es tuyo.' },
+    { t: 73.2, text: 'Y esta mañana, desde Tizatlán, suena el caracol.' },
+    { t: 80.2, text: 'El viejo tlatoani Xicohténcatl busca gente valiente: quien dé de comer a los guerreros, quien cuide la frontera, quien se gane un nombre.' },
+    { t: 95.3, text: 'Dicen los abuelos que tenemos corazón de maíz: se dobla con el viento, pero no se quiebra.' },
+    { t: 122.2, text: 'En el tianguis, en el río y en la milpa, las mujeres del valle esperan conocerte.' },
+    { t: 132.6, text: 'Y dicen los ancianos que en el mar del oriente se han visto casas que flotan, con hombres de barba y de piel pálida…' },
+    { t: 142.6, text: 'Nadie sabe qué traen. Pero el maíz no espera: al amanecer, hay que sembrar.' },
+    { t: 153.7, text: 'Los dioses te miran: Camaxtli desde su templo, la Matlalcueye desde su monte.' },
+    { t: 197.0, text: 'Tu historia empieza al amanecer.', hold: 999 },
+  ];
+
+  CH.forEach((c, i) => { c.t1 = i + 1 < CH.length ? CH[i + 1].t0 : 212; });
+  window.CdmStory = { CH, CAPTIONS, BEATS, heart, TITLE_AT: 191.82, SONG_LEN: 212 };
+})();
+</script>
+<script>
+// Corazón de Maíz · intro player. The song is the clock: each chapter is built
+// from intro-story.js a moment before its cue, and every CSS animation inside it
+// is pinned to the song time (Web Animations currentTime), so seeking, pausing or
+// a slow device never lets picture and music drift apart.
+// Enter/click: next story beat · Esc: jump to the title · M: mute.
+// Fires `cdm:intro-end` when the player starts the game from the title.
+"use strict";
+(function () {
+  const X = window.TlaxTex, S = window.CdmStory, LYRICS = window.CdmLyrics || [];
+  const { CH, CAPTIONS, BEATS, TITLE_AT, SONG_LEN, heart } = S;
   const root = document.documentElement.style;
   root.setProperty('--deco', `url(${X.decoTile()})`); root.setProperty('--plain', `url(${X.plainTiles()})`); root.setProperty('--cobalt', `url(${X.cobaltTile()})`);
 
-  // Seconds into the song where each scene begins, matched to the lyrics:
-  // intro shouts · instrumental · verse 1 ("aunque nos cierren la sal") · pre-chorus
-  // ("siembra la milpa") · verse 2 · "vienen casas sobre el mar" · last chorus + outro.
-  const CUES = [0, 21.8, 51.9, 72.8, 104.7, 132.4, 153.4];
-  const SONG_LEN = 212;
-
-  // Logo: a heart of criollo maize kernels between two husk leaves.
-  const pal = ['#f2c94c', '#f2c94c', '#f2c94c', '#e9a83a', '#c0392b', '#3d63b8', '#f6efe0', '#f2c94c', '#7a2a6a'];
-  let kern = '', n = 0;
-  for (let r = 0, y = 28; y < 96; y += 7, r++) for (let x = 18 + (r % 2) * 4; x < 104; x += 8) kern += `<ellipse cx="${x}" cy="${y}" rx="3.6" ry="3.1" fill="${pal[(n++ * 7 + r * 3) % pal.length]}" stroke="#1a1410" stroke-width="1"/>`;
-  const heart = id => `<svg viewBox="0 0 120 110"><path d="M60 104 C 20 92 2 60 18 30 C 26 14 44 8 50 26" fill="#7cb04a" stroke="#1a1410" stroke-width="3.4"/><path d="M60 104 C 100 92 118 60 102 30 C 94 14 76 8 70 26" fill="#5fa040" stroke="#1a1410" stroke-width="3.4"/><path d="M60 96 C 30 78 16 58 20 40 C 24 24 44 18 60 34 C 76 18 96 24 100 40 C 104 58 90 78 60 96 Z" fill="#e9b33e" stroke="#1a1410" stroke-width="4"/><clipPath id="${id}"><path d="M60 92 C 32 76 20 58 23 41 C 27 27 44 22 60 38 C 76 22 93 27 97 41 C 100 58 88 76 60 92 Z"/></clipPath><g clip-path="url(#${id})">${kern}</g><path d="M60 34 C 58 18 64 6 72 2" stroke="#e9b33e" stroke-width="3" fill="none"/><path d="M60 34 C 54 20 46 12 38 10" stroke="#d39a26" stroke-width="2.4" fill="none"/></svg>`;
-
   const stage = document.getElementById('stage');
-  const person = p => p === 'PLAYER' ? PLAYER : typeof p === 'number' ? CAST[p] : p;
-  const layers = SCENES.map((s, i) => {
-    const el = document.createElement('div'); el.className = 'layer';
-    el.style.setProperty('--pan', i % 2 ? '-14px' : '14px');
-    el.innerHTML = s.scene() + s.figs.map(([p, x, b, h, paint]) => `<div class="fig${paint ? ' fig--paint' : ''}${x > 50 && !s.title && paint ? ' fig--flip' : ''}" style="left:${x}%;bottom:${b}%;height:${h}%">${F.borgia(person(p))}</div>`).join('')
-      + (s.title ? `<div class="cx title">${heart('ih')}<div><div class="title__n">Corazón de Maíz</div><div class="title__t">Tlaxcallan · año 1-Ácatl · 1519</div></div></div>` : '');
-    stage.appendChild(el); return el;
-  });
-  stage.insertAdjacentHTML('beforeend', `<div class="start">Enter · comenzar</div>
-    <div class="cx cap"><div class="cap__h"><span class="cap__y"></span><span class="cap__l"></span></div><div class="cap__t"></div><div class="cap__more">▼</div></div>
-    <div class="dots">${SCENES.map(() => '<i></i>').join('')}</div>
+  const wipeTiles = Array.from({ length: 144 }, (_, k) => { const c = k % 16, r = Math.floor(k / 16); return `<i style="--i:${c + r};background-position:${(c % 2) * -60}px ${(r % 2) * -60}px"></i>`; }).join('');
+  stage.innerHTML = `<div class="chaps"></div><div class="wipe" aria-hidden="true">${wipeTiles}</div><div class="flash" aria-hidden="true"></div>
+    <div class="lyr"></div>
+    <div class="cx cap hide" aria-live="polite"><div class="cap__y"></div><div class="cap__t"></div><div class="cap__more">▼</div></div>
+    <div class="dots">${CH.map((c, i) => `<button type="button" data-ch="${i}" aria-label="Escena ${i + 1}${c.label ? ': ' + c.label : ''}"></button>`).join('')}</div>
     <div class="keys"><span><kbd>Enter</kbd>seguir</span><span><kbd>Esc</kbd>saltar</span><button class="mute" type="button" aria-pressed="false"><kbd>M</kbd><span>música</span></button></div>
-    <div class="cover"><div class="cx cover__p">${heart('ch')}<div class="cover__n">Corazón de Maíz</div><div class="cover__t">Pulsa <kbd>Enter</kbd> o haz clic para comenzar</div><div class="cover__s">♪ con música · <kbd>M</kbd> para silenciar</div></div></div>`);
+    <button class="start" type="button">Enter · comenzar</button>
+    <div class="cover"><div class="cx cover__p">${heart('hc')}<div class="cover__n">Corazón de Maíz</div><div class="cover__t">Pulsa <kbd>Enter</kbd> o haz clic para comenzar</div><div class="cover__s">♪ con música · <kbd>M</kbd> para silenciar</div></div></div>`;
   const $ = s => stage.querySelector(s);
-  const cap = $('.cap'), capY = $('.cap__y'), capL = $('.cap__l'), capT = $('.cap__t'), dots = [...stage.querySelectorAll('.dots i')], start = $('.start'), cover = $('.cover'), muteBtn = $('.mute');
-  layers[0].classList.add('on');
+  const chapsEl = $('.chaps'), wipeEl = $('.wipe'), flashEl = $('.flash'), lyrEl = $('.lyr'), cap = $('.cap'), capY = $('.cap__y'), capT = $('.cap__t');
+  const dots = [...stage.querySelectorAll('.dots button')], startBtn = $('.start'), cover = $('.cover'), muteBtn = $('.mute');
 
   // ---------- Song clock: the audio's time, or a wall clock if audio can't play ----------
   const audio = new Audio(window.CDM_AUDIO || 'assets/corazon-de-maiz-cancion.mp3');
   audio.preload = 'auto';
-  let useAudio = false, wallStart = 0, started = false, ended = false;
-  const now = () => useAudio ? audio.currentTime : Math.min(SONG_LEN, performance.now() / 1000 - wallStart);
-  function seek(t) { if (useAudio) audio.currentTime = t; else wallStart = performance.now() / 1000 - t; }
-  function fadeOut(ms = 1500) {
-    if (!useAudio) return; const v0 = audio.volume, t0 = performance.now();
-    const step = () => { const k = Math.min(1, (performance.now() - t0) / ms); audio.volume = v0 * (1 - k); if (k < 1) requestAnimationFrame(step); else audio.pause(); };
-    step();
+  let useAudio = false, wallStart = 0, started = false, ended = false, ending = false, paused = false;
+  const wallNow = () => performance.now() / 1000;
+  let aT = -1, aWall = 0;
+  function now() {
+    if (!useAudio) return Math.min(SONG_LEN, wallNow() - wallStart);
+    const ct = audio.currentTime, w = wallNow();
+    if (audio.paused || audio.ended) { aT = ct; aWall = w; return ct; }
+    if (ct !== aT) { const est = aT + (w - aWall); if (aT < 0 || Math.abs(ct - est) > .25) { aT = ct; aWall = w; } else if (ct > est) { aT = ct; aWall = w; } }
+    return Math.min(SONG_LEN, aT + (w - aWall));
   }
+  function seek(t) { if (useAudio) { audio.currentTime = t; aT = t; aWall = wallNow(); } else wallStart = wallNow() - t; }
+  const clockFrozen = () => (useAudio && audio.ended) || now() >= SONG_LEN - .05;
 
-  // ---------- Scenes and captions ----------
-  let cur = -1, typing = null;
+  // ---------- Chapters ----------
+  const built = [];
+  function chapterHTML(i) {
+    if (built[i]) return built[i];
+    const c = CH[i], p = c.build(abs => abs - c.t0), [px0, px1, z0, z1, origin] = c.cam, [ox, oy] = origin.split(' ');
+    const plane = (k, d) => p[k] ? `<div class="plane" style="--d:${d}">${p[k]}</div>` : '';
+    return (built[i] = `<div class="chap" data-i="${i}" style="--dur:${(c.t1 - c.t0).toFixed(2)}s;--px0:${px0};--px1:${px1};--z0:${z0};--z1:${z1};--ox:${ox};--oy:${oy}">${plane('sky', 0)}${plane('far', .2)}${plane('mid', .45)}${plane('near', .7)}${plane('front', 1)}${p.ui ? `<div class="ui">${p.ui}</div>` : ''}</div>`);
+  }
+  const chapterAt = t => { let i = 0; while (i + 1 < CH.length && t >= CH[i + 1].t0) i++; return i; };
+  const live = new Map();
+  const anims = el => el.getAnimations({ subtree: true });
+  function sync(i, t) { const el = live.get(i); if (!el) return; const ms = (t - CH[i].t0) * 1000; anims(el).forEach(a => { a.currentTime = ms; if (paused) a.pause(); }); }
+  function create(i, t) {
+    const tpl = document.createElement('template'); tpl.innerHTML = chapterHTML(i);
+    const el = tpl.content.firstElementChild, after = [...live.keys()].filter(j => j > i).sort((a, b) => a - b)[0];
+    chapsEl.insertBefore(el, after != null ? live.get(after) : null);
+    live.set(i, el); sync(i, t);
+    return el;
+  }
+  function drop(i) { const el = live.get(i); if (el) el.remove(); live.delete(i); }
+
+  // ---------- Captions ----------
+  let capIdx = -2, typing = null;
   function type(text) {
     clearInterval(typing);
     capT.innerHTML = [...text].map(ch => `<i>${ch}</i>`).join('');
     const chars = [...capT.children]; let k = 0; cap.classList.remove('done');
-    typing = setInterval(() => { if (k < chars.length) chars[k++].style.opacity = 1; else finish(); }, 30);
+    typing = setInterval(() => { if (k < chars.length) chars[k++].style.opacity = 1; else finish(); }, 28);
   }
-  function finish() { clearInterval(typing); typing = null; capT.querySelectorAll('i').forEach(c => c.style.opacity = 1); cap.classList.add('done'); if (cur === SCENES.length - 1) start.classList.add('on'); }
-  function show(i) {
-    cur = i; layers.forEach((l, j) => l.classList.toggle('on', j === i)); dots.forEach((d, j) => d.classList.toggle('on', j === i));
-    start.classList.remove('on'); capY.textContent = SCENES[i].year; type(SCENES[i].text);
+  function finish() { clearInterval(typing); typing = null; capT.querySelectorAll('i').forEach(c => { c.style.opacity = 1; }); cap.classList.add('done'); }
+  const captionAt = t => { let k = -1; CAPTIONS.forEach((c, i) => { if (t >= c.t) k = i; }); return k; };
+
+  // ---------- Transitions ----------
+  let wipesDone = new Set();
+  function playWipe() { wipeEl.classList.remove('go'); void wipeEl.offsetWidth; wipeEl.classList.add('go'); setTimeout(() => wipeEl.classList.remove('go'), 1400); }
+  function resync(t, quiet) {
+    live.forEach((el, i) => drop(i));
+    const ci = chapterAt(t), el = create(ci, t); el.classList.add('on', 'cut');
+    wipesDone = new Set(CH.map((c, i) => i).filter(i => CH[i].t0 - .74 <= t));
+    capIdx = -2; lastT = t; lastWall = wallNow();
+    if (!quiet) flashEl.animate([{ opacity: .85 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' });
   }
+
+  // ---------- Main loop ----------
+  let lastT = 0, lastWall = 0, lastDrift = 0, lyrText = null, beatI = 0, punchCh = -1;
+  function frame() {
+    requestAnimationFrame(frame);
+    if (!started) return;
+    const t = now(), wall = wallNow(), frozen = clockFrozen();
+    // A jump in song time that the wall clock didn't see: seek, scrub, or a background tab.
+    if (!frozen && !paused && lastWall && Math.abs(t - (lastT + (wall - lastWall))) > .6) resync(t, true);
+    lastT = t; lastWall = wall;
+
+    const ci = chapterAt(t), ni = ci + 1, nc = CH[ni];
+    if (!live.has(ci)) create(ci, t).classList.add('on', 'cut');
+    if (nc && nc.t0 - t < 1.6 && !live.has(ni)) create(ni, t);
+    if (nc && nc.wipe && !wipesDone.has(ni) && t >= nc.t0 - .74) { wipesDone.add(ni); playWipe(); }
+    live.forEach((el, i) => {
+      const isNext = i === ni && !nc.wipe && t >= nc.t0 - .45;
+      if (i === ci || isNext) { if (!el.classList.contains('on')) el.classList.add('on'); if (i === ci && CH[i].wipe && !el.classList.contains('cut')) el.classList.add('cut'); }
+      else if (i < ci) { if (CH[ci].wipe) drop(i); else { el.classList.remove('on', 'cut'); if (t > CH[ci].t0 + 1.1) drop(i); } }
+      else if (i > ni) drop(i);
+    });
+    if (!frozen && !paused && wall - lastDrift > .5) {
+      lastDrift = wall;
+      live.forEach((el, i) => { const a = el.firstElementChild && el.firstElementChild.getAnimations()[0]; if (a && Math.abs(a.currentTime - (t - CH[i].t0) * 1000) > 90) sync(i, t); });
+    }
+
+    // Narration panel.
+    const k = captionAt(t);
+    if (k !== capIdx) { capIdx = k; if (k >= 0) { capY.textContent = CH[chapterAt(CAPTIONS[k].t)].label; type(CAPTIONS[k].text); } }
+    const c = CAPTIONS[k], nextT = CAPTIONS[k + 1] ? CAPTIONS[k + 1].t : Infinity;
+    cap.classList.toggle('hide', !(k >= 0 && t < Math.min(nextT, c.t + (c.hold || 15))));
+
+    // Sung line, beat pulse, chapter dots, start button.
+    const line = LYRICS.find(([a, b]) => t >= a && t < b), lt = line && t >= 21.5 && t < TITLE_AT - .5 ? '♪ ' + line[2] : '';
+    if (lt !== lyrText) { lyrText = lt; lyrEl.textContent = lt; lyrEl.classList.toggle('on', !!lt); }
+    while (beatI > 0 && BEATS[beatI] > t) beatI--;
+    while (beatI + 1 < BEATS.length && BEATS[beatI + 1] <= t) beatI++;
+    const ph = t - BEATS[beatI], pulse = ph >= 0 && ph < .42 ? (1 - ph / .42) ** 2 : 0;
+    stage.style.setProperty('--beat', pulse.toFixed(3));
+    dots.forEach((d, i) => d.classList.toggle('on', i === ci));
+    if (punchCh !== ci) { punchCh = ci; stage.style.setProperty('--punch', CH[ci].punch || 0); }
+    startBtn.classList.toggle('on', ended || (t >= CAPTIONS[CAPTIONS.length - 1].t && cap.classList.contains('done')));
+  }
+
+  // ---------- Controls ----------
+  const NAV = [...new Set([...CH.map(c => c.t0), ...CAPTIONS.map(c => c.t)])].sort((a, b) => a - b);
+  function seekTo(t) { seek(t); resync(t); }
+  function next() {
+    if (ended) return;
+    if (!started) return begin();
+    if (typing) return finish();
+    const t = now();
+    if (t >= TITLE_AT - .2) return end();
+    const nt = NAV.find(v => v > t + .35);
+    seekTo(nt != null ? Math.min(nt, TITLE_AT) : TITLE_AT);
+  }
+  function skip() { if (ended) return; if (!started) begin(); if (now() < TITLE_AT - .2) seekTo(TITLE_AT); else end(); }
   function end() {
-    if (ended) return; ended = true; fadeOut();
-    start.textContent = '¡Que empiece tu historia!'; start.classList.add('on');
+    if (ended) return; ended = true; ending = true;
+    if (useAudio) { const v0 = audio.volume, t0 = performance.now(); const step = () => { const q = Math.min(1, (performance.now() - t0) / 1500); audio.volume = v0 * (1 - q); if (q < 1) requestAnimationFrame(step); else audio.pause(); }; step(); }
+    startBtn.textContent = '¡Que empiece tu historia!';
     window.dispatchEvent(new CustomEvent('cdm:intro-end'));
   }
-  // Manual navigation: jump the song to the scene's cue so music and picture stay together.
-  function go(i) { if (i >= SCENES.length) return end(); seek(CUES[i]); show(i); }
-  function next() { if (!started) return begin(); if (typing) return finish(); go(cur + 1); }
-
-  function tick() {
-    if (!started) return;
-    const t = now();
-    let i = 0; while (i + 1 < CUES.length && t >= CUES[i + 1]) i++;
-    if (i !== cur && !ended) show(i);
-    const line = LYRICS.find(([a, b]) => t >= a && t < b);
-    const txt = ended ? '' : line ? '♪ ' + line[2] : t < SONG_LEN - .5 ? '♪' : '';
-    if (capL.textContent !== txt) capL.textContent = txt;
-    requestAnimationFrame(tick);
-  }
+  function setPaused(p) { if (paused === p) return; paused = p; live.forEach(el => anims(el).forEach(a => (p ? a.pause() : a.play()))); if (!p) live.forEach((el, i) => sync(i, now())); }
+  audio.addEventListener('pause', () => { if (!audio.ended && !ending) setPaused(true); });
+  audio.addEventListener('play', () => setPaused(false));
+  function toggleMute(e) { if (e) e.stopPropagation(); audio.muted = !audio.muted; muteBtn.setAttribute('aria-pressed', String(audio.muted)); muteBtn.querySelector('span').textContent = audio.muted ? 'sin música' : 'música'; }
 
   function begin() {
     if (started) return; started = true;
     cover.classList.add('off');
-    audio.volume = .9;
-    wallStart = performance.now() / 1000;
-    audio.play().then(() => { const t = now(); useAudio = true; if (t > .5) audio.currentTime = t; }).catch(() => { useAudio = false; });
-    show(0); requestAnimationFrame(tick);
+    wallStart = wallNow(); audio.volume = .9;
+    audio.play().then(() => { const t = now(); useAudio = true; aT = -1; if (t > .5) seek(t); }).catch(() => { useAudio = false; });
+    paused = false; resync(0, true);
   }
-  function toggleMute(e) { if (e) e.stopPropagation(); audio.muted = !audio.muted; muteBtn.setAttribute('aria-pressed', String(audio.muted)); muteBtn.querySelector('span').textContent = audio.muted ? 'sin música' : 'música'; }
 
   addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); }
-    else if (e.key === 'Escape') { if (!started) begin(); go(SCENES.length - 1); }
+    else if (e.key === 'Escape') skip();
     else if (e.key === 'm' || e.key === 'M') toggleMute();
   });
   muteBtn.addEventListener('click', toggleMute);
+  startBtn.addEventListener('click', e => { e.stopPropagation(); if (!started) begin(); else end(); });
+  dots.forEach((d, i) => d.addEventListener('click', e => { e.stopPropagation(); if (ended) return; if (!started) begin(); seekTo(CH[i].t0 + .01); }));
   stage.addEventListener('click', next);
 
   const fit = () => { const k = Math.min(innerWidth / 960, innerHeight / 540); stage.style.transform = `translate(-50%, -50%) scale(${k})`; };
   addEventListener('resize', fit); fit();
-  window.CdmIntro = { go, next, begin, audio, now };
+  // The first chapter waits, frozen, behind the cover.
+  create(0, 0).classList.add('on', 'cut'); live.forEach(el => anims(el).forEach(a => a.pause()));
+  requestAnimationFrame(frame);
+  window.CdmIntro = { next, skip, begin, seekTo, audio, now, live };
 })();
 </script>
 </body>
