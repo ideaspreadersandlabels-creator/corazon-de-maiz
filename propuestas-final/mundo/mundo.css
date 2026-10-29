@@ -1,0 +1,33 @@
+/* Página de prueba del arte del mundo. */
+* { box-sizing: border-box; }
+body { margin: 0; background: #14110f; color: #f3e6cf; font-family: 'Alegreya Sans', system-ui, sans-serif; }
+.page { max-width: 1240px; margin: 0 auto; padding: 32px 16px 70px; }
+h1 { font: 700 36px 'Cinzel', serif; margin: 0 0 6px; text-align: center; }
+.lead { text-align: center; color: #c9b89a; margin: 0 auto 22px; max-width: 760px; font-size: 17px; text-wrap: pretty; }
+h2 { font: italic 800 24px 'Alegreya', serif; margin: 36px 0 4px; }
+h2 + p { margin: 0 0 12px; color: #c9b89a; }
+.wrap { overflow: auto; border-radius: 8px; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-width: 100%; }
+#mundo { position: relative; overflow: hidden; margin: 0 auto; background: #7dbf52; }
+#mundo .ground { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#mundo .agua { position: absolute; top: 0; background-size: 48px 48px; box-shadow: inset 3px 0 0 #5f9e3c, inset -3px 0 0 #5f9e3c; }
+#mundo .actors, #mundo .fx { position: absolute; inset: 0; }
+#mundo .crop { position: absolute; display: block; }
+#mundo .actor { position: absolute; left: 0; top: 0; display: block; }
+#mundo .fx { z-index: 1000; pointer-events: none; }
+.pop { position: absolute; transform: translateX(-12px); display: flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 3px; white-space: nowrap; font: 800 15px 'Alegreya Sans', sans-serif; color: #fff;
+  background: linear-gradient(#2f56b4, #16306e); box-shadow: inset 0 0 0 1.5px #0f2458, inset 0 0 0 3px #d39a26, 0 3px 6px rgba(0,0,0,.4); animation: pop 1.6s ease-out forwards; }
+@keyframes pop { 0% { opacity: 0; translate: 0 10px; scale: .6 } 15% { opacity: 1; scale: 1.08 } 25% { scale: 1 } 80% { opacity: 1 } 100% { opacity: 0; translate: 0 -24px } }
+.polvo, .gota { position: absolute; width: 7px; height: 7px; border-radius: 50%; animation: puff .8s ease-out forwards; }
+.polvo { background: #b9875a; box-shadow: 0 0 0 1px #6e4628; }
+.gota { background: #7fb4ea; box-shadow: 0 0 0 1px #2f5fa8; border-radius: 50% 50% 50% 0; rotate: -45deg; }
+@keyframes puff { from { opacity: 1; transform: translate(0, 0) scale(1) } to { opacity: 0; transform: translate(var(--dx), -18px) scale(.4) } }
+.sheet img, .chars img { display: block; background: repeating-conic-gradient(#3a332c 0 25%, #2a241f 0 50%) 0 0 / 16px 16px; border-radius: 4px; image-rendering: auto; }
+.chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+.chars figure, .tiles figure, .seeds figure { margin: 0; text-align: center; }
+.chars figcaption, .tiles figcaption, .seeds figcaption { margin-top: 4px; font: italic 700 15px 'Alegreya', serif; }
+.tiles, .seeds { display: flex; flex-wrap: wrap; gap: 12px; }
+.tiles img { display: block; width: 64px; height: 64px; background: repeating-conic-gradient(#3a332c 0 25%, #2a241f 0 50%) 0 0 / 16px 16px; }
+.crops .row { display: flex; align-items: flex-end; gap: 8px; padding: 6px 10px; margin-bottom: 6px; border-radius: 6px; background: #9a6a42; }
+.crops .row b { width: 90px; color: #fff3d2; font: italic 800 16px 'Alegreya', serif; align-self: center; }
+.crops img { display: block; width: 48px; height: 96px; }
+.seeds figure { background: #f4ead2; border-radius: 6px; padding: 6px 6px 2px; color: #16306e; }

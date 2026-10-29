@@ -1,0 +1,117 @@
+{
+  "escala": {
+    "1x": "cuadro de 32 px",
+    "@2x": "cuadro de 64 px"
+  },
+  "personajes": {
+    "archivo": "personajes/<id>.png",
+    "cuadro": [
+      32,
+      48
+    ],
+    "filas": [
+      "down",
+      "left",
+      "right",
+      "up"
+    ],
+    "columnas": "caminar 0–3 (el 0 sirve de quieto)",
+    "pies": "centro abajo del cuadro",
+    "ids": [
+      "tu",
+      "nizhoni",
+      "doli",
+      "nalin",
+      "nascha",
+      "kaya",
+      "citlali",
+      "tlalli",
+      "malinalli",
+      "naara",
+      "yeyetzi",
+      "isabel",
+      "yuki",
+      "mei",
+      "iyari",
+      "ayelen"
+    ]
+  },
+  "acciones": {
+    "archivo": "jugador-acciones.png",
+    "cuadro": [
+      32,
+      48
+    ],
+    "filas": [
+      "down",
+      "left",
+      "right",
+      "up"
+    ],
+    "columnas": [
+      "arar-0",
+      "arar-1",
+      "regar-0",
+      "regar-1",
+      "cosechar-0",
+      "cosechar-1"
+    ]
+  },
+  "terreno": {
+    "archivo": "terreno.png",
+    "cuadro": [
+      32,
+      32
+    ],
+    "columnas": 7,
+    "orden": [
+      "pasto",
+      "pasto-2",
+      "pasto-flores",
+      "pasto-piedras",
+      "tierra",
+      "tierra-mojada",
+      "camino",
+      "camino-2",
+      "agua-1",
+      "agua-2",
+      "orilla-n",
+      "orilla-s",
+      "orilla-e",
+      "orilla-w"
+    ],
+    "notas": "orilla-* va encima de la tierra o el camino del lado que toca pasto; agua-1 y agua-2 alternan cada 0.6 s"
+  },
+  "cultivos": {
+    "archivo": "cultivos.png",
+    "cuadro": [
+      32,
+      64
+    ],
+    "filas": [
+      "maiz",
+      "frijol",
+      "calabaza",
+      "chile",
+      "cempa",
+      "milpa"
+    ],
+    "etapas": {
+      "maiz": 5,
+      "frijol": 5,
+      "calabaza": 5,
+      "chile": 5,
+      "cempa": 4,
+      "milpa": 1
+    },
+    "apoyo": "la mitad de abajo del cuadro va sobre la casilla de tierra"
+  },
+  "semillas": [
+    "semillas/semilla-maiz.png",
+    "semillas/semilla-maizAzul.png",
+    "semillas/semilla-frijol.png",
+    "semillas/semilla-calabaza.png",
+    "semillas/semilla-chile.png",
+    "semillas/semilla-cempa.png"
+  ]
+}
