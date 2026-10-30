@@ -111,3 +111,58 @@ function tapeteCasa(x, y, w, h, c) {
   for (let i = 0; i < w; i += 6) { rect('#e8d8b0', x + i, y - 3, 2, 3); rect('#e8d8b0', x + i, y + h, 2, 3); }
   ctx.strokeStyle = 'rgba(26,20,16,.6)'; ctx.lineWidth = 1.2; ctx.strokeRect(x + .6, y + .6, w - 1.2, h - 1.2);
 }
+// Camas: tlapechtli de madera con petate, cobija con greca y almohada de algodón.
+function camaCdm(cx, by, w, col) {
+  const x = cx - w / 2, h = Math.max(16, Math.round(w * 0.36)), top = by - 12 - h;
+  rect('rgba(26,20,16,.22)', x + 3, by - 2, w, 5);
+  rect('#5a3418', x + 3, by - 8, 5, 8); rect('#5a3418', x + w - 8, by - 8, 5, 8);
+  rect('#7a4a22', x, by - 13, w, 7); rect('#a8743e', x, by - 13, w, 2);
+  rect('#d4b06c', x + 2, top, w - 4, h);
+  for (let k = 4; k < w - 6; k += 5) rect('rgba(140,100,40,.35)', x + 2 + k, top + 1, 1.2, h - 2);
+  const bx = x + Math.round(w * 0.38);
+  rect(col, bx, top - 1, x + w - 2 - bx, h + 1); rect('#f4ecd8', bx, top - 1, 3, h + 1);
+  if (w >= 56) greca(bx + 5, top + h - 9, x + w - 9 - bx, '#f2c84a', col);
+  else rect('#f2c84a', bx + 5, top + h - 5, x + w - 9 - bx, 2);
+  ctx.fillStyle = '#f8f2e4'; ctx.strokeStyle = 'rgba(26,20,16,.7)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.ellipse(x + w * 0.2, top + h / 2, w * 0.12, h * 0.32, 0, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.lineWidth = 1.4; ctx.strokeRect(x + .7, top - .3, w - 1.4, by - 6 - top); ctx.strokeRect(x + .7, by - 12.3, w - 1.4, 6);
+}
+// Camitas de las mascotas: canasta redonda de tule con cobija.
+function camaMascotaCdm(cx, by, col) {
+  ell('rgba(26,20,16,.22)', cx + 2, by + 1, 24, 6);
+  ctx.fillStyle = '#c8a060'; ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.ellipse(cx, by - 6, 22, 10, 0, 0, 7); ctx.fill(); ctx.stroke();
+  for (let i = -3; i <= 3; i++) rect('rgba(120,80,30,.35)', cx + i * 6 - 0.6, by - 14, 1.2, 14);
+  ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(cx, by - 8, 16, 6, 0, 0, 7); ctx.fill(); ctx.lineWidth = 1; ctx.stroke();
+  rect('#f4ecd8', cx - 14, by - 9, 28, 2);
+}
+// Temazcal: cúpula de piedra con puerta baja, fogón (xictli) al lado, franja roja y vapor.
+function temazcalCdm(cx, by) {
+  ell('rgba(26,20,16,.22)', cx + 4, by + 3, 66, 10);
+  // fogón
+  ctx.fillStyle = '#9a8268'; ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(cx + 44, by); ctx.lineTo(cx + 44, by - 22); ctx.quadraticCurveTo(cx + 58, by - 32, cx + 72, by - 22); ctx.lineTo(cx + 72, by); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#2a1a10'; ctx.beginPath(); ctx.moveTo(cx + 52, by); ctx.lineTo(cx + 52, by - 10); ctx.quadraticCurveTo(cx + 58, by - 16, cx + 64, by - 10); ctx.lineTo(cx + 64, by); ctx.fill();
+  const k = 1 + Math.sin(T * 11) * 0.15;
+  ctx.fillStyle = '#f08a24'; ctx.beginPath(); ctx.moveTo(cx + 58, by - 11 * k); ctx.quadraticCurveTo(cx + 63, by - 3, cx + 58, by); ctx.quadraticCurveTo(cx + 53, by - 3, cx + 58, by - 11 * k); ctx.fill();
+  ctx.fillStyle = '#f7d040'; ctx.beginPath(); ctx.moveTo(cx + 58, by - 6 * k); ctx.quadraticCurveTo(cx + 60.5, by - 2, cx + 58, by); ctx.quadraticCurveTo(cx + 55.5, by - 2, cx + 58, by - 6 * k); ctx.fill();
+  // cúpula
+  ctx.fillStyle = '#b8a084'; ctx.beginPath(); ctx.ellipse(cx, by, 54, 44, 0, Math.PI, 0); ctx.closePath(); ctx.fill();
+  ctx.save(); ctx.beginPath(); ctx.ellipse(cx, by, 54, 44, 0, Math.PI, 0); ctx.closePath(); ctx.clip();
+  for (let r = 0; r < 6; r++) { const yy = by - 6 - r * 8; for (let x = cx - 56 + (r % 2) * 7; x < cx + 56; x += 14) { ctx.fillStyle = ['#a89074', '#c0aa8e', '#b09878'][(r + Math.floor(x)) % 3]; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, yy - 6, 12, 7, 3); else ctx.rect(x, yy - 6, 12, 7); ctx.fill(); ctx.strokeStyle = 'rgba(60,45,30,.35)'; ctx.lineWidth = .8; ctx.stroke(); } }
+  ctx.restore();
+  rect('#a8392b', cx - 52, by - 12, 104, 6); greca(cx - 50, by - 12, 100, '#f2c84a', '#a8392b');
+  ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(cx, by, 54, 44, 0, Math.PI, 0); ctx.closePath(); ctx.stroke();
+  // puerta baja con cortina de petate
+  ctx.fillStyle = '#2a1a10'; ctx.beginPath(); ctx.moveTo(cx - 12, by); ctx.lineTo(cx - 12, by - 16); ctx.quadraticCurveTo(cx, by - 28, cx + 12, by - 16); ctx.lineTo(cx + 12, by); ctx.fill(); ctx.stroke();
+  rect('#d4b06c', cx - 10, by - 18, 20, 9); for (let i = -8; i < 10; i += 4) rect('rgba(140,100,40,.45)', cx + i, by - 18, 1.2, 9);
+  // vapor
+  for (let i = 0; i < 4; i++) { const t = (T * 0.35 + i / 4) % 1; circ(`rgba(240,240,236,${0.38 * (1 - t)})`, cx - 10 + i * 7 + Math.sin(T + i) * 5, by - 46 - t * 46, 4 + t * 8); }
+  for (let i = 0; i < 2; i++) { const t = (T * 0.5 + i / 2) % 1; circ(`rgba(120,110,100,${0.3 * (1 - t)})`, cx + 58 + Math.sin(T * 1.4 + i) * 3, by - 30 - t * 30, 3 + t * 5); }
+}
+function arbolPatioCdm(x, y) {
+  ell('rgba(26,20,16,.22)', x + 4, y + 2, 26, 7);
+  rect('#6b4423', x - 4, y - 30, 8, 30); rect('#8a5a30', x - 4, y - 30, 3, 30);
+  ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 1.4;
+  for (const [dx, dy, r, c] of [[-14, -38, 16, '#3f7f34'], [14, -40, 16, '#3f7f34'], [0, -52, 20, '#4f9a3a'], [-6, -44, 10, '#58a844']]) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x + dx, y + dy, r, 0, 7); ctx.fill(); ctx.stroke(); }
+  for (const [dx, dy] of [[-10, -46], [8, -54], [16, -40], [-16, -34], [2, -38]]) circ('#a8202a', x + dx, y + dy, 2.4);
+}
