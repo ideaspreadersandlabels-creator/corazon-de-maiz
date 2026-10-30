@@ -227,7 +227,7 @@ rep("""    const width = Math.max(180, ctx.measureText(label).width + 22);
     rect('rgba(20,10,10,.85)', VW/2 - width/2, VH - 68, width, 22);
     text(label, VW/2, VH - 53, 12,""",
 """    const width = Math.max(180, ctx.measureText(label).width + 22);
-    const py = UI.shopBox ? Math.min(VH - 130, UI.shopBox[1] + UI.shopBox[3] + 8) : VH - 130;
+    const sb = UI.shopBox, below = sb ? sb[1] + sb[3] + 30 : VH - 130, py = below + 22 <= VH - 108 ? below : sb && sb[1] - 30 >= 4 ? sb[1] - 30 : VH - 130;
     if (!UI.touch || R20_1.on || R20_1.q) rect('rgba(20,10,10,.85)', VW/2 - width/2, py, width, 22);
     if (!UI.touch || R20_1.on || R20_1.q) text(label, VW/2, py + 15, 12,""")
 
@@ -265,6 +265,135 @@ rep("""      nombre: l.nombre,
       price: LOGROS.estaDesbloqueado(l.id) ? 'Desbloqueado' : 'Pendiente',""",
 """      name: l.nombre, nombre: l.nombre,
       price: LOGROS.estaDesbloqueado(l.id) ? 'Desbloqueado' : 'Pendiente',""")
+
+# 12. La tierra arada se veía como hoyos negros: el dibujo de la tierra (mundo) quedó dañado
+#     en esta copia del juego (sus textos se volvieron códigos «·x…»). Se repone el original.
+i0 = s.find('function tierra(_xa168e3 = false) {')
+i1 = s.find('    return m;\n  }', i0)
+assert i0 > 0 and i1 > i0, 'no encontré tierra()'
+s = s[:i0] + r"""function tierra(hum = false) {
+    const b = hum ? G.wet : G.soil, l = hum ? G.wetL : G.soilL, d = hum ? G.wetD : G.soilD;
+    let m = `<rect width="64" height="64" fill="${b}"/>`;
+    for (let y = 0; y < 64; y += 16) m += `<path d="M0 ${y + 3} H64 V${y + 9} H0Z" fill="${l}"/><path d="M0 ${y + 3} H64" stroke="${sh(l, 1.12)}" stroke-width="1.6"/><path d="M0 ${y + 13.4} H64" stroke="${d}" stroke-width="2.6"/>`;
+    const R = rnd(hum ? 7 : 3);
+    for (let i = 0; i < 10; i++) m += `<circle cx="${n(3 + R() * 58)}" cy="${n(3 + R() * 58)}" r="${n(.8 + R() * 1)}" fill="${d}" opacity=".6"/>`;
+    if (hum) for (let i = 0; i < 4; i++) { const x = n(6 + R() * 50), y = 16 * Math.floor(R() * 4) + 11; m += `<ellipse cx="${x}" cy="${y}" rx="${n(3 + R() * 3)}" ry="1.4" fill="#8fb4d8" opacity=".75"/>`; }
+""" + s[i1:]
+
+# 13. Barras de energía, vida y aliento: en vez de tres tubos de color planos, un panel de
+#     Talavera con tres medidores esmaltados y su glifo (mazorca, corazón, pluma).
+i0 = s.find("  rect('#5a3a1e', ex, ey, 24, eh); rect('#2a1a0c', ex+4, ey+4, 16, eh-8);")
+i1 = s.find("text('❤', hx+12, ey-6, 13, '#ff6b6b', 'center', false);", i0)
+assert i0 > 0 and i1 > i0, 'no encontré las barras'
+i1 += len("text('❤', hx+12, ey-6, 13, '#ff6b6b', 'center', false);")
+s = s[:i0] + "  const hx = ex - 30; barrasTal(ex, ey, eh);" + s[i1:]
+rep("ey - (S.poison ? 54 : 30)", "ey - (S.poison ? 100 : 76)")
+rep("ey - (S.poison ? 39 : 15)", "ey - (S.poison ? 85 : 61)")
+rep("rect('rgba(20,60,20,.8)', hx - 70, ey - 30, 94, 20);", "rect('rgba(20,60,20,.8)', hx - 70, ey - 76, 94, 20);")
+rep("text('☠ Envenenado', hx - 23, ey - 15,", "text('☠ Envenenado', hx - 23, ey - 61,")
+rep("""    rect('#5a3a1e', sx, ey, 24, eh); rect('#2a1a0c', sx + 4, ey + 4, 16, eh - 8);
+    const f = sp.stam / sp.max, col = f > 0.5 ? '#5ac8ff' : f > 0.2 ? '#ffd060' : '#ff6060';
+    rect(col, sx + 4, ey + 4 + (eh - 8) * (1 - f), 16, (eh - 8) * f);
+    text('⚡', sx + 12, ey - 6, 13, '#5ac8ff', 'center', false);
+""", "")
+rep("""    if (lagE > realE + .005) rect('rgba(255,80,80,.48)', ex + 4, ey + 4 + fillH * (1 - lagE), 16, fillH * (lagE - realE));""", "")
+rep("""    if (lagH > realH + .005) rect('rgba(255,80,80,.48)', hx + 4, ey + 4 + fillH * (1 - lagH), 16, fillH * (lagH - realH));""", "")
+rep("""</body>""", """<script>
+function barrasTal(ex, ey, eh) {
+  const cl = v => Math.max(0, Math.min(1, v || 0)), sp = S.sprint;
+  const lagOk = !UI.touch;
+  const med = [];
+  if (sp) med.push({ g:'pluma', f:cl(sp.stam / sp.max), c:sp.cool > 0 ? ['#c8ccd8', '#8a90a4'] : ['#9fd2ff', '#2f6fd0'] });
+  const fh = cl(S.hp / MAX_HP);
+  med.push({ g:'corazon', f:fh, lag:lagOk && S.hpLag != null ? cl(S.hpLag / MAX_HP) : 0, c:fh > 0.3 ? ['#f2826e', '#b8302a'] : ['#ff6a5a', '#d01a14'] });
+  const fe = cl(S.energy / S.maxE);
+  med.push({ g:'maiz', f:fe, lag:lagOk && S.energyLag != null ? cl(S.energyLag / S.maxE) : 0, c:fe > 0.3 ? ['#9ad66e', '#3f8a34'] : fe > 0.12 ? ['#f6d264', '#c8901e'] : ['#f07060', '#b8402e'] });
+  const gw = 20, gap = 10, pad = 15, n = med.length, pw = pad * 2 + n * gw + (n - 1) * gap;
+  const X0 = ex + 24 - pw + 6, Y0 = ey - 44, ph = eh + 56;
+  codexPanel(X0, Y0, pw, ph);
+  const round = (x, y, w, h, r) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); };
+  med.forEach((m, i) => {
+    const x = X0 + pad + i * (gw + gap), ty = ey + 2, th = eh - 8, cx = x + gw / 2;
+    ctx.save();
+    ctx.fillStyle = 'rgba(11,26,68,.35)'; round(x + 1, ty + 2, gw, th, gw / 2); ctx.fill();
+    ctx.fillStyle = TAL.COB; round(x, ty, gw, th, gw / 2); ctx.fill();
+    ctx.fillStyle = '#efe6d2'; round(x + 2.5, ty + 2.5, gw - 5, th - 5, (gw - 5) / 2); ctx.fill();
+    ctx.clip();
+    const iy = ty + 2.5, ih = th - 5;
+    if (m.lag > m.f + .005) { ctx.fillStyle = 'rgba(232,80,60,.5)'; ctx.fillRect(x, iy + ih * (1 - m.lag), gw, ih * (m.lag - m.f)); }
+    const g = ctx.createLinearGradient(x, 0, x + gw, 0); g.addColorStop(0, m.c[0]); g.addColorStop(1, m.c[1]);
+    ctx.fillStyle = g; ctx.fillRect(x, iy + ih * (1 - m.f), gw, ih * m.f);
+    if (m.f > 0.02) { ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(x, iy + ih * (1 - m.f), gw, 1.5); }
+    ctx.fillStyle = 'rgba(255,255,255,.38)'; ctx.fillRect(x + 5, iy + 6, 2.5, ih - 12);
+    ctx.restore();
+    for (const q of [.25, .5, .75]) { const yy = Math.round(ty + 2.5 + (th - 5) * (1 - q)) + .5; ctx.strokeStyle = 'rgba(22,48,110,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + gw - 7, yy); ctx.lineTo(x + gw - 2.5, yy); ctx.stroke(); }
+    const my = ey - 15, low = m.f < 0.2 && Math.sin(T * 8) > 0;
+    circ(low ? '#c0392b' : TAL.COB, cx, my, 13); circ(TAL.OCH, cx, my, 11.2); circ('#fbf5e6', cx, my, 9.6);
+    if (m.g === 'corazon') {
+      ctx.save(); ctx.translate(cx, my + 0.5);
+      ctx.beginPath(); ctx.moveTo(0, 6.5); ctx.bezierCurveTo(-9, 0, -7, -8, -2.4, -6.4); ctx.quadraticCurveTo(0, -5.4, 0, -3.4); ctx.quadraticCurveTo(0, -5.4, 2.4, -6.4); ctx.bezierCurveTo(7, -8, 9, 0, 0, 6.5); ctx.closePath();
+      ctx.fillStyle = '#d03a2e'; ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,220,210,.8)'; ctx.beginPath(); ctx.ellipse(-3, -3, 1.6, 1.1, -.6, 0, 7); ctx.fill();
+      ctx.restore();
+    } else {
+      const im = m.g === 'maiz' ? (globalThis.iconoDe && iconoDe('maiz')) : ESTADO_GLIFOS[m.g];
+      if (im && im.complete && im.naturalWidth) ctx.drawImage(im, cx - 9, my - 9, 18, 18);
+      else text(m.g === 'maiz' ? 'E' : '⚡', cx, my + 4, 11, TAL.NAVY, 'center');
+    }
+  });
+}
+</script>
+</body>""")
+
+# 14. Paneles de arriba más compactos en pantallas angostas (celular): el reloj ocupa menos alto,
+#     el panel de fama tiene menos relleno, la mini-bolsa muestra una sola fila y el tutorial
+#     se acomoda justo debajo de los paneles en vez de a una altura fija.
+rep("const H1 = 124; codexPanel(X, 10, W, H1);", "const C = VW < 640, H1 = C ? 96 : 124; codexPanel(X, 10, W, H1);")
+rep("estadoTexto(`${SEASONS[s]} ${d}`, cx, 46, `700 21px ${TAL_SERIF}`, TAL.COB, 'center');",
+    "estadoTexto(`${SEASONS[s]} ${d}`, cx, C ? 39 : 46, `700 ${C ? 19 : 21}px ${TAL_SERIF}`, TAL.COB, 'center');")
+rep("const aw = estadoTexto(`Año ${year}`, cx - 10, 63, `italic 700 13px ${TAL_ITAL}`, '#8a5a14', 'center');",
+    "const aw = C ? estadoTexto(`Año ${year}`, X + 22, 62, `italic 700 12px ${TAL_ITAL}`, '#8a5a14', 'left') : estadoTexto(`Año ${year}`, cx - 10, 63, `italic 700 13px ${TAL_ITAL}`, '#8a5a14', 'center');")
+rep("estadoGlifo(clima, cx - 10 + aw / 2 + 4, 50, 18);", "if (C) estadoGlifo(clima, X + W - 40, 47, 18); else estadoGlifo(clima, cx - 10 + aw / 2 + 4, 50, 18);")
+rep("estadoTexto(fmtTime(S.time), cx, 88, `800 23px ${SANS}`, TAL.NAVY, 'center');",
+    "estadoTexto(fmtTime(S.time), cx, C ? 63 : 88, `800 ${C ? 20 : 23}px ${SANS}`, TAL.NAVY, 'center');")
+rep("const py = 94, pw = W - 40", "const py = C ? 70 : 94, pw = W - 40")
+rep("const H2 = inner + 40, b =", "const H2 = inner + (C ? 30 : 40), b =")
+rep("let y = Y2 + 2 + b + 6;", "let y = Y2 + 2 + b + (C ? 1 : 6);")
+rep("return Y2 + H2;", "return UI.estadoBottom = Y2 + H2;")
+rep("const cols = 4, cs = 38, show = items.slice(0, 8)", "const cols = 4, cs = 38, show = items.slice(0, VW < 640 ? 4 : 8)")
+rep("items.length > 8 ? `+${items.length - 8} más", "items.length > show.length ? `+${items.length - show.length} más")
+rep("const top = VW - 420 >= 320, w = top ? Math.min(470, VW - 420) : Math.min(470, VW - 20), x = VW/2 - w/2, y = top ? 12 : UI.touch ? 250 : 210;",
+    "const top = VW - 420 >= 320, w = top ? Math.min(470, VW - 420) : Math.min(470, VW - 20), x = VW/2 - w/2, y = top ? 12 : Math.max(UI.estadoBottom || 0, UI.invRect ? UI.invRect.y + UI.invRect.h : 0) + 8;")
+
+# 15. Edificios del pueblo: las tiendas llevan un guardapolvo de azulejo de Talavera al pie del
+#     muro, contorno de tinta estilo códice, y los letreros son placas de Talavera.
+rep("rect(side > 0 ? 'rgba(70,40,20,.16)' : 'rgba(255,240,210,.12)', px + w - 18, wallTop, 14, base - 12 - wallTop);",
+"""rect(side > 0 ? 'rgba(70,40,20,.16)' : 'rgba(255,240,210,.12)', px + w - 18, wallTop, 14, base - 12 - wallTop);
+  { const dyT = base - 25; rect(TAL.COB, px + 4, dyT - 2, w - 8, 15); if (!TAL.fill('deco', 11, px + 4, dyT, w - 8, 11)) rect('#f4ecd8', px + 4, dyT, w - 8, 11); rect(TAL.OCH, px + 4, dyT - 2, w - 8, 1); rect('rgba(0,0,0,.18)', px + 4, dyT + 11, w - 8, 2);
+    ctx.strokeStyle = 'rgba(26,20,16,.75)'; ctx.lineWidth = 1.6; ctx.strokeRect(px + 4.5, wallTop + .5, w - 9, base - 12 - wallTop);
+    const wx0 = px + w - 34 - 7, wy0 = wallTop + 11; rect(TAL.COB, wx0 - 1, wy0 - 1, 36, 30); if (!TAL.fill('deco', 9, wx0, wy0, 34, 28)) rect('#f4ecd8', wx0, wy0, 34, 28); }""")
+rep("""function signBoard(b, y) {
+  const px = b.x*TS, w = b.w*TS;
+  ctx.font = `bold 11px ${FONT}`;
+  const tw = ctx.measureText(b.name).width + 14;
+  rect('#5a3a1e', px+w/2 - tw/2 - 2, y-4, tw+4, 20);
+  rect('#e8d8b8', px+w/2 - tw/2, y-2, tw, 16);
+  text(b.name, px+w/2, y+10, 11, '#4a2f18', 'center');
+}""", """function signBoard(b, y) {
+  const px = b.x*TS, w = b.w*TS, cx = px + w/2;
+  ctx.font = `bold 11px ${FONT}`;
+  const tw = ctx.measureText(b.name).width + 30, x0 = cx - tw/2;
+  rect('rgba(20,12,8,.35)', x0 + 1, y - 2, tw, 22);
+  rect(TAL.COB, x0 - 1, y - 5, tw + 2, 22);
+  if (!TAL.fill('plain', 30, x0 + 1, y - 3, tw - 2, 18)) rect('#fbf7ee', x0 + 1, y - 3, tw - 2, 18);
+  ctx.strokeStyle = TAL.OCH; ctx.lineWidth = 1; ctx.strokeRect(x0 + 3.5, y - 0.5, tw - 7, 12);
+  for (const rx of [x0 + 8, x0 + tw - 8]) { circ(TAL.COB, rx, y + 6, 3.6); circ(TAL.OCH, rx, y + 6, 1.8); }
+  text(b.name, cx, y + 10, 11, TAL.NAVY, 'center');
+}""")
+
+# 16. Barra de herramientas: cantidades abreviadas (400k) para que no se salgan de la casilla.
+rep("if (i >= 5 && slotBag(i)) text(String(S.inv[slotBag(i).id] || 0), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right');",
+    "if (i >= 5 && slotBag(i)) { const q = S.inv[slotBag(i).id] || 0; text(q >= 1e6 ? `${+(q / 1e6).toFixed(1)}M` : q >= 1e4 ? `${Math.floor(q / 1000)}k` : String(q), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right'); }")
 
 open(path, 'w', encoding='utf-8').write(s)
 print('parche aplicado; UIK en', s.count('globalThis.UIK'), 'lugares')

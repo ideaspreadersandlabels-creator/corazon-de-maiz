@@ -22,3 +22,13 @@ python3 parche_movil.py ruta/al/index.html
 - **Logros.** Salía una fila vacía con sólo la estrella; ahora se ven todos los logros con nombre y descripción, y «Defensor» ya no aparece dos veces.
 
 `menus-antes-despues.jpg` compara el mapa, una tienda y los logros en un Pixel 7.
+
+## Arte del mundo y barras (segunda ronda)
+
+- **Tierra arada.** Se veía como hoyos negros: en esta copia del juego el dibujo de la tierra quedó dañado (sus textos se volvieron códigos «·x…»). Se repuso el original: surcos cafés, y más oscuros cuando están regados.
+- **Barras de energía, vida y aliento.** Ahora son un panel de azulejo de Talavera con tres medidores esmaltados y su glifo: pluma (aliento), corazón (vida) y mazorca (energía). El medallón parpadea en rojo cuando queda menos del 20 %, y lo que acabas de perder se ve un momento en rojo claro.
+- **Tiendas del pueblo.** Ventanas enmarcadas en azulejo, guardapolvo de Talavera al pie del muro, contorno de tinta estilo códice, y los letreros son placas de Talavera con letra azul cobalto.
+- **Paneles compactos en celular.** El reloj ocupa menos alto, el panel de fama tiene menos relleno, la mini-bolsa muestra una fila, y el tutorial se acomoda justo debajo de los paneles.
+- **Barra de herramientas.** Las cantidades se abrevian (400k).
+
+`mundo-antes-despues.jpg` y `tiendas-talavera.jpg` muestran el cambio.

@@ -9573,12 +9573,15 @@ function stoneTemple(b, accent, stone = '#b3ab99') {
 
 
 function signBoard(b, y) {
-  const px = b.x*TS, w = b.w*TS;
+  const px = b.x*TS, w = b.w*TS, cx = px + w/2;
   ctx.font = `bold 11px ${FONT}`;
-  const tw = ctx.measureText(b.name).width + 14;
-  rect('#5a3a1e', px+w/2 - tw/2 - 2, y-4, tw+4, 20);
-  rect('#e8d8b8', px+w/2 - tw/2, y-2, tw, 16);
-  text(b.name, px+w/2, y+10, 11, '#4a2f18', 'center');
+  const tw = ctx.measureText(b.name).width + 30, x0 = cx - tw/2;
+  rect('rgba(20,12,8,.35)', x0 + 1, y - 2, tw, 22);
+  rect(TAL.COB, x0 - 1, y - 5, tw + 2, 22);
+  if (!TAL.fill('plain', 30, x0 + 1, y - 3, tw - 2, 18)) rect('#fbf7ee', x0 + 1, y - 3, tw - 2, 18);
+  ctx.strokeStyle = TAL.OCH; ctx.lineWidth = 1; ctx.strokeRect(x0 + 3.5, y - 0.5, tw - 7, 12);
+  for (const rx of [x0 + 8, x0 + tw - 8]) { circ(TAL.COB, rx, y + 6, 3.6); circ(TAL.OCH, rx, y + 6, 1.8); }
+  text(b.name, cx, y + 10, 11, TAL.NAVY, 'center');
 }
 
 function _xcdcb68(b, px, py, w, h) {}
@@ -10616,27 +10619,19 @@ function drawHUD() {
   
   
   const eh = 140, ex = VW-34, ey = VH - eh - (VW < 640 ? 110 : 20);
-  rect('#5a3a1e', ex, ey, 24, eh); rect('#2a1a0c', ex+4, ey+4, 16, eh-8);
-  const f = S.energy / S.maxE;
-  rect(f > 0.3 ? '#5cd65c' : f > 0.12 ? '#f0c040' : '#e04040', ex+4, ey+4 + (eh-8)*(1-f), 16, (eh-8)*f);
-  text('E', ex+12, ey-6, 14, '#fff', 'center');
-  
-  const hx = ex - 30, fh = S.hp / MAX_HP;
-  rect('#5a3a1e', hx, ey, 24, eh); rect('#2a1a0c', hx+4, ey+4, 16, eh-8);
-  rect(fh > 0.3 ? '#e04848' : '#ff2020', hx+4, ey+4 + (eh-8)*(1-fh), 16, (eh-8)*fh);
-  text('❤', hx+12, ey-6, 13, '#ff6b6b', 'center', false);
+  const hx = ex - 30; barrasTal(ex, ey, eh);
   if (UI.hurt > 0) rect(`rgba(255,0,0,${UI.hurt * 0.5})`, 0, 0, VW, VH);
   if (S.sick) {
     rect(`rgba(200,180,60,${0.06 + Math.sin(T*1.5)*0.03})`, 0, 0, VW, VH);
     ctx.font = `bold 12px ${FONT}`;
     const label = `🤒 ${ILLNESS[S.sick].name}`, lw = ctx.measureText(label).width + 16;
-    rect('rgba(70,60,10,.85)', hx + 24 - lw, ey - (S.poison ? 54 : 30), lw, 20);
-    text(label, hx + 24 - lw/2, ey - (S.poison ? 39 : 15), 12, '#f0e080', 'center');
+    rect('rgba(70,60,10,.85)', hx + 24 - lw, ey - (S.poison ? 100 : 76), lw, 20);
+    text(label, hx + 24 - lw/2, ey - (S.poison ? 85 : 61), 12, '#f0e080', 'center');
   }
   if (S.poison) {
     rect(`rgba(60,170,60,${0.07 + Math.sin(T*2)*0.04})`, 0, 0, VW, VH);
-    rect('rgba(20,60,20,.8)', hx - 70, ey - 30, 94, 20);
-    text('☠ Envenenado', hx - 23, ey - 15, 12, '#b0ff90', 'center');
+    rect('rgba(20,60,20,.8)', hx - 70, ey - 76, 94, 20);
+    text('☠ Envenenado', hx - 23, ey - 61, 12, '#b0ff90', 'center');
   }
 
   
@@ -10655,7 +10650,7 @@ function drawHUD() {
     }
     ctx.save(); ctx.translate(x + sw/2, by + sw/2); ctx.scale(sw/50, sw/50); drawIcon(i, 0, 0); ctx.restore();
     text(String((i+1) % 10), x+7, by+15, 10, '#7a5530');
-    if (i >= 5 && slotBag(i)) text(String(S.inv[slotBag(i).id] || 0), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right');
+    if (i >= 5 && slotBag(i)) { const q = S.inv[slotBag(i).id] || 0; text(q >= 1e6 ? `${+(q / 1e6).toFixed(1)}M` : q >= 1e4 ? `${Math.floor(q / 1000)}k` : String(q), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right'); }
     if (i < 5) { 
       const st = S.tools[TOOLS[i].id], fr = st.dur / METALS[st.lvl].dur;
       rect('#2a1a0c', x+14, by+5, sw-20, 4);
@@ -10681,7 +10676,7 @@ function drawHUD() {
   const items = Object.keys(ITEM_NAME).filter(k => S.inv[k] > 0);
   UI.invRect = null;
   if (items.length) {
-    const cols = 4, cs = 38, show = items.slice(0, 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 40;
+    const cols = 4, cs = 38, show = items.slice(0, VW < 640 ? 4 : 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 40;
     panel(10, 10, pw, ph); UI.invRect = { x:10, y:10, w:pw, h:ph };
     let tip = null;
     show.forEach((k, i) => {
@@ -10693,7 +10688,7 @@ function drawHUD() {
       text(n, cx + 14, cy + 16, 11, '#fff6d0', 'right');
       if (mouse.x > cx - 17 && mouse.x < cx + 17 && mouse.y > cy - 17 && mouse.y < cy + 17) tip = [k, cx, cy];
     });
-    text(items.length > 8 ? `+${items.length - 8} más · ${UI.touch ? 'toca' : 'Tab'} = bolsa` : (UI.touch ? 'toca = bolsa' : 'Tab = bolsa'), 10 + pw/2, 10 + ph - 14, 11, '#7a5530', 'center', false);
+    text(items.length > show.length ? `+${items.length - show.length} más · ${UI.touch ? 'toca' : 'Tab'} = bolsa` : (UI.touch ? 'toca = bolsa' : 'Tab = bolsa'), 10 + pw/2, 10 + ph - 14, 11, '#7a5530', 'center', false);
     if (tip) { 
       const [k, cx, cy] = tip, label = `${ITEM_NAME[k]} ×${S.inv[k]}`; ctx.font = `bold 12px ${FONT}`;
       const lw = ctx.measureText(label).width + 14;
@@ -10707,7 +10702,7 @@ function drawHUD() {
     text(label, VW/2, VH - 132, 13, safe ? '#c8f7a0' : '#fff6a0', 'center');
   }
   if (S.tut >= 0 && !UI.menu) { 
-    const top = VW - 420 >= 320, w = top ? Math.min(470, VW - 420) : Math.min(470, VW - 20), x = VW/2 - w/2, y = top ? 12 : UI.touch ? 250 : 210;
+    const top = VW - 420 >= 320, w = top ? Math.min(470, VW - 420) : Math.min(470, VW - 20), x = VW/2 - w/2, y = top ? 12 : Math.max(UI.estadoBottom || 0, UI.invRect ? UI.invRect.y + UI.invRect.h : 0) + 8;
     ctx.font = `bold 13px ${FONT}`;
     const lines = wrapText(TUTORIAL[S.tut].text, w - 30);
     panel(x, y, w, 40 + lines.length*17);
@@ -12219,6 +12214,9 @@ function drawTienda(b) {
   rect(T0.col, px + 4, wallTop, w - 8, base - 12 - wallTop); 
   for (let i = 0; i < 10; i++) rect('rgba(120,80,40,.08)', px + 6 + hash(b.x + i, b.y) * (w - 20), wallTop + 14 + hash(b.y, i) * (base - wallTop - 34), 8, 2);
   rect(side > 0 ? 'rgba(70,40,20,.16)' : 'rgba(255,240,210,.12)', px + w - 18, wallTop, 14, base - 12 - wallTop);
+  { const dyT = base - 25; rect(TAL.COB, px + 4, dyT - 2, w - 8, 15); if (!TAL.fill('deco', 11, px + 4, dyT, w - 8, 11)) rect('#f4ecd8', px + 4, dyT, w - 8, 11); rect(TAL.OCH, px + 4, dyT - 2, w - 8, 1); rect('rgba(0,0,0,.18)', px + 4, dyT + 11, w - 8, 2);
+    ctx.strokeStyle = 'rgba(26,20,16,.75)'; ctx.lineWidth = 1.6; ctx.strokeRect(px + 4.5, wallTop + .5, w - 9, base - 12 - wallTop);
+    const wx0 = px + w - 34 - 7, wy0 = wallTop + 11; rect(TAL.COB, wx0 - 1, wy0 - 1, 36, 30); if (!TAL.fill('deco', 9, wx0, wy0, 34, 28)) rect('#f4ecd8', wx0, wy0, 34, 28); }
   greca(px + 4, wallTop, w - 8, T0.band, '#f4ecd8'); 
   rect('#6a4a2a', px, top + 10, w, 8); rect('#4a2f18', px, top + 17, w, 2); 
   for (let x = px + 6; x < px + w - 6; x += 14) rect('#4a2f18', x, top + 18, 4, 4);
@@ -28544,7 +28542,7 @@ drawShop = function () {
     const label = R20_1.on ? `/${R20_1.q}_` : (R20_1.q ? `"${R20_1.q}" (Esc borra)` : '"/" buscar');
     ctx.font = `bold 12px ${FONT}`;
     const width = Math.max(180, ctx.measureText(label).width + 22);
-    const py = UI.shopBox ? Math.min(VH - 130, UI.shopBox[1] + UI.shopBox[3] + 8) : VH - 130;
+    const sb = UI.shopBox, below = sb ? sb[1] + sb[3] + 30 : VH - 130, py = below + 22 <= VH - 108 ? below : sb && sb[1] - 30 >= 4 ? sb[1] - 30 : VH - 130;
     if (!UI.touch || R20_1.on || R20_1.q) rect('rgba(20,10,10,.85)', VW/2 - width/2, py, width, 22);
     if (!UI.touch || R20_1.on || R20_1.q) text(label, VW/2, py + 15, 12, R20_1.on ? '#ffe08a' : '#a0a0a0', 'center', false);
   }
@@ -32863,10 +32861,6 @@ if (R39.activo) {
     _drawHUDR39();
     if (!S.sprint || ['night', 'love', 'affair', "_x871ab5"].includes(UI.menu)) return;
     const sp = S.sprint, eh = 140, ex = VW - 34, ey = VH - eh - (VW < 640 ? 110 : 20), sx = ex - 60;
-    rect('#5a3a1e', sx, ey, 24, eh); rect('#2a1a0c', sx + 4, ey + 4, 16, eh - 8);
-    const f = sp.stam / sp.max, col = f > 0.5 ? '#5ac8ff' : f > 0.2 ? '#ffd060' : '#ff6060';
-    rect(col, sx + 4, ey + 4 + (eh - 8) * (1 - f), 16, (eh - 8) * f);
-    text('⚡', sx + 12, ey - 6, 13, '#5ac8ff', 'center', false);
     if (sp.cool > 0) text("·xa0dff1", VW/2, 80, 12, '#ff8080', 'center', false);
   };
 
@@ -33023,9 +33017,9 @@ if (R39.activo) {
     if (!S || UI.menu || UI.touch) return;
     const eh = 140, ex = VW - 34, ey = VH - eh - (VW < 640 ? 110 : 20), fillH = eh - 8;
     const lagE = Math.max(0, Math.min(1, S.energyLag / S.maxE)), realE = Math.max(0, Math.min(1, S.energy / S.maxE));
-    if (lagE > realE + .005) rect('rgba(255,80,80,.48)', ex + 4, ey + 4 + fillH * (1 - lagE), 16, fillH * (lagE - realE));
+
     const hx = ex - 30, lagH = Math.max(0, Math.min(1, S.hpLag / MAX_HP)), realH = Math.max(0, Math.min(1, S.hp / MAX_HP));
-    if (lagH > realH + .005) rect('rgba(255,80,80,.48)', hx + 4, ey + 4 + fillH * (1 - lagH), 16, fillH * (lagH - realH));
+
   };
 
   
@@ -45160,14 +45154,14 @@ function drawEstado() {
   const W = Math.min(236, VW - 20), X = VW - W - 10, cx = X + W / 2, SANS = ESTADO_SANS();
   const s = Math.floor((S.day-1) / 28) % 4, d = (S.day-1) % 28 + 1, year = Math.floor((S.day-1) / 112) + 1;
   
-  const H1 = 124; codexPanel(X, 10, W, H1);
+  const C = VW < 640, H1 = C ? 96 : 124; codexPanel(X, 10, W, H1);
   ctx.save();
-  estadoTexto(`${SEASONS[s]} ${d}`, cx, 46, `700 21px ${TAL_SERIF}`, TAL.COB, 'center');
+  estadoTexto(`${SEASONS[s]} ${d}`, cx, C ? 39 : 46, `700 ${C ? 19 : 21}px ${TAL_SERIF}`, TAL.COB, 'center');
   const clima = S.storm?.day === S.day ? 'tormenta' : S.rainToday ? 'lluvia' : 'sol';
-  const aw = estadoTexto(`Año ${year}`, cx - 10, 63, `italic 700 13px ${TAL_ITAL}`, '#8a5a14', 'center');
-  estadoGlifo(clima, cx - 10 + aw / 2 + 4, 50, 18);
-  estadoTexto(fmtTime(S.time), cx, 88, `800 23px ${SANS}`, TAL.NAVY, 'center');
-  const py = 94, pw = W - 40, px = X + 20, money = S.money.toLocaleString('es-MX');
+  const aw = C ? estadoTexto(`Año ${year}`, X + 22, 62, `italic 700 12px ${TAL_ITAL}`, '#8a5a14', 'left') : estadoTexto(`Año ${year}`, cx - 10, 63, `italic 700 13px ${TAL_ITAL}`, '#8a5a14', 'center');
+  if (C) estadoGlifo(clima, X + W - 40, 47, 18); else estadoGlifo(clima, cx - 10 + aw / 2 + 4, 50, 18);
+  estadoTexto(fmtTime(S.time), cx, C ? 63 : 88, `800 ${C ? 20 : 23}px ${SANS}`, TAL.NAVY, 'center');
+  const py = C ? 70 : 94, pw = W - 40, px = X + 20, money = S.money.toLocaleString('es-MX');
   rect('#0b1a44', px, py + 2, pw, 20);
   if (!TAL.fill('cobalt', 48, px, py, pw, 20)) rect(TAL.COB, px, py, pw, 20);
   ctx.strokeStyle = '#0f2458'; ctx.lineWidth = 2; ctx.strokeRect(px + 1, py + 1, pw - 2, 18); ctx.strokeStyle = TAL.OCH; ctx.lineWidth = 1; ctx.strokeRect(px + 3.5, py + 3.5, pw - 7, 13);
@@ -45188,11 +45182,11 @@ function drawEstado() {
   if (S.gear.weapon || S.gear.shield || S.gear.armor) rows.push({ h:32, draw:estadoEquipo });
   if (S.request) rows.push({ h:58, draw:estadoEncargo });
   const inner = rows.reduce((a, r) => a + r.h, 0), Y2 = 10 + H1 + 6;
-  const H2 = inner + 40, b = Math.max(5, Math.min(14, Math.round(Math.min(W, H2) * 0.09)));
+  const H2 = inner + (C ? 30 : 40), b = Math.max(5, Math.min(14, Math.round(Math.min(W, H2) * 0.09)));
   codexPanel(X, Y2, W, H2);
-  let y = Y2 + 2 + b + 6; const x = X + 2 + b + 6, w = W - 2 * (2 + b + 6);
+  let y = Y2 + 2 + b + (C ? 1 : 6); const x = X + 2 + b + 6, w = W - 2 * (2 + b + 6);
   rows.forEach((r, i) => { if (i) estadoPunteado(x, y, w); ctx.save(); try { r.draw(x, y, w); } catch (e) {} ctx.restore(); y += r.h; });
-  return Y2 + H2;
+  return UI.estadoBottom = Y2 + H2;
 }
 function estadoFama(x, y, w) {
   const v = Math.max(-100, Math.min(100, S.honor || 0)), rk = honorRank(), neg = v < 0, col = neg ? '#b8402e' : '#2f7a3a';
@@ -45492,13 +45486,13 @@ function estadoEncargo(x, y, w) {
     return m;
   }
   
-  function tierra(_xa168e3 = false) {
-    const b = _xa168e3 ? G.wet : G.soil, l = _xa168e3 ? G.wetL : G.soilL, d = _xa168e3 ? G.wetD : G.soilD;
-    let m = "·x78730e";
-    for (let y = 0; y < 64; y += 16) m += "·xbb58fe";
-    const R = rnd(_xa168e3 ? 7 : 3);
-    for (let i = 0; i < 10; i++) m += "·xd22313";
-    if (_xa168e3) for (let i = 0; i < 4; i++) { const x = n(6 + R() * 50), y = 16 * Math.floor(R() * 4) + 11; m += "·x27da90"; }
+  function tierra(hum = false) {
+    const b = hum ? G.wet : G.soil, l = hum ? G.wetL : G.soilL, d = hum ? G.wetD : G.soilD;
+    let m = `<rect width="64" height="64" fill="${b}"/>`;
+    for (let y = 0; y < 64; y += 16) m += `<path d="M0 ${y + 3} H64 V${y + 9} H0Z" fill="${l}"/><path d="M0 ${y + 3} H64" stroke="${sh(l, 1.12)}" stroke-width="1.6"/><path d="M0 ${y + 13.4} H64" stroke="${d}" stroke-width="2.6"/>`;
+    const R = rnd(hum ? 7 : 3);
+    for (let i = 0; i < 10; i++) m += `<circle cx="${n(3 + R() * 58)}" cy="${n(3 + R() * 58)}" r="${n(.8 + R() * 1)}" fill="${d}" opacity=".6"/>`;
+    if (hum) for (let i = 0; i < 4; i++) { const x = n(6 + R() * 50), y = 16 * Math.floor(R() * 4) + 11; m += `<ellipse cx="${x}" cy="${y}" rx="${n(3 + R() * 3)}" ry="1.4" fill="#8fb4d8" opacity=".75"/>`; }
     return m;
   }
   function camino(seed = 4) {
@@ -45808,6 +45802,51 @@ addEventListener('pointerdown', e => {
     openMenu('bolsa'); e.stopImmediatePropagation(); e.preventDefault();
   }
 }, true);
+</script>
+<script>
+function barrasTal(ex, ey, eh) {
+  const cl = v => Math.max(0, Math.min(1, v || 0)), sp = S.sprint;
+  const lagOk = !UI.touch;
+  const med = [];
+  if (sp) med.push({ g:'pluma', f:cl(sp.stam / sp.max), c:sp.cool > 0 ? ['#c8ccd8', '#8a90a4'] : ['#9fd2ff', '#2f6fd0'] });
+  const fh = cl(S.hp / MAX_HP);
+  med.push({ g:'corazon', f:fh, lag:lagOk && S.hpLag != null ? cl(S.hpLag / MAX_HP) : 0, c:fh > 0.3 ? ['#f2826e', '#b8302a'] : ['#ff6a5a', '#d01a14'] });
+  const fe = cl(S.energy / S.maxE);
+  med.push({ g:'maiz', f:fe, lag:lagOk && S.energyLag != null ? cl(S.energyLag / S.maxE) : 0, c:fe > 0.3 ? ['#9ad66e', '#3f8a34'] : fe > 0.12 ? ['#f6d264', '#c8901e'] : ['#f07060', '#b8402e'] });
+  const gw = 20, gap = 10, pad = 15, n = med.length, pw = pad * 2 + n * gw + (n - 1) * gap;
+  const X0 = ex + 24 - pw + 6, Y0 = ey - 44, ph = eh + 56;
+  codexPanel(X0, Y0, pw, ph);
+  const round = (x, y, w, h, r) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); };
+  med.forEach((m, i) => {
+    const x = X0 + pad + i * (gw + gap), ty = ey + 2, th = eh - 8, cx = x + gw / 2;
+    ctx.save();
+    ctx.fillStyle = 'rgba(11,26,68,.35)'; round(x + 1, ty + 2, gw, th, gw / 2); ctx.fill();
+    ctx.fillStyle = TAL.COB; round(x, ty, gw, th, gw / 2); ctx.fill();
+    ctx.fillStyle = '#efe6d2'; round(x + 2.5, ty + 2.5, gw - 5, th - 5, (gw - 5) / 2); ctx.fill();
+    ctx.clip();
+    const iy = ty + 2.5, ih = th - 5;
+    if (m.lag > m.f + .005) { ctx.fillStyle = 'rgba(232,80,60,.5)'; ctx.fillRect(x, iy + ih * (1 - m.lag), gw, ih * (m.lag - m.f)); }
+    const g = ctx.createLinearGradient(x, 0, x + gw, 0); g.addColorStop(0, m.c[0]); g.addColorStop(1, m.c[1]);
+    ctx.fillStyle = g; ctx.fillRect(x, iy + ih * (1 - m.f), gw, ih * m.f);
+    if (m.f > 0.02) { ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(x, iy + ih * (1 - m.f), gw, 1.5); }
+    ctx.fillStyle = 'rgba(255,255,255,.38)'; ctx.fillRect(x + 5, iy + 6, 2.5, ih - 12);
+    ctx.restore();
+    for (const q of [.25, .5, .75]) { const yy = Math.round(ty + 2.5 + (th - 5) * (1 - q)) + .5; ctx.strokeStyle = 'rgba(22,48,110,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + gw - 7, yy); ctx.lineTo(x + gw - 2.5, yy); ctx.stroke(); }
+    const my = ey - 15, low = m.f < 0.2 && Math.sin(T * 8) > 0;
+    circ(low ? '#c0392b' : TAL.COB, cx, my, 13); circ(TAL.OCH, cx, my, 11.2); circ('#fbf5e6', cx, my, 9.6);
+    if (m.g === 'corazon') {
+      ctx.save(); ctx.translate(cx, my + 0.5);
+      ctx.beginPath(); ctx.moveTo(0, 6.5); ctx.bezierCurveTo(-9, 0, -7, -8, -2.4, -6.4); ctx.quadraticCurveTo(0, -5.4, 0, -3.4); ctx.quadraticCurveTo(0, -5.4, 2.4, -6.4); ctx.bezierCurveTo(7, -8, 9, 0, 0, 6.5); ctx.closePath();
+      ctx.fillStyle = '#d03a2e'; ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,220,210,.8)'; ctx.beginPath(); ctx.ellipse(-3, -3, 1.6, 1.1, -.6, 0, 7); ctx.fill();
+      ctx.restore();
+    } else {
+      const im = m.g === 'maiz' ? (globalThis.iconoDe && iconoDe('maiz')) : ESTADO_GLIFOS[m.g];
+      if (im && im.complete && im.naturalWidth) ctx.drawImage(im, cx - 9, my - 9, 18, 18);
+      else text(m.g === 'maiz' ? 'E' : '⚡', cx, my + 4, 11, TAL.NAVY, 'center');
+    }
+  });
+}
 </script>
 </body>
 </html>
