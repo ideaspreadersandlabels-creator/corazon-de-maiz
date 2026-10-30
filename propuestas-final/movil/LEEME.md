@@ -32,3 +32,13 @@ python3 parche_movil.py ruta/al/index.html
 - **Barra de herramientas.** Las cantidades se abrevian (400k).
 
 `mundo-antes-despues.jpg` y `tiendas-talavera.jpg` muestran el cambio.
+
+## Casas, interiores, palacio y aldeas (tercera ronda)
+
+- **Palacio de Xicohténcatl.** Parecía un templo griego de columnas. Ahora es un tecpan tlaxcalteca: basamento de talud y tablero rojo con greca, escalinata con alfardas, pórtico de pilares pintados, friso con greca, almenas escalonadas, el estandarte rojo con la garza blanca de Tizatlán, estandartes de pluma (pantli) y braseros.
+- **Sala del palacio.** Mural azul con chalchihuites y grecas, escudos (chimalli) y estandartes de pluma en el muro, icpalli de tule con piel de jaguar, piso de aplanado rojizo y un petate largo en lugar de la alfombra roja y el piso de ajedrez europeo.
+- **Interiores de casas y tiendas.** Vigas de madera en el techo, muro de aplanado con guardapolvo rojo, y nichos con ofrenda (olla y flores de cempasúchil) en vez de ventanas de vidrio, que no existían antes de la conquista. La iglesia y la casa del capitán españoles conservan sus ventanas.
+- **Tu casa.** Muros de adobe con remate rojo y contorno de tinta.
+- **Casas del pueblo y de las aldeas.** Cimiento de piedra, dintel de madera sobre la puerta, contorno de tinta, ollas de barro y magueyes; las chozas otomíes también llevan magueyes y ollas.
+
+`palacio-antes-despues.jpg` e `interiores-antes-despues.jpg` muestran el cambio.
