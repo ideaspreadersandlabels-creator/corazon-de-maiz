@@ -10681,19 +10681,19 @@ function drawHUD() {
   const items = Object.keys(ITEM_NAME).filter(k => S.inv[k] > 0);
   UI.invRect = null;
   if (items.length) {
-    const cols = 4, cs = 38, show = items.slice(0, 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 34;
+    const cols = 4, cs = 38, show = items.slice(0, 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 40;
     panel(10, 10, pw, ph); UI.invRect = { x:10, y:10, w:pw, h:ph };
     let tip = null;
     show.forEach((k, i) => {
       const cx = 18 + (i % cols)*cs + cs/2, cy = 18 + Math.floor(i / cols)*cs + cs/2 - 1;
       rect('#d8b77a', cx - 17, cy - 17, 34, 34); rect('#f8ecd0', cx - 15, cy - 15, 30, 30);
       ctx.save(); ctx.translate(cx, cy); ctx.scale(0.72, 0.72); itemIcon(k, 0, 0); ctx.restore();
-      const n = String(S.inv[k]); ctx.font = `bold 11px ${FONT}`;
+      const q = S.inv[k], n = q >= 1e6 ? `${+(q / 1e6).toFixed(1)}M` : q >= 1e4 ? `${Math.floor(q / 1000)}k` : String(q); ctx.font = `bold 11px ${FONT}`;
       const nw = ctx.measureText(n).width + 6; rect('rgba(42,26,12,.85)', cx + 17 - nw, cy + 6, nw, 13);
       text(n, cx + 14, cy + 16, 11, '#fff6d0', 'right');
       if (mouse.x > cx - 17 && mouse.x < cx + 17 && mouse.y > cy - 17 && mouse.y < cy + 17) tip = [k, cx, cy];
     });
-    text(items.length > 8 ? `+${items.length - 8} más · Tab = bolsa` : 'Tab = bolsa', 10 + pw/2, 10 + ph - 11, 11, '#7a5530', 'center', false);
+    text(items.length > 8 ? `+${items.length - 8} más · ${UI.touch ? 'toca' : 'Tab'} = bolsa` : (UI.touch ? 'toca = bolsa' : 'Tab = bolsa'), 10 + pw/2, 10 + ph - 14, 11, '#7a5530', 'center', false);
     if (tip) { 
       const [k, cx, cy] = tip, label = `${ITEM_NAME[k]} ×${S.inv[k]}`; ctx.font = `bold 12px ${FONT}`;
       const lw = ctx.measureText(label).width + 14;
@@ -11266,8 +11266,8 @@ function drawShop() {
     tabPos.push([tbx, tby, tw]); tbx += tw + 6;
   }
   const top = 96 + (tabs ? tby + 38 : 0);
-  const vis = Math.max(shop.compact ? 1 : 3, Math.min(Math.max(rows.length, shop.compact ? 1 : 4), 9, Math.floor((VH - 60 - top - 46) / rh)));
-  const h = top + vis*rh + 46, [x, y] = dialog(w, h), look = shopLook();
+  const vis = Math.max(shop.compact ? 1 : 3, Math.min(Math.max(rows.length, shop.compact ? 1 : 4), VH > 900 ? 16 : 9, Math.floor((VH - 60 - top - 46 - (VH > 900 ? 120 : 0)) / rh)));
+  const h = top + vis*rh + 46, [x, y] = dialog(w, h), look = shopLook(); UI.shopBox = [x, y, w, h];
   
   const title = typeof shop.title === 'function' ? shop.title() : shop.title;
   const pr = honorRank().price, priceNote = pr === 1 ? '' : ` · precios ${pr < 1 ? '-' : '+'}${Math.round(Math.abs(1 - pr)*100)}% por tu honra`;
@@ -28520,7 +28520,7 @@ drawShop = function () {
       ctx.restore();
     }
   }
-  if (R20.tooltip && mouse.on) {
+  if (R20.tooltip && mouse.on && !UI.touch) {
     for (const r of UI.shopRows) {
       if (mouse.x < r.x || mouse.x > r.x + r.w || mouse.y < r.y || mouse.y > r.y + r.h) continue;
       const row = UI.curRows[r.i];
@@ -28544,8 +28544,9 @@ drawShop = function () {
     const label = R20_1.on ? `/${R20_1.q}_` : (R20_1.q ? `"${R20_1.q}" (Esc borra)` : '"/" buscar');
     ctx.font = `bold 12px ${FONT}`;
     const width = Math.max(180, ctx.measureText(label).width + 22);
-    rect('rgba(20,10,10,.85)', VW/2 - width/2, VH - 68, width, 22);
-    text(label, VW/2, VH - 53, 12, R20_1.on ? '#ffe08a' : '#a0a0a0', 'center', false);
+    const py = UI.shopBox ? Math.min(VH - 130, UI.shopBox[1] + UI.shopBox[3] + 8) : VH - 130;
+    if (!UI.touch || R20_1.on || R20_1.q) rect('rgba(20,10,10,.85)', VW/2 - width/2, py, width, 22);
+    if (!UI.touch || R20_1.on || R20_1.q) text(label, VW/2, py + 15, 12, R20_1.on ? '#ffe08a' : '#a0a0a0', 'center', false);
   }
 };
 
@@ -29308,49 +29309,67 @@ if(R24.marker) {
 if(R24.mapFilters) {
   UI.mapHide??=new Set();
   UI.mapFilterBtns=[];
+  globalThis.mapGeom=function(){
+    const w=VW-30,gap=16;let k=1,sc=Math.min((w-40)/MW,(VH-176)/WORLD_H);
+    if(VW<740)for(let n=2;n<=6;n++){const s2=Math.min((w-40)/(MW/n),(VH-250-(n-1)*gap)/(WORLD_H*n));if(s2>sc*1.05){sc=s2;k=n;}}
+    const bw=MW/k,mw=bw*sc,bh=WORLD_H*sc,mh=k*bh+(k-1)*gap,h=mh+176;
+    const x=Math.round(VW/2-w/2),y=Math.round(VH/2-h/2),mx=x+(w-mw)/2,my=y+56;
+    const P=(tx,ty)=>{const b=Math.max(0,Math.min(k-1,Math.floor(tx/bw)));return [mx+(tx-b*bw)*sc,my+b*(bh+gap)+ty*sc,b];};
+    return {w,h,x,y,k,sc,bw,bh,mw,mh,mx,my,gap,P,ly1:my+mh+24,ly2:my+mh+44};
+  };
   drawMap=function(){
-    const w=VW-30,sc=Math.min((w-40)/MW,(VH-140)/WORLD_H),mw=MW*sc,mh=WORLD_H*sc,h=mh+130;
-    const [x,y]=dialog(w,h),mx=x+(w-mw)/2,my=y+56;
-    text('Mapa de Tlaxcallan y sus alrededores',x+w/2,y+40,20,'#4a2f18','center');
-    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(MAP_CV,mx,my,mw,mh);
-    for(let cy=0;cy<SEEN_H;cy++)for(let cx=0;cx<SEEN_W;cx++)
-      if(!S.seen?.[cy*SEEN_W+cx])rect('#d8c49a',mx+cx*SEEN*sc-.5,my+cy*SEEN*sc-.5,SEEN*sc+1,SEEN*sc+1);
-    ctx.strokeStyle='#5a3a1e';ctx.lineWidth=2;ctx.strokeRect(mx,my,mw,mh);
+    const G=mapGeom(),{w,h,k,sc,bw,bh,mw,mh,mx,my,gap,P}=G;
+    const [x,y]=dialog(w,h);
+    text('Mapa de Tlaxcallan y sus alrededores',x+w/2,y+40,VW<500?17:20,'#4a2f18','center');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    const pxT=MAP_CV.width/MW;
+    for(let b=0;b<k;b++){
+      const by=my+b*(bh+gap),ox=mx-b*bw*sc;
+      ctx.save();ctx.beginPath();ctx.rect(mx,by,mw,bh);ctx.clip();
+      ctx.drawImage(MAP_CV,b*bw*pxT,0,bw*pxT,MAP_CV.height,mx,by,mw,bh);
+      for(let cy=0;cy<SEEN_H;cy++)for(let cx=0;cx<SEEN_W;cx++){
+        const cx0=cx*SEEN;if(cx0+SEEN<b*bw||cx0>(b+1)*bw)continue;
+        if(!S.seen?.[cy*SEEN_W+cx])rect('#d8c49a',ox+cx0*sc-.5,by+cy*SEEN*sc-.5,SEEN*sc+1,SEEN*sc+1);
+      }
+      ctx.restore();
+      ctx.strokeStyle='#5a3a1e';ctx.lineWidth=2;ctx.strokeRect(mx,by,mw,bh);
+      if(b<k-1)text('↩',mx+mw+9,by+bh+12,13,'#9a7040','center',false);
+    }
     const seenAt=(tx,ty)=>!!S.seen?.[Math.floor(ty/SEEN)*SEEN_W+Math.floor(tx/SEEN)];
     for(const [name,lx,ly] of MAP_LABELS)if(seenAt(lx,ly)){
-      ctx.font=`bold 11px ${FONT}`;const lw=ctx.measureText(name).width+8;
-      const lx2=Math.max(mx+lw/2,Math.min(mx+mw-lw/2,mx+lx*sc));
-      rect('rgba(42,26,12,.75)',lx2-lw/2,my+ly*sc-10,lw,14);
-      text(name,lx2,my+ly*sc+1,11,'#fff6d0','center');
+      ctx.font=`bold 11px ${FONT}`;const lw=ctx.measureText(name).width+8;const [px,py]=P(lx,ly);
+      const lx2=Math.max(mx+lw/2,Math.min(mx+mw-lw/2,px));
+      rect('rgba(42,26,12,.75)',lx2-lw/2,py-10,lw,14);
+      text(name,lx2,py+1,11,'#fff6d0','center');
     }
     if(!UI.mapHide.has('postas'))for(const b of postaList())if(S.postas?.[b.id]){
-      rect('#c0392b',mx+b.x*sc-2,my+b.y*sc-8,2,9);rect('#f2c94c',mx+b.x*sc,my+b.y*sc-8,6,4);
+      const [px,py]=P(b.x,b.y);rect('#c0392b',px-2,py-8,2,9);rect('#f2c94c',px,py-8,6,4);
     }
     if(!UI.mapHide.has('templos'))for(const sh of S.shrines||[]){
       if(!sh.found&&!sh.revealed)continue;
-      const sx=mx+(sh.x+1.5)*sc,sy=my+(sh.y+1.5)*sc;
+      const [sx,sy]=P(sh.x+1.5,sh.y+1.5);
       if(!sh.found){circ('#5a3a1e',sx,sy,7);text('?',sx,sy+5,13,'#fff6d0','center');}
       else{circ(GODS[sh.god].col,sx,sy,6);ctx.save();ctx.translate(sx,sy);ctx.scale(.3,.3);GOD_ICON[sh.god](0,0);ctx.restore();}
     }
     if(!UI.mapHide.has('marcador')&&S.marcador){
-      const sx=mx+(S.marcador.x+.5)*sc,sy=my+(S.marcador.y+.5)*sc;
+      const [sx,sy]=P(S.marcador.x+.5,S.marcador.y+.5);
       circ('#ff6f3a',sx,sy,8);text('🚩',sx,sy+4,12,'#fff','center');
     }
     const [ptx,pty]=playerTile(),inMine=pty>=WORLD_H;
     if(!UI.mapHide.has('player')&&!inMine&&Math.sin(T*6)>-.3){
-      circ('#fff',mx+ptx*sc,my+pty*sc,5);circ('#d9483b',mx+ptx*sc,my+pty*sc,3.5);
+      const [px,py]=P(ptx,pty);circ('#fff',px,py,5);circ('#d9483b',px,py,3.5);
     }
-    text(inMine?'Estás dentro de una mina':'● tú   🚩 postas   ◉ templos',x+w/2,y+h-40,12,'#7a5530','center',false);
+    text(inMine?'Estás dentro de una mina':'● tú   🚩 postas   ◉ templos',x+w/2,G.ly2,12,'#7a5530','center',false);
     UI.mapFilterBtns=[];
     const filters=[['postas','🚩 Postas'],['templos','⛩ Templos'],['marcador','🚩 Marcador'],['player','● Tú']];
-    const fw=Math.min(110,(VW-20)/filters.length),start=VW/2-filters.length*fw/2;
+    const fw=Math.min(120,(w-40)/filters.length),start=x+w/2-filters.length*fw/2,fy=my+mh+58,fh=UI.touch?32:26;
     filters.forEach(([cat,label],i)=>{
-      const bx=start+i*fw,by=VH-40,on=!UI.mapHide.has(cat);
-      rect(on?'rgba(40,80,40,.9)':'rgba(60,20,20,.9)',bx+2,by,fw-4,22);
-      text(label,bx+fw/2,by+15,11,on?'#a0f0a0':'#ff8080','center',false);
-      UI.mapFilterBtns.push({cat,x:bx,y:by,w:fw,h:22});
+      const bx=start+i*fw,on=!UI.mapHide.has(cat);
+      rect(on?'rgba(40,80,40,.9)':'rgba(60,20,20,.9)',bx+3,fy,fw-6,fh);
+      text(label,bx+fw/2,fy+fh/2+4,11,on?'#a0f0a0':'#ff8080','center',false);
+      UI.mapFilterBtns.push({cat,x:bx,y:fy,w:fw,h:fh});
     });
-    text('M o Esc = cerrar · clic o 1-4 = filtros',x+w/2,y+h-20,11,'#7a5530','center',false);
+    text(UI.touch?'toca un filtro para mostrar u ocultar':'M o Esc = cerrar · clic o 1-4 = filtros',x+w/2,y+h-26,11,'#7a5530','center',false);
   };
   const pointerMap24=pointerDown;
   pointerDown=function(px,py,button){
@@ -40952,7 +40971,6 @@ SHOPS.ajustes.rows = function () {
     definicion: [
       { id: 'primera_cosecha', nombre: 'Primera Cosecha', desc: 'Cosecha tu primera planta', icono: '🌽' },
       { id: 'primer_asalto', nombre: 'Defensor', desc: 'Resiste tu primer asalto', icono: '🛡️' },
-      { id: 'primer_asalto', nombre: 'Defensor', desc: 'Resiste tu primer asalto', icono: '🛡️' },
       { id: 'primer_romance', nombre: 'Corazón Enamorado', desc: 'Ten tu primera cita romántica', icono: '❤️' },
       { id: 'primer_hijo', nombre: 'Padre/Madre', desc: 'Ten tu primer hijo', icono: '👶' },
       { id: 'fantasma_amante', nombre: 'Amor Fantasmal', desc: "·xfa7680", icono: '👻' },
@@ -40978,7 +40996,7 @@ SHOPS.ajustes.rows = function () {
     sub: () => `${LOGROS.lista.length}/${LOGROS.definicion.length}`,
     rows: () => LOGROS.definicion.map(l => ({
       icon: emojiIcon(LOGROS.estaDesbloqueado(l.id) ? '⭐' : '☆'),
-      nombre: l.nombre,
+      name: l.nombre, nombre: l.nombre,
       price: LOGROS.estaDesbloqueado(l.id) ? 'Desbloqueado' : 'Pendiente',
       desc: l.desc,
       buy: () => {}
@@ -43798,15 +43816,14 @@ r25Diario('👩', 'Diario de chicas', () => `${AMANTES_TRIBU.length + 1} amantes
 const _drawMapChicas = drawMap;
 drawMap = function () {
   _drawMapChicas();
-  const w = VW - 30, sc = Math.min((w - 40) / MW, (VH - 140) / WORLD_H), mw = MW * sc, mh = WORLD_H * sc, h = mh + 130;
-  const x = Math.round(VW / 2 - w / 2), y = Math.round(VH / 2 - h / 2), mx = x + (w - mw) / 2, my = y + 56;
+  const G = mapGeom(), { w, h, x, y } = G;
   const visto = v => { const tx = Math.floor(v.x / TS), ty = Math.floor((v.y - 4) / TS); return ty < WORLD_H && S.seen[Math.floor(ty / SEEN) * SEEN_W + Math.floor(tx / SEEN)]; };
   for (const v of VILLAGERS) {
     if (!v.look?.female || !(v.romance || v.amanteTribu) || !visto(v)) continue;
-    const amante = !!AMANTE_DE[v.name], px = mx + v.x / TS * sc, py = my + (v.y - 4) / TS * sc;
+    const amante = !!AMANTE_DE[v.name], [px, py] = G.P(v.x / TS, (v.y - 4) / TS);
     circ('#fff', px, py, amante ? 5 : 4); circ(S.spouse === v.name ? '#f0c020' : amante ? '#e0306a' : '#ff9ac0', px, py, amante ? 3.5 : 2.5);
   }
-  text('💗 chicas del pueblo   💋 tus amantes', x + w / 2, y + h - 58, 12, '#7a5530', 'center', false);
+  text('💗 chicas del pueblo   💋 tus amantes', x + w / 2, G.ly1, 12, '#7a5530', 'center', false);
 };
 
 const CHICA_DE = new Map(); const chicaGesto = name => { if (!CHICA_DE.size) for (const v of VILLAGERS) if (v.look?.female && (v.romance || v.amanteTribu)) CHICA_DE.set(v.name, v); return CHICA_DE.get(name); };
@@ -45783,6 +45800,14 @@ openMenu = function (...a) { // los menús cuyo título se retiró no se abren
   return r;
 };
 text = function (s, ...r) { if (typeof s === 'string' && TOKEN_PUBLICO.test(s)) { s = s.replace(/(?:·x|_x)[0-9a-f]{6}/g, '').trim(); if (!s) return; } return _textPublico(s, ...r); };
+</script>
+<script>
+addEventListener('pointerdown', e => {
+  const r = UI.invRect; if (UI.menu || !r || !S?.player) return;
+  if (e.clientX >= r.x && e.clientX <= r.x + r.w && e.clientY >= r.y && e.clientY <= r.y + r.h) {
+    openMenu('bolsa'); e.stopImmediatePropagation(); e.preventDefault();
+  }
+}, true);
 </script>
 </body>
 </html>
