@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Captura del intro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500;1,600;1,700&family=Alegreya+Sans:wght@500;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../intro/intro.css">
+<style>
+  /* Cuadro de 960×960: pared de azulejo y el mural al centro, con acercamiento lento (--z). */
+  html, body { width: 960px; height: 960px; overflow: hidden; }
+  body { background: linear-gradient(90deg, rgba(201,191,168,.95) 1.5px, transparent 1.5px) 0 0 / 60px 60px, linear-gradient(rgba(201,191,168,.95) 1.5px, transparent 1.5px) 0 0 / 60px 60px, radial-gradient(circle at 30% 25%, rgba(255,255,255,.28), rgba(255,255,255,0) 48%, rgba(90,74,48,.06)) 0 0 / 60px 60px, #f6f1e6; }
+  #stage { left: 0; top: 210px; transform: scale(var(--z, 1)) !important; transform-origin: 50% 50%; cursor: default; box-shadow: 0 0 0 3px #6a4a2e, 0 0 0 5px #3a2416, 0 14px 30px rgba(0,0,0,.35); }
+  /* El texto se queda dentro del cuadro aun con el acercamiento máximo (1.3). */
+  .cap { transition: none; left: 150px; right: 150px; }
+</style>
+</head>
+<body>
+<!-- Paints background figures in cobalt, like the rest of the tile mural. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="cobalt" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.05 0.12 0.24 0.62 0.98"/><feFuncG type="table" tableValues="0.09 0.2 0.36 0.72 0.96"/><feFuncB type="table" tableValues="0.3 0.5 0.7 0.9 0.92"/></feComponentTransfer></filter></svg>
+<div id="stage" role="img" aria-label="Intro de Corazón de Maíz"></div>
+<script src="../../propuestas-v2/chars.js"></script>
+<script src="../../propuestas-v2/textures.js"></script>
+<script src="../../propuestas-v4/figs4.js"></script>
+<script src="../intro/lyrics.js"></script>
+<script src="../intro/intro-art.js"></script>
+<script src="../intro/intro-story.js"></script>
+<script src="captura.js"></script>
+</body>
+</html>
