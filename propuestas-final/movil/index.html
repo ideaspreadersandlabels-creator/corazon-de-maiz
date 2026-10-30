@@ -559,13 +559,9 @@ let VW, VH, Z, camX = 0, camY = 0, T = 0;
 const keys = {}, mouse = { x:0, y:0, on:false };
 
 function resize() {
-  // UIK: en pantallas chicas (celular) la interfaz se dibuja en un lienzo virtual de al
-  // menos 640×560 y se reduce en proporción; los toques se convierten con la misma escala.
-  // La portada ya se adapta sola: ahí no se escala.
-  globalThis.UIK = UI.menu === 'title' ? 1 : Math.min(1, Math.max(1, innerWidth) / 600, Math.max(1, innerHeight) / 560);
-  const dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1)) * UIK;
-  VW = Math.max(1, innerWidth) / UIK; VH = Math.max(1, innerHeight) / UIK;
-  cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr); cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+  const dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1)));
+  VW = Math.max(1, innerWidth); VH = Math.max(1, innerHeight); 
+  cv.width = VW * dpr; cv.height = VH * dpr; cv.style.width = VW + 'px'; cv.style.height = VH + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); 
   const fit = Math.min(VW / (20*TS), VH / (13*TS));
   Z = Math.max(0.5, fit); 
@@ -7183,29 +7179,19 @@ function pointerDown(px, py, button) {
   if (e.button === 0) useTool(); else if (e.button === 2) interact();
 }
 
-// Coordenadas de toque y mouse en la escala de la interfaz (ver UIK en resize).
-{
-  // Toques y mouse leen clientX/clientY ya divididos entre UIK (solo cambia en celular).
-  for (const proto of [MouseEvent.prototype, typeof Touch !== 'undefined' && Touch.prototype].filter(Boolean))
-    for (const prop of ['clientX', 'clientY']) {
-      const d = Object.getOwnPropertyDescriptor(proto, prop);
-      if (d && d.get) Object.defineProperty(proto, prop, { configurable:true, enumerable:d.enumerable, get() { return d.get.call(this) / (globalThis.UIK || 1); } });
-    }
-}
-const TB = () => (globalThis.UIK || 1) < 1 ? 1.35 : 1;   // botones táctiles más grandes en celular
-const JOY = { x:() => 84 * TB(), y:() => VH - 190 * TB(), get r() { return 54 * TB(); } };
+const JOY = { x:() => 84, y:() => VH - 190, r:54 };
 function touchButtons() {
   const inT = UI.menu === 'inside' || UI.menu === 'bar_in' || UI.menu === 'edif_in', inAct = UI.menu === 'bar_in' ? barAct : UI.menu === 'edif_in' ? edifAct : insideAct;
-  const k = TB(), big = [['use', 'Usar', VW - 112*k, VH - 250*k, 34*k, inT ? inAct : useTool], ['act', 'E', VW - 186*k, VH - 196*k, 28*k, inT ? inAct : interactFacing], ['atk', 'R', VW - 186*k, VH - 290*k, 24*k, attack]];
+  const big = [['use', 'Usar', VW - 112, VH - 250, 34, inT ? inAct : useTool], ['act', 'E', VW - 186, VH - 196, 28, inT ? inAct : interactFacing], ['atk', 'R', VW - 186, VH - 290, 24, attack]];
   const small = [['bag', '🎒', () => openMenu('bolsa')], ['map', '🗺', () => { renderMap(); UI.menu = 'map'; S.tutFlags.map = true; }],
     ['diary', '📜', () => { openMenu('diario'); S.tutFlags.diary = true; }], ['eat', '🍽', () => openMenu('comer')], ['fish', '🎣', fishKey], ['menu', '≡', () => openMenu('pausa')]];
   return [...big.map(([id, label, x, y, r, act]) => ({ id, label, x, y, r, act })),
-          ...small.map(([id, label, act], i) => ({ id, label, x:34*k, y:180*k + i*50*k, r:20*k, act }))];
+          ...small.map(([id, label, act], i) => ({ id, label, x:34, y:180 + i*50, r:20, act }))];
 }
 function drawTouch() {
   const jx = JOY.x(), jy = JOY.y();
   circ('rgba(30,20,10,.35)', jx, jy, JOY.r); circ('rgba(255,246,208,.25)', jx, jy, JOY.r - 6);
-  circ('rgba(255,246,208,.75)', jx + (UI.joy?.dx || 0), jy + (UI.joy?.dy || 0), 22 * TB());
+  circ('rgba(255,246,208,.75)', jx + (UI.joy?.dx || 0), jy + (UI.joy?.dy || 0), 22);
   for (const b of touchButtons()) {
     const on = UI.btnFlash?.id === b.id && UI.btnFlash.t > T;
     circ('rgba(30,20,10,.55)', b.x, b.y, b.r); circ(on ? 'rgba(255,240,180,.9)' : 'rgba(242,228,194,.85)', b.x, b.y, b.r - 3);
@@ -7219,7 +7205,7 @@ function touchMove(t) {
     if (Math.abs(dy) > 26) { UI.tap.moved = true; UI.tap.y = t.clientY; UI.shopSel = Math.max(0, Math.min((UI.curRows?.length || 1) - 1, UI.shopSel + (dy < 0 ? 1 : -1))); UI.mouseMoved = 0; }
   }
   if (UI.joy?.id !== t.identifier) return;
-  const dx = t.clientX - JOY.x(), dy = t.clientY - JOY.y(), d = Math.hypot(dx, dy), m = Math.min(d, 46 * TB());
+  const dx = t.clientX - JOY.x(), dy = t.clientY - JOY.y(), d = Math.hypot(dx, dy), m = Math.min(d, 46);
   UI.joy.dx = d ? dx/d*m : 0; UI.joy.dy = d ? dy/d*m : 0;
   keys.a = UI.joy.dx < -14; keys.d = UI.joy.dx > 14; keys.w = UI.joy.dy < -14; keys.s = UI.joy.dy > 14;
 }
@@ -7253,7 +7239,6 @@ cv.addEventListener('wheel', e => {
 
 function update(dt) {
   T += dt;
-  { const t = UI.menu === 'title'; if (UI._uikTitle !== t) { UI._uikTitle = t; resize(); } }
   UI.toasts.forEach(t => t.t -= dt); UI.toasts = UI.toasts.filter(t => t.t > 0);
   UI.swing = Math.max(0, UI.swing - dt);
   UI.hurt = Math.max(0, (UI.hurt || 0) - dt);
@@ -10604,8 +10589,15 @@ function drawHUD() {
 
   
   
+  const CEL = typeof MOVIL !== 'undefined' && MOVIL.k < 1; 
   const eh = 140, ex = VW-34, ey = VH - eh - (VW < 640 ? 110 : 20);
-  const hx = ex - 30; barrasTal(ex, ey, eh);
+  const f = S.energy / S.maxE;
+  
+  const hx = ex - 30, fh = S.hp / MAX_HP;
+  if (CEL) movilBarras();
+  else {
+  barrasTal(ex, ey, eh);
+  }
   if (UI.hurt > 0) rect(`rgba(255,0,0,${UI.hurt * 0.5})`, 0, 0, VW, VH);
   if (S.sick) {
     rect(`rgba(200,180,60,${0.06 + Math.sin(T*1.5)*0.03})`, 0, 0, VW, VH);
@@ -10636,7 +10628,7 @@ function drawHUD() {
     }
     ctx.save(); ctx.translate(x + sw/2, by + sw/2); ctx.scale(sw/50, sw/50); drawIcon(i, 0, 0); ctx.restore();
     text(String((i+1) % 10), x+7, by+15, 10, '#7a5530');
-    if (i >= 5 && slotBag(i)) { const q = S.inv[slotBag(i).id] || 0; text(q >= 1e6 ? `${+(q / 1e6).toFixed(1)}M` : q >= 1e4 ? `${Math.floor(q / 1000)}k` : String(q), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right'); }
+    if (i >= 5 && slotBag(i)) text(cuentaCorta(S.inv[slotBag(i).id] || 0), x+sw-6, by+sw-6, 12, '#2a1a0c', 'right');
     if (i < 5) { 
       const st = S.tools[TOOLS[i].id], fr = st.dur / METALS[st.lvl].dur;
       rect('#2a1a0c', x+14, by+5, sw-20, 4);
@@ -10656,25 +10648,26 @@ function drawHUD() {
   rect('#1a1424', tx - 4, by - 30, 5*sw + 8, 20);
   rect('#c45a3a', tx - 4, by - 30, 5*sw + 8, 3);
   rect('#e6d2a8', tx - 2, by - 25, 5*sw + 4, 13);
-  text(`Q ⇄ bolsa ${S.seedPage + 1}/${BAG_PAGES}`, tx + 5*sw/2, by - 15, 12, '#4a2f18', 'center');
+  text(`${UI.touch ? '⇄' : 'Q ⇄'} bolsa ${S.seedPage + 1}/${BAG_PAGES}`, tx + 5*sw/2, by - 15, 12, '#4a2f18', 'center');
+  UI.bolsaTab = { x:tx - 4, y:by - 30, w:5*sw + 8, h:20 };
 
   
   const items = Object.keys(ITEM_NAME).filter(k => S.inv[k] > 0);
   UI.invRect = null;
-  if (items.length) {
-    const cols = 4, cs = 38, show = items.slice(0, VW < 640 ? 4 : 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 40;
+  if (items.length && !CEL) {
+    const cols = 4, cs = 38, show = items.slice(0, VW < 640 ? 4 : 8), pw = cols*cs + 16, ph = Math.ceil(show.length/cols)*cs + 34;
     panel(10, 10, pw, ph); UI.invRect = { x:10, y:10, w:pw, h:ph };
     let tip = null;
     show.forEach((k, i) => {
       const cx = 18 + (i % cols)*cs + cs/2, cy = 18 + Math.floor(i / cols)*cs + cs/2 - 1;
       rect('#d8b77a', cx - 17, cy - 17, 34, 34); rect('#f8ecd0', cx - 15, cy - 15, 30, 30);
       ctx.save(); ctx.translate(cx, cy); ctx.scale(0.72, 0.72); itemIcon(k, 0, 0); ctx.restore();
-      const q = S.inv[k], n = q >= 1e6 ? `${+(q / 1e6).toFixed(1)}M` : q >= 1e4 ? `${Math.floor(q / 1000)}k` : String(q); ctx.font = `bold 11px ${FONT}`;
+      const n = cuentaCorta(S.inv[k]); ctx.font = `bold 11px ${FONT}`;
       const nw = ctx.measureText(n).width + 6; rect('rgba(42,26,12,.85)', cx + 17 - nw, cy + 6, nw, 13);
       text(n, cx + 14, cy + 16, 11, '#fff6d0', 'right');
       if (mouse.x > cx - 17 && mouse.x < cx + 17 && mouse.y > cy - 17 && mouse.y < cy + 17) tip = [k, cx, cy];
     });
-    text(items.length > show.length ? `+${items.length - show.length} más · ${UI.touch ? 'toca' : 'Tab'} = bolsa` : (UI.touch ? 'toca = bolsa' : 'Tab = bolsa'), 10 + pw/2, 10 + ph - 14, 11, '#7a5530', 'center', false);
+    text(items.length > show.length ? `+${items.length - show.length} más · Tab = bolsa` : 'Tab = bolsa', 10 + pw/2, 10 + ph - 11, 11, '#7a5530', 'center', false);
     if (tip) { 
       const [k, cx, cy] = tip, label = `${ITEM_NAME[k]} ×${S.inv[k]}`; ctx.font = `bold 12px ${FONT}`;
       const lw = ctx.measureText(label).width + 14;
@@ -10690,7 +10683,7 @@ function drawHUD() {
   if (S.tut >= 0 && !UI.menu) { 
     const top = VW - 420 >= 320, w = top ? Math.min(470, VW - 420) : Math.min(470, VW - 20), x = VW/2 - w/2, y = top ? 12 : Math.max(UI.estadoBottom || 0, UI.invRect ? UI.invRect.y + UI.invRect.h : 0) + 8;
     ctx.font = `bold 13px ${FONT}`;
-    const lines = wrapText(TUTORIAL[S.tut].text, w - 30);
+    const lines = wrapText(UI.touch ? tutorialTactil(TUTORIAL[S.tut].text) : TUTORIAL[S.tut].text, w - 30);
     panel(x, y, w, 40 + lines.length*17);
     text(`🎓 Tutorial ${S.tut + 1}/${TUTORIAL.length}`, x + 16, y + 24, 12, '#b5462f');
     lines.forEach((l, i) => text(l, x + 16, y + 42 + i*17, 13, '#4a2f18'));
@@ -11688,7 +11681,7 @@ function pickLine(v) {
 function gameError(e) { 
   console.error(e);
   for (let i = 0; i < 20; i++) ctx.restore();
-  const dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1)); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; 
+  const dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.globalAlpha = 1; ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; 
   UI.errRun = (UI.errRun || 0) + 1;
   if (UI.errRun > 60 && UI.menu) { UI.menu = null; UI.errRun = 0; } 
   if (T - (UI.errToastT ?? -99) > 10) {
@@ -11821,7 +11814,7 @@ function drawPauseScreen() {
   }
   rect('rgba(16,10,22,.6)', 0, 0, VW, VH);
   pageTitle(fromTitle ? 'OPCIONES' : 'PAUSA', fromTitle ? 'TIERRA DEL MAÍZ' : seasonLine(), Math.max(70, Math.round(VH * 0.16)));
-  const pRows = SHOPS.pausa.rows(), oRows = (rows => [...rows.filter(r => r.name !== 'Volver'), ...rows.filter(r => r.name === 'Volver')])(SHOPS.ajustes.rows());
+  const pRows = SHOPS.pausa.rows(), oRows = SHOPS.ajustes.rows();
   const both = !fromTitle && VW >= 720, lw = 230, ow = Math.min(440, VW - 32), gap = 16;
   const showList = !fromTitle && (both || !inOpts), showOpts = inOpts || both;
   const totalW = (showList ? lw : 0) + (showList && showOpts ? gap : 0) + (showOpts ? ow : 0);
@@ -11855,18 +11848,16 @@ function drawPauseScreen() {
     x += lw + gap;
   }
   if (showOpts) { 
-    const rh = 40, vis = Math.max(4, Math.min(oRows.length, Math.floor((maxH - 26) / rh))), h = vis * rh + 26;
-    if (inOpts) { UI.optScroll = Math.max(0, Math.min(UI.optScroll || 0, oRows.length - vis));
-      if (UI.shopSel < UI.optScroll) UI.optScroll = UI.shopSel;
-      if (UI.shopSel >= UI.optScroll + vis) UI.optScroll = UI.shopSel - vis + 1; } else UI.optScroll = 0;
-    const o0 = UI.optScroll;
+    const rh = 40, vis = Math.max(3, Math.min(oRows.length, Math.floor((maxH - 26) / rh))), h = vis * rh + 26;
+    const orden = oRows.map((r, i) => i).sort((a, b) => (oRows[a].name === 'Volver') - (oRows[b].name === 'Volver')); 
+    const pos = orden.indexOf(UI.shopSel);
+    UI.optScroll = Math.max(0, Math.min(UI.optScroll || 0, oRows.length - vis));
+    if (inOpts && pos >= 0) { if (pos < UI.optScroll) UI.optScroll = pos; if (pos >= UI.optScroll + vis) UI.optScroll = pos - vis + 1; }
     codexPanel(x, top, ow, h);
-    if (o0 > 0) text('▲', x + ow/2, top + 11, 10, UIC.muted, 'center');
-    if (o0 + vis < oRows.length) text('▼', x + ow/2, top + h - 4, 10, UIC.muted, 'center');
     const lx = x + 18, cx0 = x + Math.round(ow * 0.42), cw = ow - (cx0 - x) - 40;
-    oRows.forEach((r, i) => {
-      if (i < o0 || i >= o0 + vis) return;
-      const ry = top + 14 + (i - o0) * rh, on = inOpts && i === UI.shopSel;
+    const valW = Math.min(150, Math.round(ow * 0.36));
+    orden.slice(UI.optScroll, UI.optScroll + vis).forEach((i, k) => {
+      const r = oRows[i], ry = top + 14 + k * rh, on = inOpts && i === UI.shopSel;
       if (inOpts && mouse.x > x && mouse.x < x + ow && mouse.y > ry && mouse.y < ry + rh && (UI.mouseMoved || 0) > 0) UI.shopSel = i;
       if (on) { rect('rgba(47,95,168,.12)', x + 8, ry - 2, ow - 16, rh - 4); }
       if (r.name === 'Volver') {
@@ -11875,9 +11866,10 @@ function drawPauseScreen() {
         return;
       }
       const label = { 'Volumen general':'General', 'Volumen de la música':'Música', 'Volumen de efectos y ambiente':'Efectos', 'Duración de los mensajes':'Texto', 'Guardado automático':'Guardar', 'Contorno de personajes':'Contorno' }[r.name] || r.name;
-      let lb = (on ? '▸ ' : '') + label; ctx.font = `${on ? 'bold ' : ''}15px ${FONT}`;
-      if (ctx.measureText(lb).width > cx0 - lx - 8) { while (lb.length > 4 && ctx.measureText(lb + '…').width > cx0 - lx - 8) lb = lb.slice(0, -1); lb = lb.trimEnd() + '…'; }
-      text(lb, lx, ry + 22, 15, UIC.ink, 'left', on);
+      let nm = (on ? '▸ ' : '') + label; ctx.font = `15px ${FONT}`;
+      const anchoNombre = ['General', 'Música', 'Efectos', 'Texto', 'Guardar', 'Contorno'].includes(label) ? cx0 - lx - 6 : ow - 44 - valW - (r.adj ? 64 : 0);
+      while (nm.length > 4 && ctx.measureText(nm).width > anchoNombre) nm = nm.slice(0, -2) + '…';
+      text(nm, lx, ry + 22, 15, UIC.ink, 'left', on);
       const key = { General:'vol', 'Música':'music', Efectos:'sfx', Texto:'msg', Guardar:'auto', Contorno:'outline' }[label];
       if (key === 'vol' || key === 'music' || key === 'sfx') {
         const sw = cw - 34;
@@ -11892,19 +11884,27 @@ function drawPauseScreen() {
           designBtn(bx, ry + 4, bw, 28, l, PREFS[key] === v, bw < 64 ? 11 : 12);
           if (inOpts) UI.optHits.push({ x:bx, y:ry + 4, w:bw, h:28, act:() => { PREFS[key] = v; savePrefs(); sfx('click'); UI.shopSel = i; } });
         });
-      } else {
-        // Fila genérica: su valor en un botón (◂ ▸ si se puede ajustar); tocar la fila la cambia.
-        const ex = x + ow - 18, vw = ex - cx0, val = String(r.price ?? '');
-        const fit = (t, w) => { ctx.font = `12px ${FONT}`; if (ctx.measureText(t).width <= w) return t; while (t.length > 3 && ctx.measureText(t + '…').width > w) t = t.slice(0, -1); return t.trimEnd() + '…'; };
-        if (r.adj) {
-          designBtn(cx0, ry + 4, 26, 28, '◂', false, 12); designBtn(ex - 26, ry + 4, 26, 28, '▸', false, 12);
-          if (val) designBtn(cx0 + 30, ry + 4, vw - 60, 28, fit(val, vw - 70), on, 12);
-          if (inOpts) { UI.optHits.push({ x:cx0 - 4, y:ry + 2, w:32, h:rh - 4, act:() => { UI.shopSel = i; r.adj(-1); savePrefs?.(); sfx('click'); } });
-                        UI.optHits.push({ x:ex - 30, y:ry + 2, w:34, h:rh - 4, act:() => { UI.shopSel = i; r.adj(1); savePrefs?.(); sfx('click'); } }); }
-        } else if (val) designBtn(cx0, ry + 4, vw, 28, fit(val, vw - 12), on, 12);
-        if (inOpts && r.buy) UI.optHits.push({ x:x + 8, y:ry, w:ow - 16, h:rh - 4, act:() => { UI.shopSel = i; r.buy(); sfx('click'); } });
+      } else { 
+        const bx = x + ow - 18 - valW - (r.adj ? 30 : 0);
+        let v = String(r.price ?? ''); ctx.font = `bold 12px ${FONT}`;
+        while (v.length > 3 && ctx.measureText(v).width > valW - 14) v = v.slice(0, -2) + '…';
+        if (r.adj) { 
+          designBtn(bx - 30, ry + 4, 26, 28, '◂', false, 12); designBtn(bx + valW + 4, ry + 4, 26, 28, '▸', false, 12);
+          if (inOpts) UI.optHits.push({ x:bx - 32, y:ry, w:30, h:rh - 4, act:() => { UI.shopSel = i; r.adj(-1); sfx('click'); } },
+                                      { x:bx + valW + 2, y:ry, w:30, h:rh - 4, act:() => { UI.shopSel = i; r.adj(1); sfx('click'); } });
+        }
+        designBtn(bx, ry + 4, valW, 28, v, on, 12);
+        if (inOpts) UI.optHits.push({ x:x + 8, y:ry, w:ow - 16, h:rh - 4, act:() => { UI.shopSel = i; r.buy?.(); } });
       }
     });
+    if (UI.optScroll > 0) { 
+      text('▲', x + ow/2, top + 11, 11, UIC.muted, 'center');
+      if (inOpts) UI.optHits.push({ x, y:top, w:ow, h:14, act:() => { UI.shopSel = orden[Math.max(0, UI.optScroll - 1)]; } });
+    }
+    if (UI.optScroll + vis < oRows.length) {
+      text('▼', x + ow/2, top + h - 3, 11, UIC.muted, 'center');
+      if (inOpts) UI.optHits.push({ x, y:top + h - 14, w:ow, h:14, act:() => { UI.shopSel = orden[Math.min(orden.length - 1, UI.optScroll + vis)]; } });
+    }
     if (!inOpts) UI.optHits.push({ x, y:top, w:ow, h, act:() => { UI.ajustesFrom = 'pausa'; openMenu('ajustes'); } });
   }
   const hint = inOpts ? '[Esc] Volver     [Enter] Cambiar     [◂ ▸] Ajustar' : '[Esc] Volver     [Enter] Aceptar     [▲▼] Elegir';
@@ -28522,7 +28522,7 @@ drawShop = function () {
       break;
     }
   }
-  if (R20.buscador) {
+  if (R20.buscador && !UI.touch) {
     const label = R20_1.on ? `/${R20_1.q}_` : (R20_1.q ? `"${R20_1.q}" (Esc borra)` : '"/" buscar');
     ctx.font = `bold 12px ${FONT}`;
     const width = Math.max(180, ctx.measureText(label).width + 22);
@@ -31829,10 +31829,10 @@ for (const [nom, fn] of [['acceptItzel', acceptItzel], ['rejectItzel', rejectItz
       MOV.hair += Math.max(-2.5, Math.min(2.5, (hx - body) * 1.4));
     } else { hx = 0; hv = 0; }
     
-    const sc = resWant(), dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1)), want = Math.round(VW * dpr * sc);
+    const sc = resWant(), dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))), want = Math.round(VW * dpr * sc);
     if (cv.width !== want) {
       if (sc === 1) resize();
-      else { cv.width = want; cv.height = Math.round(VH * dpr * sc); cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px'; ctx.imageSmoothingEnabled = false; }
+      else { cv.width = want; cv.height = Math.round(VH * dpr * sc); cv.style.width = VW + 'px'; cv.style.height = VH + 'px'; ctx.imageSmoothingEnabled = false; }
     }
   };
 }
@@ -33291,7 +33291,7 @@ drawWorld = function() {
 const _drawHUDGLR27 = drawHUD;
 drawHUD = function() {
   if (!R27.webgl || !R27.glState) return _drawHUDGLR27();
-  const s = R27.glState, mainCtx = ctx, dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1));
+  const s = R27.glState, mainCtx = ctx, dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1)));
   ctx = s.uiCtx; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, VW, VH);
   try { _drawHUDGLR27(); } catch (e) { ctx = mainCtx; r27FallBackWebGL(e); _drawHUDGLR27(); return; }
   finally { ctx = mainCtx; }
@@ -33299,7 +33299,7 @@ drawHUD = function() {
 const _drawMenusGLR27 = drawMenus;
 drawMenus = function() {
   if (!R27.webgl || !R27.glState) return _drawMenusGLR27();
-  const s = R27.glState, mainCtx = ctx, dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1));
+  const s = R27.glState, mainCtx = ctx, dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1)));
   ctx = s.uiCtx; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   try {
     _drawMenusGLR27();
@@ -33420,8 +33420,8 @@ function r28Region(canvas) {
 }
 function r28Flush() {
   if (!R28.activo || !R28.count) return;
-  const gl = R28.gl, dpr = (Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))) * (globalThis.UIK || 1)), W = VW*dpr, H = VH*dpr;
-  if (R28.glCv.width !== Math.round(W) || R28.glCv.height !== Math.round(H)) { R28.glCv.width = Math.round(W); R28.glCv.height = Math.round(H); }
+  const gl = R28.gl, dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1))), W = VW*dpr, H = VH*dpr;
+  if (R28.glCv.width !== W || R28.glCv.height !== H) { R28.glCv.width = W; R28.glCv.height = H; }
   gl.viewport(0, 0, W, H); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
   if (R28.atlasDirty) {
     gl.bindTexture(gl.TEXTURE_2D, R28.atlasTex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -45601,11 +45601,17 @@ function mundoImg(key, make, w, h) {
   let im = ARTE_MUNDO.imgs.get(key);
   if (!im) {
     im = new Image(); ARTE_MUNDO.pendientes++;
-    im.onload = im.onerror = () => { if (--ARTE_MUNDO.pendientes === 0) try { TERRAIN_CACHE.clear(); } catch (e) {} };
+    im.onload = im.onerror = () => {
+      if (im.naturalWidth) try { 
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(im, 0, 0, w, h); ARTE_MUNDO.imgs.set(key, c);
+      } catch (e) {}
+      if (--ARTE_MUNDO.pendientes === 0) try { TERRAIN_CACHE.clear(); } catch (e) {}
+    };
     try { im.src = CdmMundo.url(CdmMundo.svg(make(), w, h)); } catch (e) { console.warn('[mundo]', key, e); }
     ARTE_MUNDO.imgs.set(key, im);
   }
-  return im.complete && im.naturalWidth ? im : null;
+  return im instanceof HTMLCanvasElement ? im : null;
 }
 
 const ARTE_LOOK_OK = new Set(['skin', 'cloth', 'accent', 'hair', 'band', 'skirt', 'female', 'quech', 'herb', 'style', 'curly', 'eye', 'cinta', 'pluma', 'fav', 'bundle', 'pick', 'basket', 'brush']);
@@ -45665,7 +45671,7 @@ drawGround = function (x, y) {
   if (g !== G.GRASS) for (const [dx, dy, side] of NEIGH) if (gAt(x+dx, y+dy, g) === G.GRASS) orillas += ARTE_LADO[side];
   const im = mundoImg(`t|${nombre}|${orillas}`, () => CdmMundo.TILES[nombre]() + [...orillas].map(d => CdmMundo.TILES['orilla-' + d]()).join(''), 64, 64);
   if (!im) return _drawGroundMundo(x, y);
-  ctx.drawImage(im, px - 0.5, py - 0.5, TS + 1, TS + 1); 
+  ctx.drawImage(im, px - 1, py - 1, TS + 2, TS + 2); 
   if (g === G.GRASS) try { if (seasonLook().frost) rect('rgba(225,235,245,.38)', px, py, TS, TS); } catch (e) {} 
   if (g === G.TILLED) {
     if (S.fert[y][x]) for (let i = 0; i < 6; i++) rect('#3a2410', px + 5 + hash(x+i, y)*20, py + 4 + hash(x, y+i)*22, 3, 2);
@@ -45764,6 +45770,139 @@ verIntro = function (alTerminar) {
   return caja;
 };
 
+
+
+
+
+const MOVIL = { k:1, estilo:null };
+function esCelular() {
+  const touch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+  return touch && Math.min(innerWidth, innerHeight) < 640;
+}
+function movilEscala() { 
+  if (!esCelular() || typeof UI === 'undefined' || UI.menu === 'title') return 1;
+  return Math.max(0.62, Math.min(1, Math.min(innerWidth, innerHeight) / 520));
+}
+function movilZoom() {
+  if (MOVIL.k >= 1) return;
+  const base = VH > VW ? VW / (12*TS) : VH / (8*TS);
+  Z = Math.max(0.5, base + (PREFS.zoomAdj || 0) * 0.25);
+}
+const _resizeMovil = resize;
+resize = function () {
+  _resizeMovil();
+  const k = MOVIL.k = movilEscala();
+  if (!MOVIL.estilo) { MOVIL.estilo = document.createElement('style'); document.head.appendChild(MOVIL.estilo); }
+  if (k < 1) {
+    const dpr = Math.min(2, Math.max(1, Math.round(devicePixelRatio || 1)));
+    VW = Math.max(1, innerWidth) / k; VH = Math.max(1, innerHeight) / k;
+    cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr);
+    ctx.setTransform(cv.width / VW, 0, 0, cv.width / VW, 0, 0);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    
+    MOVIL.estilo.textContent = `#c{width:${innerWidth}px !important;height:${innerHeight}px !important}`;
+  } else MOVIL.estilo.textContent = '';
+  movilZoom();
+};
+addEventListener('resize', () => resize());
+addEventListener('orientationchange', () => setTimeout(() => resize(), 300));
+
+for (const P of [MouseEvent.prototype, window.Touch && Touch.prototype]) if (P) for (const eje of ['clientX', 'clientY']) {
+  const d = Object.getOwnPropertyDescriptor(P, eje);
+  if (d?.get) Object.defineProperty(P, eje, { configurable:true, enumerable:d.enumerable, get() { const v = d.get.call(this); return MOVIL.k < 1 ? v / MOVIL.k : v; } });
+}
+resize();
+
+
+
+
+const MOVIL_BOTON = () => MOVIL.k < 1 ? 1.3 : 1;
+const _touchButtonsMovil = touchButtons;
+touchButtons = function () {
+  const bs = _touchButtonsMovil();
+  if (MOVIL.k >= 1) return bs;
+  const parado = VH > VW, g = MOVIL_BOTON();
+  const acostado = { use:[VW - 95, VH - 150, 40], act:[VW - 185, VH - 95, 32], atk:[VW - 185, VH - 205, 28] }; 
+  return bs.map(b => ['use', 'act', 'atk'].includes(b.id) ? (parado ? { ...b, x:VW - (VW - b.x) * g - 56, y:VH - (VH - b.y) * g, r:b.r * g }
+      : { ...b, x:acostado[b.id][0], y:acostado[b.id][1], r:acostado[b.id][2] })
+    : parado ? { ...b, x:b.x * g, y:340 + (b.y - 180) * g, r:b.r * g }
+    : { ...b, x:VW/2 + ((b.y - 180) / 50 - 2.5) * 60, y:VH - 140, r:b.r * g }); 
+};
+{ const jx = JOY.x, jy = JOY.y, jr = JOY.r; 
+  JOY.x = () => jx() * MOVIL_BOTON(); JOY.y = () => MOVIL.k < 1 && VW > VH ? VH - 125 : VH - (VH - jy()) * MOVIL_BOTON();
+  Object.defineProperty(JOY, 'r', { configurable:true, get:() => jr * MOVIL_BOTON() }); }
+
+
+
+
+
+const VERSION_JUEGO = '30 oct · celular 4';
+if (esCelular()) {
+  const dprReal = devicePixelRatio || 1;
+  try { Object.defineProperty(window, 'devicePixelRatio', { configurable:true, get:() => UI.menu === 'title' ? dprReal : 1 }); } catch (e) {} 
+  resize(); dispatchEvent(new Event('resize'));
+}
+const _updateLigero = update;
+update = function (dt) {
+  const r = _updateLigero(dt);
+  const enPortada = UI.menu === 'title';
+  if (esCelular() && UI.movilPortada !== enPortada) { UI.movilPortada = enPortada; resize(); dispatchEvent(new Event('resize')); }
+  if (!UI.movilLigero && UI.grafListo && MOVIL.k < 1) {
+    UI.movilLigero = true; UI.lowFx = true;
+    if (PREFS.graf.calidad === 'auto' && typeof R14 !== 'undefined') { R14.level = Math.max(R14.level, 2); try { aplicarCalidad(R14.level); } catch (e) {} }
+  }
+  return r;
+};
+const _drawMenusVersion = drawMenus;
+drawMenus = function (...a) {
+  const r = _drawMenusVersion(...a);
+  if (UI.menu === 'title') { ctx.save(); ctx.globalAlpha = 0.75; text(`versión ${VERSION_JUEGO}`, VW - 8, 14, 10, '#1b3a8a', 'right', false); ctx.restore(); }
+  return r;
+};
+
+
+
+
+
+function cuentaCorta(n) {
+  n = +n || 0;
+  return n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.0', '') + 'M' : n >= 1e4 ? Math.floor(n / 1e3) + 'k' : String(n);
+}
+function movilBarras() {
+  const filas = [['⚡', S.sprint ? S.sprint.stam / S.sprint.max : null, '#5ac8ff', '#2f7ab8'],
+    ['❤', S.hp / MAX_HP, '#f06060', '#b8302e'], ['E', S.energy / S.maxE, '#7cd070', '#3f9a3a']].filter(r => r[1] != null);
+  const W = Math.max(150, Math.min(220, VW - Math.min(236, VW - 20) - 30)), H = filas.length * 20 + 26, X = 10, Y = 10;
+  codexPanel(X, Y, W, H);
+  const b = Math.max(5, Math.min(14, Math.round(Math.min(W, H) * 0.09))), x0 = X + b + 10, bw = W - 2 * b - 44;
+  filas.forEach(([ic, v, c1, c2], i) => {
+    const y = Y + b + 8 + i * 20, f = Math.max(0, Math.min(1, v));
+    text(ic, x0 + 6, y + 11, 13, ic === 'E' ? TAL.NAVY : c2, 'center', false);
+    const bx = x0 + 18;
+    rect(TAL.COB, bx, y + 1, bw, 12); rect('#e9e2d2', bx + 2, y + 3, bw - 4, 8);
+    const g = ctx.createLinearGradient(0, y + 3, 0, y + 11); g.addColorStop(0, f < 0.2 ? '#ff8a6a' : c1); g.addColorStop(1, f < 0.2 ? '#c0392b' : c2);
+    ctx.fillStyle = g; ctx.fillRect(bx + 2, y + 3, (bw - 4) * f, 8);
+  });
+}
+function tutorialTactil(s) {
+  return s.replace(/\s*\(tecla \d\)/g, '').replace(/pulsa Espacio/g, 'toca Usar').replace(/con Tab/g, 'con 🎒')
+    .replace(/con M\b/g, 'con 🗺').replace(/con J\b/g, 'con 📜').replace(/\(E\)/g, '(botón E)').replace(/\(E frente/g, '(botón E frente');
+}
+const _pointerDownBolsa = pointerDown;
+pointerDown = function (px, py, button) {
+  const t = UI.bolsaTab;
+  if (UI.touch && !UI.menu && t && px >= t.x && px <= t.x + t.w && py >= t.y - 8 && py <= t.y + t.h + 8) {
+    S.seedPage = (S.seedPage + 1) % BAG_PAGES; toast(`Bolsa: página ${S.seedPage + 1} de ${BAG_PAGES}`); return;
+  }
+  return _pointerDownBolsa(px, py, button);
+};
+
+const AVISO_TECNICO = /^(⚡ R28|🖼 Grading|✨ Postprocesado|R28 )/;
+const _toastTecnico = toast;
+toast = function (msg, ...a) { if (AVISO_TECNICO.test(String(msg))) return; return _toastTecnico(msg, ...a); };
+UI.toasts = (UI.toasts || []).filter(t => !AVISO_TECNICO.test(String(t.msg)));
+
+if (typeof R28 !== 'undefined') R28.activo = false;
+
 // Textos retirados de la versión pública: no se dibujan.
 const TOKEN_PUBLICO = /(?:·x|_x)[0-9a-f]{6}/;
 const _textPublico = text;
@@ -45778,14 +45917,6 @@ openMenu = function (...a) { // los menús cuyo título se retiró no se abren
   return r;
 };
 text = function (s, ...r) { if (typeof s === 'string' && TOKEN_PUBLICO.test(s)) { s = s.replace(/(?:·x|_x)[0-9a-f]{6}/g, '').trim(); if (!s) return; } return _textPublico(s, ...r); };
-</script>
-<script>
-addEventListener('pointerdown', e => {
-  const r = UI.invRect; if (UI.menu || !r || !S?.player) return;
-  if (e.clientX >= r.x && e.clientX <= r.x + r.w && e.clientY >= r.y && e.clientY <= r.y + r.h) {
-    openMenu('bolsa'); e.stopImmediatePropagation(); e.preventDefault();
-  }
-}, true);
 </script>
 <script>
 const TINTA = '#1a1410';

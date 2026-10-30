@@ -42,3 +42,11 @@ python3 parche_movil.py ruta/al/index.html
 - **Casas del pueblo y de las aldeas.** Cimiento de piedra, dintel de madera sobre la puerta, contorno de tinta, ollas de barro y magueyes; las chozas otomíes también llevan magueyes y ollas.
 
 `palacio-antes-despues.jpg` e `interiores-antes-despues.jpg` muestran el cambio.
+
+## Versión actual del juego (con el sistema MOVIL)
+
+El repositorio `maiz` ya trae su propia adaptación para celular (MOVIL: escala, toques, opciones, barras compactas y cantidades cortas). Para esa versión se usa `parche_juego.py`, que aplica sólo las mejoras de diseño (secciones 6–8, 10–15 y 17–19 de `parche_movil.py`); los medidores de Talavera salen en computadora y en celular se queda el panel compacto de MOVIL. `parche_movil.py` sirve para la versión anterior del juego.
+
+```
+python3 parche_juego.py ruta/al/index.html
+```
