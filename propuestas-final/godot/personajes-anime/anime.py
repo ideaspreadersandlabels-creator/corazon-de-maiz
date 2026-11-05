@@ -10,6 +10,9 @@ Uso: python3 anime.py <salida_dir>
 import math, os, sys
 
 W, Hh = 128, 192
+ESTILO = "anime"          # "anime" o "acogedor"
+CABEZA = 1.0              # escala de la cabeza (acogedor: cabezón)
+LARGO = 1.0               # largo de trenzas/pelo largo
 SUELO = 186
 LINEA = "#3b2418"
 LW = 1.6
@@ -30,8 +33,19 @@ def mezcla(a, b, t):
     return hexc([A[i] * (1 - t) + B[i] * t for i in range(3)])
 
 
+FILTRO = ""
+
+
+def color_linea(base):
+    if ESTILO == "acogedor":  # contorno del mismo color, más oscuro
+        return mezcla(mezcla(base, "#000000", 0.5), "#3a1a10", 0.25)
+    return LINEA
+
+
 def sombra_de(c):
     # sombra de anime: más oscura y un poco hacia el violeta
+    if ESTILO == "acogedor":
+        return mezcla(mezcla(c, "#000000", 0.14), "#b04a3a", 0.10)
     return mezcla(mezcla(c, "#000000", 0.22), "#5a3a7a", 0.18)
 
 
@@ -99,9 +113,9 @@ class Lienzo:
         self.defs.append(f'<clipPath id="c{i}"><use href="#{i}"/></clipPath>')
         g = f'<g opacity="{op}">' if op != 1 else "<g>"
         g += (f'<g clip-path="url(#c{i})"><rect x="-50" y="-50" width="{self.w + 100}" height="{self.h + 100}" fill="{sombra}"/>'
-              f'<use href="#{i}" fill="{base}" transform="translate({-desp[0]} {-desp[1]})"/></g>')
+              f'<use href="#{i}" fill="{base}" transform="translate({-desp[0]} {-desp[1]})"{FILTRO}/></g>')
         if linea:
-            g += f'<use href="#{i}" fill="none" stroke="{LINEA}" stroke-width="{lw}" stroke-linejoin="round"/>'
+            g += f'<use href="#{i}" fill="none" stroke="{color_linea(base)}" stroke-width="{lw}" stroke-linejoin="round"/>'
         self.o.append(g + "</g>")
 
     def miembro(self, segs, base, sombra=None, lw=LW):
@@ -110,10 +124,16 @@ class Lienzo:
         seg = lambda a, b, w, c, dx=0, dy=0: (f'<line x1="{a[0] + dx:.2f}" y1="{a[1] + dy:.2f}" x2="{b[0] + dx:.2f}" y2="{b[1] + dy:.2f}" '
                                              f'stroke="{c}" stroke-width="{w:.2f}" stroke-linecap="round"/>')
         g = "<g>"
-        g += "".join(seg(a, b, w + 2 * lw, LINEA) for a, b, w in segs)
+        g += "".join(seg(a, b, w + 2 * lw, color_linea(base)) for a, b, w in segs)
         g += "".join(seg(a, b, w, sombra) for a, b, w in segs)
-        g += "".join(seg(a, b, w * 0.6, base, -w * 0.18, -0.3) for a, b, w in segs)
+        g += f"<g{FILTRO}>" + "".join(seg(a, b, w * 0.6, base, -w * 0.18, -0.3) for a, b, w in segs) + "</g>"
         self.o.append(g + "</g>")
+
+    def ini(self, t):
+        self.o.append(f'<g transform="{t}">' if t else "<g>")
+
+    def fin(self):
+        self.o.append("</g>")
 
     def plano(self, d, fill, linea=False, lw=LW, op=1):
         st = f' stroke="{LINEA}" stroke-width="{lw}" stroke-linejoin="round" stroke-linecap="round"' if linea else ""
@@ -130,7 +150,7 @@ class Lienzo:
         if transform:
             body = f'<g transform="{transform}">{body}</g>'
         return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{self.w}" height="{self.h}" '
-                f'viewBox="0 0 {self.w} {self.h}"><defs>{"".join(self.defs)}</defs>{body}</svg>')
+                f'viewBox="0 0 {self.w} {self.h}"><defs><filter id="suave" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.1"/></filter>{"".join(self.defs)}</defs>{body}</svg>')
 
 
 # ------------------------------------------------------------------ personajes
@@ -202,6 +222,14 @@ class Pose:
         self.cadera_y = 101
         self.muslo, self.pierna = 40, 40
         self.brazo, self.antebrazo = 25, 22
+        if ESTILO == "acogedor":
+            self.cuello, self.hombro_y, self.cadera_y = 96, 101, 134
+            self.muslo, self.pierna = 24, 23
+            self.brazo, self.antebrazo = 16, 14
+            self.cab = (64, 96 - 19)
+            self.sw *= 0.86
+            self.ww *= 0.92
+            self.hw *= 0.95
         if vista == "lado":
             self._lado()
         else:
@@ -288,6 +316,13 @@ def dibujar(pid, vista, cuadro=0, espejo=False, accion=None, accion_cuadro=0, de
     return L.svg(tr)
 
 
+def tcab(po):
+    if CABEZA == 1.0:
+        return None
+    x, y = po.cx, po.cuello + po.bob + 1
+    return f"translate({x} {y}) scale({CABEZA}) translate({-x} {-y})"
+
+
 def sombra_suelo(L, po, vista):
     L.raw(f'<ellipse cx="64" cy="{SUELO - 1}" rx="{20 if vista != "derecha" else 22}" ry="4.5" fill="#000" opacity="0.18"/>')
 
@@ -336,7 +371,9 @@ def ropa_banda(L, x0, x1, y, h, col, col2=None):
 def frente(L, p, po, detalle):
     cx, b = po.cx, po.bob
     # pelo de atrás y capa de atrás
+    L.ini(tcab(po))
     pelo_atras(L, p, po, "abajo")
+    L.fin()
     if p.get("capa"):
         y0 = po.hombro_y + b
         hem = 150 if p["peinado"] != "anciano" else 172
@@ -353,7 +390,9 @@ def frente(L, p, po, detalle):
         brazo(L, p, br, p["piel"], manga_de(p), manga_larga=p["arriba"] == "tunica")
     if p.get("capa"):  # nudo de la tilma
         L.parte(elipse(cx + po.sw * 0.55, po.hombro_y + b + 1, 4.2, 3.4), p["capa_borde"])
+    L.ini(tcab(po))
     cabeza_frente(L, p, po, detalle)
+    L.fin()
     objeto_mano(L, p, po, "abajo")
 
 
@@ -367,10 +406,12 @@ def espalda(L, p, po):
         brazo(L, p, br, p["piel"], manga_de(p), manga_larga=p["arriba"] == "tunica")
     objeto_mano(L, p, po, "arriba")
     # cabeza por detrás
+    L.ini(tcab(po))
     hy = po.cab[1] + b
     L.parte(capsula((cx, po.cuello + b - 6), (cx, po.cuello + b + 5), 4.4, 4.6), p["piel"])
     L.parte(elipse(cx, hy, po.rx, po.ry), p["piel"])
     pelo_atras(L, p, po, "arriba")
+    L.fin()
     if p.get("capa"):
         y0 = po.hombro_y + b
         hem = 150 if p["peinado"] != "anciano" else 172
@@ -485,6 +526,9 @@ def cara_rasgos(L, p, cx, hy, rx, ry, detalle, perfil=False):
     ey = hy + 3
     dx = 6.0
     ojos = [cx - dx, cx + dx] if not perfil else [cx + 6.5]
+    if ESTILO == "acogedor":
+        ojos_tiernos(L, p, cx, ey, ojos, perfil)
+        return
     for ox in ojos:
         w = 3.6 if mujer else 3.3
         h = 4.6 if mujer else 4.0
@@ -517,6 +561,30 @@ def cara_rasgos(L, p, cx, hy, rx, ry, detalle, perfil=False):
         L.trazo(f"M{cx + 9},{ey - 5} l-3,7", "#6a2a1e", 1)
 
 
+def ojos_tiernos(L, p, cx, ey, ojos, perfil):
+    mujer, anc = p["mujer"], p.get("anciano")
+    for ox in ojos:
+        if anc:  # ojitos cerrados y sonrientes
+            L.trazo(f"M{ox - 3.4},{ey + 0.8} Q{ox},{ey - 3} {ox + 3.4},{ey + 0.8}", "#2a1a14", 1.6)
+        else:
+            w, h = (3.9, 5.2) if mujer else (3.6, 4.8)
+            L.plano(elipse(ox, ey, w, h), "#2a1a14")
+            L.plano(elipse(ox, ey + h * 0.35, w * 0.72, h * 0.5), p["ojos"], op=0.9)
+            L.plano(elipse(ox + w * 0.32, ey - h * 0.38, w * 0.42, w * 0.42), "#ffffff")
+            L.plano(elipse(ox - w * 0.38, ey + h * 0.42, w * 0.18, w * 0.18), "#ffffff", op=0.9)
+            if mujer:
+                sg = 1 if (perfil or ox > cx) else -1
+                L.trazo(f"M{ox + sg * (w - 0.6)},{ey - h * 0.55} l{sg * 2},-1.4", "#2a1a14", 1.2)
+        cy_ = ey - (9.0 if mujer else 7.8)
+        L.trazo(f"M{ox - 2.4},{cy_ + 0.4} Q{ox},{cy_ - 1.0} {ox + 2.4},{cy_ + 0.4}",
+                p["pelo"] if not anc else "#bdb6aa", 1.3)
+        L.plano(elipse(ox + (1.5 if perfil else 0) + (0 if perfil else (-1 if ox < cx else 1)), ey + 5.6, 3.2, 1.7), "#ec7a6e", op=0.5)
+    if not perfil:
+        L.trazo(f"M{cx - 2.2},{ey + 7.6} Q{cx - 1.1},{ey + 9} {cx},{ey + 7.8} Q{cx + 1.1},{ey + 9} {cx + 2.2},{ey + 7.6}", "#7a2a1e", 1.1)
+    if p.get("cicatriz"):
+        L.trazo(f"M{cx + 9},{ey - 5} l-3,7", "#a0503a", 0.9)
+
+
 def pelo_atras(L, p, po, vista):
     cx, b = po.cx, po.bob
     hy = po.cab[1] + b
@@ -535,12 +603,12 @@ def pelo_atras(L, p, po, vista):
     for k in (-6, -2, 2, 6):
         L.trazo(f"M{cx + k * 0.6},{hy - ry} Q{cx + k * 1.1},{hy} {cx + k * 1.2},{hy + ry - 2}", mezcla(c, "#ffffff", 0.18), 0.9)
     if pe == "trenza":
-        trenza(L, c, (cx, hy + ry - 2), (cx + 1, hy + 70), p.get("listón", ROJO))
+        trenza(L, c, (cx, hy + ry - 2), (cx + 1, hy + 70 * LARGO), p.get("listón", ROJO))
     elif pe == "trenzas":
         for k in (-1, 1):
             trenza(L, c, (cx + k * 7, hy + ry - 4), (cx + k * 9, hy + 46), ROJO)
     elif pe in ("largo", "anciano"):
-        L.parte(poli([(cx - rx, hy + 4), (cx + rx, hy + 4), (cx + rx + 2, hy + 48), (cx - rx - 2, hy + 48)]), c)
+        L.parte(poli([(cx - rx, hy + 4), (cx + rx, hy + 4), (cx + rx + 2, hy + 48 * LARGO), (cx - rx - 2, hy + 48 * LARGO)]), c)
         for k in (-8, -3, 3, 8):
             L.trazo(f"M{cx + k},{hy + 8} L{cx + k * 1.15},{hy + 46}", mezcla(c, "#000000", 0.25), 0.9)
     elif pe == "chongo":
@@ -638,10 +706,12 @@ def lado(L, p, po, accion):
     falda = p["abajo"] in ("falda", "larga") or tipo == "tunica"
     # pelo largo de atrás
     pe = p["peinado"]
+    L.ini(tcab(po))
     if pe in ("largo", "anciano"):
-        L.parte(poli([(cx - 12, hy - 2), (cx - 2, hy - 2), (cx - 4, hy + 46), (cx - 16, hy + 44)]), p["pelo"])
+        L.parte(poli([(cx - 12, hy - 2), (cx - 2, hy - 2), (cx - 4, hy + 46 * LARGO), (cx - 16, hy + 44 * LARGO)]), p["pelo"])
     if pe == "trenza":
-        trenza(L, p["pelo"], (cx - 8, hy + 8), (cx - 10, hy + 66), p.get("listón", ROJO))
+        trenza(L, p["pelo"], (cx - 8, hy + 8), (cx - 10, hy + 66 * LARGO), p.get("listón", ROJO))
+    L.fin()
     if p.get("capa"):
         y0 = po.hombro_y + b
         hem = 150 if pe != "anciano" else 172
@@ -692,6 +762,7 @@ def lado(L, p, po, accion):
     if p.get("mandil"):
         L.parte(poli([(cx + 6, y0 + 9), (cx + 12, y0 + 9), (cx + 13, po.cadera_y + b + 24), (cx + 7, po.cadera_y + b + 24)]), p["mandil"])
     # cabeza de perfil 3/4
+    L.ini(tcab(po))
     piel = p["piel"]
     L.parte(capsula((cx + 1, po.cuello + b - 6), (cx, po.cuello + b + 5), 4.4, 4.8), piel, desp=(1.2, -2))
     cara = suave([(cx - 13, hy - 2), (cx - 12, hy - 15), (cx, hy - 18), (cx + 11, hy - 14), (cx + 14, hy - 4), (cx + 14.5, hy + 3),
@@ -727,6 +798,7 @@ def lado(L, p, po, accion):
         L.parte(poli([(cx - 14, hy - 11), (cx + 13, hy - 11), (cx + 13, hy - 6), (cx + 12, hy - 6), (cx + 10, hy - 17), (cx + 7, hy - 6), (cx - 14, hy - 6)]), p["diadema"], lw=1.1)
     if p.get("aretes"):
         L.parte(elipse(cx - 3, hy + 7.5, 1.8, 1.8), p["aretes"], lw=0.8)
+    L.fin()
     # brazo de adelante
     objeto_mano(L, p, po, "derecha", antes=True)
     brazo(L, p, po.brazos[1], p["piel"], manga_de(p), manga_larga=tipo == "tunica")
@@ -895,7 +967,8 @@ def dibujar_accion(pid, vista, accion, k):
 def retrato(pid):
     """busto para diálogos: el cuadro de frente en grande, recortado del pecho para arriba"""
     s = dibujar(pid, "abajo", 0, accion="quieto", detalle=True, sin_objeto=True)
-    s = s.replace(f'width="{W}" height="{Hh}" viewBox="0 0 {W} {Hh}"', 'width="400" height="400" viewBox="36 5 56 56"')
+    vb = "36 5 56 56" if ESTILO == "anime" else "24 20 80 80"
+    s = s.replace(f'width="{W}" height="{Hh}" viewBox="0 0 {W} {Hh}"', f'width="400" height="400" viewBox="{vb}"')
     return s
 
 
@@ -915,6 +988,15 @@ def generar(out):
                 open(os.path.join(d, f"{acc}_{v}_{k}.svg"), "w").write(dibujar_accion("player", v, acc, k))
 
 
+def usar_estilo(nombre):
+    global ESTILO, CABEZA, LARGO, FILTRO
+    ESTILO = nombre
+    if nombre == "acogedor":
+        CABEZA, LARGO, FILTRO = 1.55, 0.62, ' filter="url(#suave)"'
+
+
 if __name__ == "__main__":
+    if len(sys.argv) > 2:
+        usar_estilo(sys.argv[2])
     generar(sys.argv[1])
     print("listo")
