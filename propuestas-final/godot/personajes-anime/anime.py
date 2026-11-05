@@ -260,6 +260,20 @@ PERSONAJES.update({
                      capa="#c8a878", capa_borde=AZUL, mano="baston", ojos="#3a2418", ancho=1.12),
 })
 
+# ---- variantes del jugador: hombre o mujer, tres tonos de piel, ropa de invierno y de fiesta
+PIELES = {"clara": "#c99a72", "media": PIEL, "oscura": "#8a5638"}
+JUGADORA = dict(nombre="Campesina", mujer=True, piel=PIEL, pelo=NEGRO_PELO, peinado="trenza", listón=ROJO,
+                arriba="huipil", c_arriba=BLANCO, bordado=ROJO, bordado2=OCRE, abajo="falda", c_abajo="#8a2a2a",
+                mano="bolsa", ojos="#5a3418", aretes=OCRE)
+for nombre_piel, tono in PIELES.items():
+    if nombre_piel != "media":
+        PERSONAJES[f"player_{nombre_piel}"] = dict(PERSONAJES["player"], piel=tono)
+    PERSONAJES["player_mujer" + ("" if nombre_piel == "media" else f"_{nombre_piel}")] = dict(JUGADORA, piel=tono)
+PERSONAJES["player_invierno"] = dict(PERSONAJES["player"], capa="#7a5a3e", capa_borde=ROJO, c_arriba="#e8dcc8", banda="#8a3a2a")
+PERSONAJES["player_fiesta"] = dict(PERSONAJES["player"], penacho=["#2a9a5a", ROJO, OCRE, "#3fb5a4"], collar=JADE, banda=OCRE)
+PERSONAJES["player_mujer_invierno"] = dict(JUGADORA, capa="#5a3a6a", capa_borde=OCRE)
+PERSONAJES["player_mujer_fiesta"] = dict(JUGADORA, penacho=["#e8507a", OCRE, "#2a9a5a"], collar=JADE)
+
 # ------------------------------------------------------------------ esqueleto
 class Pose:
     """posición de las articulaciones para una dirección y un cuadro"""
@@ -697,6 +711,7 @@ def pelo_atras(L, p, po, vista):
     c = p["pelo"]
     pe = p["peinado"]
     if vista == "abajo":
+        penacho(L, p, cx, hy, "frente")
         if pe in ("trenza", "largo", "anciano"):
             L.parte(poli([(cx - rx - 1.5, hy), (cx + rx + 1.5, hy), (cx + rx + 3, hy + 36), (cx - rx - 3, hy + 36)]), lejos(c))
         if pe == "trenzas":
@@ -732,6 +747,20 @@ def pelo_atras(L, p, po, vista):
         L.parte(poli([(cx + 1, hy - 4), (cx + 5, hy + 13), (cx + 1.5, hy + 12)]), p["banda"], lw=0.9)
     if p.get("diadema"):
         L.parte(poli([(cx - rx - 1, hy - 8), (cx + rx + 1, hy - 8), (cx + rx + 1, hy - 4), (cx - rx - 1, hy - 4)]), p["diadema"], lw=1.1)
+    penacho(L, p, cx, hy, "espalda")
+
+
+def penacho(L, p, cx, hy, vista):
+    """penacho de plumas para fiesta: abanico detrás de la cabeza"""
+    if not p.get("penacho"):
+        return
+    cols = p["penacho"]
+    base = (cx - (6 if vista == "lado" else 0), hy - 13)
+    n = 7
+    for i in range(n):
+        a = -math.pi / 2 + (i - (n - 1) / 2) * (0.26 if vista != "lado" else 0.18) + (-0.35 if vista == "lado" else 0)
+        L.parte(elipse(base[0] + math.cos(a) * 15, base[1] + math.sin(a) * 15, 3.4, 12, a + math.pi / 2), cols[i % len(cols)], lw=0.9)
+        L.plano(elipse(base[0] + math.cos(a) * 22, base[1] + math.sin(a) * 22, 1.5, 1.5), "#fbf7ee")
 
 
 def trenza(L, c, a, b, liston):
@@ -812,6 +841,7 @@ def lado(L, p, po, accion):
     # pelo largo de atrás
     pe = p["peinado"]
     L.ini(tcab(po))
+    penacho(L, p, cx, hy, "lado")
     if pe in ("largo", "anciano"):
         L.parte(poli([(cx - 12, hy - 2), (cx - 2, hy - 2), (cx - 4, hy + 46 * LARGO), (cx - 16, hy + 44 * LARGO)]), p["pelo"])
     if pe == "trenza":
@@ -1013,6 +1043,8 @@ def aplicar_accion(po, vista, accion, k):
             codo, fin = (cx + 10, y + 14), (cx + 22, y + 10 + k * 2)
         elif accion == "cargar":
             codo, fin = (cx + 8, y + 12), (cx + 6, y + 4 - k)
+        elif accion == "barrer":
+            codo, fin = (cx + 8, y + 16), (cx + 16 + k * 6, y + 26)
         else:  # cosechar
             codo, fin = [(cx + 10, y + 18), (cx + 8, y + 6)][k], [(cx + 22, y + 44), (cx + 18, y + 0)][k]
         cerca = esc(hom, codo, fin)
@@ -1024,8 +1056,8 @@ def aplicar_accion(po, vista, accion, k):
             if accion in ("arar", "talar", "picar"):
                 fin = [(cx + lado * 4, y - 26), (cx + lado * 4, y + 38)][k]
                 codo = [(cx + lado * 12, y - 10), (cx + lado * 12, y + 16)][k]
-            elif accion in ("regar", "pescar"):
-                fin = (cx + lado * 6, y + 30 + k * 2)
+            elif accion in ("regar", "pescar", "barrer"):
+                fin = (cx + lado * 6 + (k * 6 - 3 if accion == "barrer" else 0), y + 30 + k * 2)
                 codo = (cx + lado * (po.sw + 1), y + 18)
             elif accion == "saludar":
                 if lado < 0:
@@ -1077,6 +1109,13 @@ def herramienta(L, po, vista, accion, k):
     mx, my = mano
     lat = vista in ("derecha", "izquierda")
     if accion == "saludar":
+        return
+    if accion == "barrer":  # escoba de varas
+        pie = (mx + (10 if lat else (6 - k * 12)), my + 40)
+        L.parte(capsula((mx, my - 8), pie, 1.4, 1.4), "#a8784a")
+        ang = math.atan2(pie[1] - my, pie[0] - mx)
+        for j in range(-3, 4):
+            L.trazo(f"M{pie[0]},{pie[1]} l{j * 1.6 + math.cos(ang) * 4},{9}", "#d8b860", 1.2)
         return
     if accion == "comer":  # tlaxcalli (tortilla) enrollada, mano encima de la cara
         mx, my = po.brazos[1][2]
@@ -1231,15 +1270,23 @@ def generar(out):
         if ESTILO == "acogedor":
             for ex in EXPRESIONES[1:]:
                 open(os.path.join(d, f"retrato_{ex}.svg"), "w").write(retrato(pid, ex))
-    d = os.path.join(out, "player")
-    acciones = ("arar", "regar", "cosechar") + (("saludar", "comer", "pescar", "talar", "picar", "cargar") if ESTILO == "acogedor" else ())
-    for acc in acciones:
-        for v in DIRS:
+    for pid in PERSONAJES:
+        if pid.startswith("g_"):
+            continue
+        d = os.path.join(out, pid)
+        if pid.startswith("player"):
+            acciones = ("arar", "regar", "cosechar") + (("saludar", "comer", "pescar", "talar", "picar", "cargar") if ESTILO == "acogedor" else ())
+        elif ESTILO == "acogedor":
+            acciones = ("saludar", "comer", "pescar", "cargar", "barrer")  # actividades de los vecinos
+        else:
+            acciones = ()
+        for acc in acciones:
+            for v in DIRS:
+                for k in range(2):
+                    open(os.path.join(d, f"{acc}_{v}_{k}.svg"), "w").write(dibujar_accion(pid, v, acc, k))
+        if ESTILO == "acogedor" and pid.startswith("player"):
             for k in range(2):
-                open(os.path.join(d, f"{acc}_{v}_{k}.svg"), "w").write(dibujar_accion("player", v, acc, k))
-    if ESTILO == "acogedor":
-        for k in range(2):
-            open(os.path.join(d, f"dormir_{k}.svg"), "w").write(dibujar_dormir("player", k))
+                open(os.path.join(d, f"dormir_{k}.svg"), "w").write(dibujar_dormir(pid, k))
 
 
 def usar_estilo(nombre):

@@ -86,15 +86,23 @@ def bisonte(f=0):
     return L
 
 
-def caballo(f=0, pelo="#9a5a32", crin="#2a1c18", casco="#3a2a22"):
-    L = C(80, 64)
+def caballo(f=0, pelo="#9a5a32", crin="#2a1c18", casco="#3a2a22", modo="", L=None):
+    L = L or C(80, 64)
     sombra(L, 38, 61, 28)
     b = -0.6 if f else 0
-    cerca = patas(L, f, 24, 48, 37, 23, 5.4, pelo, casco, 61, 0.45)
+    echado = modo == "dormir"
+    if echado:
+        L.ini("translate(0 18)")
+        for x in (28, 46):
+            L.p(elipse(x, 41, 9, 3.6), A.lejos(pelo))
+        cerca = lambda: None
+    else:
+        cerca = patas(L, f, 24, 48, 37, 23, 5.4, pelo, casco, 61, 0.45)
     L.p(suave([(14, 20 + b), (6, 30), (8, 44), (14, 40), (16, 30)]), crin)   # cola
     L.p(elipse(36, 32 + b, 21, 11.5), pelo)
     L.plano(elipse(36, 39 + b, 14, 4), "#ffffff", op=0.12)
     cerca()
+    L.ini("rotate(62 50 28)" if modo == "comer" else ("rotate(20 50 28)" if echado else ""))
     L.m([((50, 28 + b), (60, 14 + b), 11)], pelo)                             # cuello
     L.p(suave([(48, 24 + b), (54, 8 + b), (60, 4 + b), (58, 12 + b), (52, 26 + b)]), crin)
     L.p(elipse(65, 14 + b, 11, 9, 0.35), pelo)                              # cabeza
@@ -102,7 +110,10 @@ def caballo(f=0, pelo="#9a5a32", crin="#2a1c18", casco="#3a2a22"):
     L.plano(elipse(73.5, 19 + b, 0.9, 0.7), "#2a1a14")
     L.p(poli([(60, 8 + b), (61, 1 + b), (64, 7 + b)]), pelo)
     L.p(suave([(58, 9 + b), (63, 3 + b), (66, 7 + b), (62, 11 + b)]), crin)  # copete
-    ojo(L, 65, 12 + b, 2.6)
+    ojo(L, 65, 12 + b, 2.6, cerrado=echado)
+    L.fin()
+    if echado:
+        L.fin()
     return L
 
 
@@ -158,7 +169,7 @@ def guajolote(modo="quieto"):
     L.p(elipse(pico[0], pico[1], 5, 4.6), "#a8c0d8")
     L.p(suave([(pico[0] + 1, pico[1] + 2), (pico[0] + 3, pico[1] + 3), (pico[0] + 2, pico[1] + 8), (pico[0], pico[1] + 6)]), "#d03a3a")  # moco
     L.p(poli([(pico[0] + 4, pico[1] - 1), (pico[0] + 8, pico[1] + 0.5), (pico[0] + 4, pico[1] + 1.5)]), "#e0b040")
-    ojo(L, pico[0] + 1, pico[1] - 1, 1.6)
+    ojo(L, pico[0] + 1, pico[1] - 1, 1.6, cerrado=(modo == "dormir"))
     return L
 
 
@@ -172,7 +183,7 @@ def pato(modo="quieto"):
     sombra(L, 21, 33, 11 * k) if not nada else None
     T = lambda x, y: (ox + x * k, oy + y * k + (33 - 33 * k) * (1 if cria else 0) * 0.6)
     cuerpo, cabeza = ("#f2d65a", "#f2d65a") if cria else ("#2a2a32", "#2a2a32")
-    if not nada:
+    if not nada and modo != "dormir":
         s = [0, 1, -1][f]
         for j, x in enumerate((17, 23)):
             a, b = T(x, 28), T(x + (s if j else -s) * 2.4, 32)
@@ -188,7 +199,7 @@ def pato(modo="quieto"):
     if not cria:
         L.plano(elipse(h[0] + 1.6, h[1] + 1, 2.4, 2), "#d04040", op=0.9)
     L.p(suave([(h[0] + 4.6 * k, h[1] + 0.5 * k), (h[0] + 10 * k, h[1] + 1.4 * k), (h[0] + 9.6 * k, h[1] + 3.2 * k), (h[0] + 4.6 * k, h[1] + 3 * k)]), "#e8902a")
-    ojo(L, h[0] + 1.2 * k, h[1] - 1.2 * k, 1.7 * k if not cria else 1.4, rubor=True)
+    ojo(L, h[0] + 1.2 * k, h[1] - 1.2 * k, 1.7 * k if not cria else 1.4, rubor=True, cerrado=(modo == "dormir"))
     if nada:  # agua
         y = T(20, 27)[1]
         L.raw(f'<rect x="0" y="{y}" width="44" height="{36 - y}" fill="#6ab0d8" opacity="0.85"/>')
@@ -196,8 +207,8 @@ def pato(modo="quieto"):
     return L
 
 
-def venado(macho=False, f=0):
-    L = C(64, 70)
+def venado(macho=False, f=0, modo="", manchas=False, L=None):
+    L = L or C(64, 70)
     sombra(L, 30, 67, 18)
     col = "#b07a4a"
     b = -0.5 if f else 0
@@ -205,7 +216,11 @@ def venado(macho=False, f=0):
     L.p(elipse(10, 36 + b, 3, 3.6), "#f4eee2")
     L.p(elipse(30, 38 + b, 17, 9.5), col)
     L.plano(elipse(30, 44 + b, 12, 3), "#f4e6d0", op=0.7)
+    if manchas:
+        for (x, y) in ((22, 34), (28, 32), (34, 34), (26, 38), (38, 33), (31, 37)):
+            L.plano(elipse(x, y + b, 1.6, 1.3), "#f8eedc")
     cerca()
+    L.ini("rotate(70 42 33)" if modo == "comer" else "")
     L.m([((42, 33 + b), (47, 22 + b), 7.5)], col)
     L.p(elipse(49, 20 + b, 9.4, 8.4, 0.25), col)
     L.p(elipse(56, 24 + b, 4.2, 3.4), mezcla(col, "#ffffff", 0.25))
@@ -218,6 +233,7 @@ def venado(macho=False, f=0):
             L.trazo(f"M{x},{14 + b} q{s_ * 2},-8 {s_ * 1},-12 M{x + s_ * 1},{8 + b} l{s_ * 4},-3 M{x + s_ * 1.4},{4 + b} l{-s_ * 3},-3", "#5a3a22", 2.6)
             L.trazo(f"M{x},{14 + b} q{s_ * 2},-8 {s_ * 1},-12 M{x + s_ * 1},{8 + b} l{s_ * 4},-3 M{x + s_ * 1.4},{4 + b} l{-s_ * 3},-3", "#e8dcc0", 1.4)
     ojo(L, 50.5, 18.5 + b, 2.6)
+    L.fin()
     return L
 
 
@@ -226,7 +242,9 @@ def mascota(tipo, modo="quieto"):
     L = C(56, 44)
     sombra(L, 26, 42, 16)
     f = {"caminar_1": 1, "caminar_2": 2}.get(modo, 0)
-    cerrado = modo == "parpadeo"
+    cerrado = modo in ("parpadeo", "dormir")
+    if modo == "dormir":
+        L.ini("translate(0 10)")
     if tipo == "gato":
         col, cola = "#f4eee2", "#e08a3a"
     elif tipo == "perro":
@@ -234,7 +252,7 @@ def mascota(tipo, modo="quieto"):
     else:
         col, cola = "#3e3a44", "#3e3a44"
     b = -0.6 if f else 0
-    cerca = patas(L, f, 16, 34, 29, 12, 4.4, col, None, 42, 0.48)
+    cerca = patas(L, f, 16, 34, 29, 12, 4.4, col, None, 42, 0.48) if modo != "dormir" else (lambda: None)
     # cola
     if tipo == "gato":
         L.p(capsula((10, 26 + b), (4, 12 + b), 2.4, 2.6), cola)
@@ -281,6 +299,9 @@ def mascota(tipo, modo="quieto"):
         L.trazo(f"M{hx + 7},{hy + 4.5} q1,1 2,0 q1,1 2,0", "#7a2a1e", 0.8)
     else:
         L.trazo(f"M{hx + 8},{hy + 6} q2,1.4 4,0", "#7a2a1e", 0.8)
+    if modo == "dormir":
+        L.fin()
+        L.raw('<text x="46" y="10" font-family="Arial, sans-serif" font-weight="900" font-size="8" fill="#6a8ac8">z</text>')
     return L
 
 
@@ -351,6 +372,14 @@ def serpiente(k=0):
     return L
 
 
+def cria(fn, w, h, suelo, k=0.66, **kw):
+    L = C(w, h)
+    L.ini(f"translate({w / 2} {suelo}) scale({k}) translate({-w / 2} {-suelo})")
+    fn(L=L, **kw)
+    L.fin()
+    return L
+
+
 # ------------------------------------------------------------------ salida
 def piezas():
     P = {}
@@ -375,6 +404,20 @@ def piezas():
     for t in ("gato", "perro", "xolo"):
         for m in ("quieto", "caminar_1", "caminar_2", "parpadeo"):
             P[f"mascotas/{t}/{m}"] = mascota(t, m)
+    # más acciones y crías
+    P["animales/caballo/comer"] = caballo(0, modo="comer")
+    P["animales/caballo/dormir"] = caballo(0, modo="dormir")
+    P["animales/caballo/potrillo"] = cria(caballo, 80, 64, 61, f=0)
+    P["animales/caballo/potrillo_caminar_1"] = cria(caballo, 80, 64, 61, f=1)
+    P["animales/caballo/potrillo_caminar_2"] = cria(caballo, 80, 64, 61, f=2)
+    P["animales/venado/hembra_comer"] = venado(False, 0, modo="comer")
+    P["animales/venado/cervatillo"] = cria(venado, 64, 70, 67, macho=False, f=0, manchas=True)
+    P["animales/venado/cervatillo_caminar_1"] = cria(venado, 64, 70, 67, macho=False, f=1, manchas=True)
+    P["animales/venado/cervatillo_caminar_2"] = cria(venado, 64, 70, 67, macho=False, f=2, manchas=True)
+    P["animales/guajolote/dormir"] = guajolote("dormir")
+    P["animales/pato/dormir"] = pato("dormir")
+    for t in ("gato", "perro", "xolo"):
+        P[f"mascotas/{t}/dormir"] = mascota(t, "dormir")
     for k in range(2):
         P[f"criaturas/cangrejo/{k}"] = cangrejo(k)
         P[f"criaturas/tarantula/{k}"] = tarantula(k)

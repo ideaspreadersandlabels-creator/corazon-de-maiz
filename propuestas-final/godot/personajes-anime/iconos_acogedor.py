@@ -23,22 +23,32 @@ def mezcla(a, b, t):
     return hexc([A[i] * (1 - t) + B[i] * t for i in range(3)])
 
 
-def contorno(fill):
+def contorno(fill, fuerza=0.52):
     if fill and re.fullmatch(r"#[0-9a-fA-F]{3,6}", fill):
-        return mezcla(mezcla(fill, "#000000", 0.52), "#3a1a10", 0.25)
-    return "#5a3a2a"
+        return mezcla(mezcla(fill, "#000000", fuerza), "#5a2a18", 0.25)
+    return "#6a4a3a"
 
 
-def convertir(svg):
+def vivo(c):
+    """colores un poco más vivos y cálidos"""
+    r, g, b = hx(c)
+    m = (r + g + b) / 3
+    k = 1.12
+    return hexc([m + (r - m) * k + 6, m + (g - m) * k + 3, m + (b - m) * k - 2])
+
+
+def convertir(svg, fuerza=0.52, avivar=False):
     def tag(m):
         t = m.group(0)
         fm = re.search(r'fill="([^"]+)"', t)
         fill = fm.group(1) if fm else None
+        if avivar and fill and re.fullmatch(r"#[0-9a-fA-F]{6}", fill) and fill.lower() != TINTA:
+            t = t.replace(f'fill="{fill}"', f'fill="{vivo(fill)}"', 1)
         if fill and fill.lower() == TINTA:  # rellenos negros -> café oscuro suave
             t = t.replace(f'fill="{fill}"', 'fill="#3a2c2a"')
             fill = "#3a2c2a"
         if f'stroke="{TINTA}"' in t:
-            t = t.replace(f'stroke="{TINTA}"', f'stroke="{contorno(fill)}"')
+            t = t.replace(f'stroke="{TINTA}"', f'stroke="{contorno(fill, fuerza)}"')
         return t
     svg = re.sub(r"<(path|ellipse|circle|rect|polygon|polyline|line)\b[^>]*>", tag, svg)
     # sombrita suave y un poco más redondo
