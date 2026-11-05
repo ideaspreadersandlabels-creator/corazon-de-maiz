@@ -27,7 +27,7 @@ drawObjInner = function (x, y, o, px, py) {
     const L = seasonLook(), si = seasonIdx(), h = hash(x, y), nieve = !!L.frost || S.ground[y]?.[x] === G.SNOW, v3 = Math.floor(h * 3) % 3;
     switch (o.k) {
       case 'tree':
-        if (x < FARM_W) ok = natDibuja('frutal', { fruta:FRUTA_ESTACION[si], flor:si === 0 ? '#ffb0d0' : null, n:si === 3 ? 2 : 5 }, 'fr' + si, px, py, 0.72, wind(px, py));
+        if (x < (typeof FARM_W2 !== 'undefined' ? FARM_W2 : FARM_W)) ok = natDibuja('frutal', { fruta:FRUTA_ESTACION[si], flor:si === 0 ? '#ffb0d0' : null, n:si === 3 ? 2 : 5 }, 'fr' + si, px, py, 0.72, wind(px, py));
         else ok = natDibuja('arbol', { c:L.tree, flor:si === 0 ? (L.blossom || '#ffb0d0') : null, desnudo:si === 3, v:h < 0.5 ? 0 : 1 }, `ar${si}${h < 0.5 ? 0 : 1}`, px, py, 0.72, wind(px, py));
         break;
       case 'pine': ok = natDibuja('pino', { nieve }, 'pi' + (nieve ? 1 : 0), px, py, 0.75, wind(px, py) * 0.5); break;

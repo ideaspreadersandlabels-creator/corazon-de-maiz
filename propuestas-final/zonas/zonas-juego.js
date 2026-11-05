@@ -1,5 +1,7 @@
 // Tenochtitlan, Villa Rica y tierra maya: edificios con más diseño (estilo códice, contorno de tinta).
 const TINTA_Z = '#1a1410';
+// Columnas que se recorrió el mundo al crecer la granja (DX2 en la versión original; 0 en la pública).
+function ofx() { return typeof DX2 !== 'undefined' ? DX2 : 0; }
 function tinta(x, y, w, h, a = .75) { ctx.strokeStyle = `rgba(26,20,16,${a})`; ctx.lineWidth = 1.5; ctx.strokeRect(x + .75, y + .75, w - 1.5, h - 1.5); }
 function cabezaSerpiente(x, y, dir, col = '#c9c1ae', s = 1) {
   ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s);
@@ -103,8 +105,9 @@ function casaMayaCdm(b) {
 }
 const _drawTownHouseZonas = drawTownHouse;
 drawTownHouse = function (b) {
-  if (b.t === 'casita' && b.x >= 360 && b.x <= 400 && b.y >= 36) return casaEspCdm(b);
-  if (b.t === 'casita' && b.x >= 540) return casaMayaCdm(b);
+  const bx = b.x - ofx();
+  if (b.t === 'casita' && bx >= 360 && bx <= 400 && b.y >= 36) return casaEspCdm(b);
+  if (b.t === 'casita' && bx >= 540) return casaMayaCdm(b);
   return _drawTownHouseZonas(b);
 };
 drawCasaEsp = function (b) { casaEspCdm(b); };

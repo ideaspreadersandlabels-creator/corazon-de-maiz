@@ -1,5 +1,6 @@
 // Cada pueblo con su propio estilo: plaza, casas y pieza central de la plaza.
 function regionCdm(x, y) {
+  x -= ofx();
   if (x >= 64 && x < 133 && y < 34) return 'tlax';
   if (x >= 176 && x < 219 && y < 28) return 'tenoch';
   if (x >= 238 && x < 285 && y < 28) return 'otomi';

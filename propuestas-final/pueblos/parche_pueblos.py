@@ -20,7 +20,7 @@ def rep(old, new, count=1):
     s = s.replace(old, new)
 # Las casas totonacas no llevan los adornos tlaxcaltecas (cimiento y olla).
 rep("  if (b.t === 'casita' && (b.x >= 540 || (b.x >= 360 && b.x <= 400 && b.y >= 36))) return;",
-    "  if (b.t === 'casita' && (b.x >= 540 || (b.x >= 360 && b.x <= 400 && b.y >= 36) || (b.x >= 294 && b.x < 329 && b.y >= 38 && b.y < 66))) return;")
+    "  if (b.t === 'casita' && regionCdm(b.x, b.y) !== 'tlax' && regionCdm(b.x, b.y) !== null && regionCdm(b.x, b.y) !== 'otomi') return;\n  if (b.t === 'casita' && b.x - ofx() >= 540) return;")
 js = open(os.path.join(aqui, 'pueblos-juego.js'), encoding='utf-8').read()
 rep('</body>', '<script>\n' + js + '\n</script>\n</body>')
 open(path, 'w', encoding='utf-8').write(s); print('parche aplicado')
