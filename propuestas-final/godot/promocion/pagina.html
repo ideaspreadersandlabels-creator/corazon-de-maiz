@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corazón de Maíz</title>
+<meta name="description" content="Un juego acogedor de granja en el señorío de Tlaxcallan, año 1519.">
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--crema:#fbf4e4;--crema2:#f2e2c4;--cafe:#7a4a3a;--texto:#5a3a2a;--rosa:#ec7a8e;--naranja:#e8805a;--verde:#7ab86a;--ocre:#e8a830}
+*{box-sizing:border-box}
+body{margin:0;background:var(--crema2);color:var(--texto);font-family:Nunito,system-ui,sans-serif;font-size:18px;line-height:1.55}
+.hero{position:relative;min-height:62vh;background:url(img/hero.jpg) center bottom/cover;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4vh 16px 0}
+.hero img.logo{width:min(760px,92vw);filter:drop-shadow(0 6px 10px rgba(60,30,20,.25))}
+.boton{display:inline-block;margin-top:18px;background:var(--naranja);color:var(--crema);font-family:'Bree Serif',serif;font-size:24px;padding:12px 34px;border-radius:40px;border:4px solid var(--cafe);text-decoration:none;box-shadow:0 5px 0 var(--cafe)}
+.boton:hover{transform:translateY(2px);box-shadow:0 3px 0 var(--cafe)}
+main{max-width:1080px;margin:0 auto;padding:0 16px 60px}
+.panel{background:var(--crema);border:4px solid var(--cafe);border-radius:22px;padding:28px;margin:36px 0;position:relative}
+.panel::before,.panel::after{content:"✿";position:absolute;font-size:28px;color:var(--rosa);top:-18px}
+.panel::before{left:18px}.panel::after{right:18px;color:var(--ocre)}
+h2{font-family:'Bree Serif',serif;color:var(--cafe);font-size:34px;margin:0 0 12px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.rasgo{background:var(--crema2);border-radius:16px;padding:16px;border:2px dashed #d8a878}
+.rasgo b{font-family:'Bree Serif',serif;color:var(--cafe);font-size:21px;display:block;margin-bottom:4px}
+.capturas img,video{width:100%;border-radius:14px;border:4px solid var(--cafe);display:block}
+.capturas{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.capturas img:first-child{grid-column:1/3}
+.gente{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.gente figure{margin:0;text-align:center;width:120px}
+.gente img{width:110px;height:110px;border-radius:50%;background:var(--crema2);border:4px solid var(--cafe)}
+.gente figcaption{font-family:'Bree Serif',serif;color:var(--cafe)}
+.animales{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:flex-end;margin-top:14px}
+.animales img{height:70px}
+footer{text-align:center;color:var(--cafe);padding:30px 16px}
+@media (max-width:640px){.capturas{grid-template-columns:1fr}.capturas img:first-child{grid-column:auto}h2{font-size:28px}}
+</style></head><body>
+<header class="hero">
+  <img class="logo" src="img/logo.png" alt="Corazón de Maíz — Una granja en Tlaxcallan, 1519">
+</header>
+<main>
+  <p style="text-align:center;margin:-34px 0 0"><a class="boton" href="#trailer">Ver el tráiler</a></p>
+  <section class="panel">
+    <h2>Siembra, platica y vive en Tlaxcallan</h2>
+    <p>Llegas a una pequeña granja al pie de la Matlalcueye en el año 1-Ácatl (1519). Siembra tu milpa con maíz, frijol y calabaza, cuida tus guajolotes y caballos, vende en el tianguis y hazte amigo de los vecinos de los cuatro señoríos: Tepetícpac, Ocotelulco, Tizatlán y Quiahuiztlán.</p>
+    <div class="rejilla">
+      <div class="rasgo"><b>🌽 Tu milpa</b>Más de 15 cultivos que crecen con las estaciones y la lluvia.</div>
+      <div class="rasgo"><b>🏡 Tu casa</b>De choza a casa grande en 7 niveles; acomoda tus muebles.</div>
+      <div class="rasgo"><b>💬 Tus vecinos</b>Más de 25 personajes con su oficio, horario y muchas expresiones.</div>
+      <div class="rasgo"><b>🎉 Las fiestas</b>Ofrendas, música de huéhuetl, voladores y antorchas de ocote.</div>
+    </div>
+  </section>
+  <section class="panel" id="trailer">
+    <h2>Tráiler</h2>
+    <video src="img/trailer.mp4" controls loop muted playsinline poster="img/captura_granja.jpg"></video>
+  </section>
+  <section class="panel">
+    <h2>Capturas</h2>
+    <div class="capturas">
+      <img src="img/captura_granja.jpg" alt="La granja con la milpa, la casa, animales y vecinos">
+      <img src="img/captura_milpa.jpg" alt="La milpa creciendo">
+      <img src="img/captura_dialogo.jpg" alt="Platicando con Xóchitl">
+    </div>
+  </section>
+  <section class="panel">
+    <h2>La gente de Tlaxcallan</h2>
+    <div class="gente">
+      <figure><img src="img/ret_player.png" alt=""><figcaption>Tú</figcaption></figure>
+      <figure><img src="img/ret_player_mujer.png" alt=""><figcaption>…o tú</figcaption></figure>
+      <figure><img src="img/ret_xochitl.png" alt=""><figcaption>Xóchitl</figcaption></figure>
+      <figure><img src="img/ret_citlalli.png" alt=""><figcaption>Citlalli</figcaption></figure>
+      <figure><img src="img/ret_ocelotl.png" alt=""><figcaption>Ocelotl</figcaption></figure>
+      <figure><img src="img/ret_doni.png" alt=""><figcaption>Doni</figcaption></figure>
+      <figure><img src="img/ret_yaotl.png" alt=""><figcaption>Yáotl</figcaption></figure>
+      <figure><img src="img/ret_tlatoani.png" alt=""><figcaption>Xicohténcatl</figcaption></figure>
+    </div>
+    <div class="animales">
+      <img src="img/an_gato.png" alt="gato"><img src="img/an_perro.png" alt="perro"><img src="img/an_xolo.png" alt="xoloitzcuintle">
+      <img src="img/an_guajolote_quieto.png" alt="guajolote"><img src="img/an_pato_cria.png" alt="patito"><img src="img/an_caballo_potrillo.png" alt="potrillo">
+    </div>
+  </section>
+  <section class="panel" style="text-align:center">
+    <h2>Próximamente</h2>
+    <p>Para PC. Sigue el desarrollo y entérate cuando salga.</p>
+    <a class="boton" href="#">Seguir el juego</a>
+  </section>
+</main>
+<footer>Corazón de Maíz · hecho con cariño en Godot</footer>
+</body></html>
