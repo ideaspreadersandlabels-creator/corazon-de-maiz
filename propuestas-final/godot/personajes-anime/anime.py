@@ -197,11 +197,68 @@ PERSONAJES = {
     "tlatoani": dict(nombre="Xicohténcatl", mujer=False, piel=PIEL, pelo="#e6e2da", peinado="anciano", diadema="#3fb5a4",
                      arriba="tunica", c_arriba=BLANCO, bordado=ROJO, abajo="larga", c_abajo=BLANCO,
                      capa="#2a9a8a", capa_borde=OCRE, mano="baston", ojos="#3a2418", anciano=True),
+    "g_jaguar": dict(nombre="Guerrero jaguar", mujer=False, piel="#e0a830", cara=PIEL, pelo=NEGRO_PELO, peinado="corto",
+                     arriba="armadura", c_arriba="#e0a830", bordado="#2a2420", abajo="maxtlatl", c_abajo="#e0a830", colgajo=ROJO,
+                     manchas=True, casco="jaguar", mano="macuahuitl", escudo=AZUL, ojos="#3a2418", ancho=1.08),
+    "g_aguila": dict(nombre="Guerrero águila", mujer=False, piel="#8a6440", cara=PIEL, pelo=NEGRO_PELO, peinado="corto",
+                     arriba="armadura", c_arriba="#8a6440", bordado=OCRE, abajo="maxtlatl", c_abajo=BLANCO, colgajo=ROJO,
+                     casco="aguila", mano="macuahuitl", escudo=ROJO, ojos="#3a2418", ancho=1.08),
     "daniel": dict(nombre="Daniel", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="corto", banda=BLANCO,
                    arriba="camisa", c_arriba=BLANCO, bordado=JADE, abajo="maxtlatl", c_abajo=BLANCO, colgajo=JADE,
                    capa="#e8e0c8", capa_borde=JADE, mano="hierbas", ojos="#4a2a1e"),
 }
 
+
+# ---- vecinos de los cuatro señoríos, las muchachas del romance y otros (sin dibujo antes)
+# Tizatlán = rojo, Ocotelulco = verde, Tepeticpac = azul, Quiahuiztlán = ocre
+VERDE = "#3e8a4a"
+PERSONAJES.update({
+    "acatl": dict(nombre="Acatl", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="coleta", banda=ROJO,
+                  arriba="camisa", c_arriba=BLANCO, bordado=ROJO, abajo="maxtlatl", c_abajo=BLANCO, colgajo=ROJO,
+                  capa="#e8d8c0", capa_borde=ROJO, mano=None, ojos="#4a2a1e"),
+    "cozca": dict(nombre="Cozca", mujer=False, piel=PIEL_OSC, pelo=NEGRO_PELO, peinado="corto", banda="#8f2a1f",
+                  arriba="camisa", c_arriba="#d84a3a", bordado=BLANCO, abajo="maxtlatl", c_abajo=BLANCO, colgajo="#8f2a1f",
+                  mano="cantaro", ojos="#3a2418", ancho=1.1),
+    "ichtaca": dict(nombre="Ichtaca", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="corto", banda=VERDE,
+                    arriba="camisa", c_arriba=BLANCO, bordado=VERDE, abajo="maxtlatl", c_abajo=BLANCO, colgajo=VERDE,
+                    capa="#5a7a4a", capa_borde=OCRE, mano="bolsa", ojos="#4a2a1e"),
+    "xochico": dict(nombre="Xochico", mujer=True, piel=PIEL_CLARA, pelo=NEGRO_PELO, peinado="chongo", flor="#f08a1c",
+                    arriba="huipil", c_arriba="#eef0e0", bordado=VERDE, bordado2=OCRE, abajo="falda", c_abajo="#3a5a3a",
+                    mano="flores", ojos="#5a3418", aretes=OCRE),
+    "atl": dict(nombre="Atl", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="corto", banda=AZUL,
+                arriba="camisa", c_arriba="#cfe0ea", bordado=AZUL, abajo="maxtlatl", c_abajo=BLANCO, colgajo=AZUL,
+                mano="hierbas", ojos="#3a2418"),
+    "chalchi": dict(nombre="Chalchi", mujer=True, piel=PIEL, pelo=NEGRO_PELO, peinado="trenza", listón=AZUL,
+                    arriba="huipil", c_arriba=BLANCO, bordado=AZUL, bordado2="#7ac0e8", abajo="falda", c_abajo="#2a4a7a",
+                    mano="cantaro", ojos="#4a2a1e", collar=JADE),
+    "tezca": dict(nombre="Tezca", mujer=False, piel=PIEL_OSC, pelo=NEGRO_PELO, peinado="coleta", banda=OCRE,
+                  arriba="camisa", c_arriba="#e8d8a8", bordado=OCRE, abajo="maxtlatl", c_abajo=BLANCO, colgajo=OCRE,
+                  mandil="#c9a06a", mano="bolsa", ojos="#3a2418"),
+    "michin": dict(nombre="Michin", mujer=True, piel=PIEL_OSC, pelo=NEGRO_PELO, peinado="trenzas", flor=OCRE,
+                   arriba="quechquemitl", c_arriba="#e0a121", bordado="#8a4a1a", bordado2=BLANCO, abajo="falda", c_abajo="#6a4a2a",
+                   mano="cantaro", ojos="#4a2a1e", aretes=OCRE),
+    "yolotl": dict(nombre="Yolotl", mujer=True, piel=PIEL, pelo=NEGRO_PELO, peinado="trenzas", flor="#e8507a",
+                   arriba="huipil", c_arriba=BLANCO, bordado=ROJO, bordado2="#e8507a", abajo="falda", c_abajo="#8a2a3a",
+                   mano="flores", ojos="#5a3418", aretes=OCRE, collar=JADE),
+    "xiuhtzin": dict(nombre="Xiuhtzin", mujer=True, piel=PIEL_CLARA, pelo=NEGRO_PELO, peinado="chongo", flor="#3fb5a4",
+                     arriba="huipil", c_arriba="#e8f4f0", bordado="#2a9a8a", bordado2=OCRE, abajo="falda", c_abajo="#2a6a6a",
+                     mano=None, ojos="#4a2a1e", aretes="#3fb5a4", collar=JADE),
+    "quetzalli": dict(nombre="Quetzalli", mujer=True, piel=PIEL, pelo=NEGRO_PELO, peinado="trenza", listón="#2a9a5a",
+                      arriba="huipil", c_arriba=BLANCO, bordado="#2a9a5a", bordado2=ROJO, abajo="falda", c_abajo="#1e5a3a",
+                      mano="flores", ojos="#4a2a1e", aretes=OCRE, collar="#3fb5a4"),
+    "tonalli": dict(nombre="Tonalli", mujer=True, piel=PIEL_OSC, pelo=NEGRO_PELO, peinado="trenzas", flor="#f08a1c",
+                    arriba="huipil", c_arriba="#fbf0d8", bordado="#f08a1c", bordado2=ROJO, abajo="falda", c_abajo="#b06a1a",
+                    mano=None, ojos="#5a3418", aretes=OCRE),
+    "tonatiuh": dict(nombre="Tonatiuh", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="temillotl", banda=OCRE,
+                     arriba="armadura", c_arriba=BLANCO, bordado=OCRE, abajo="maxtlatl", c_abajo=BLANCO, colgajo=ROJO,
+                     mano="lanza", escudo=OCRE, ojos="#3a2418", ancho=1.08),
+    "metztli": dict(nombre="Metztli", mujer=True, piel=PIEL, pelo=NEGRO_PELO, peinado="largo", banda="#e8e0d0",
+                    arriba="tunica", c_arriba="#3a3a5a", bordado="#c8c8e8", abajo="larga", c_abajo="#3a3a5a",
+                    mano="copal", ojos="#3a2a40", aretes="#d8d8e8"),
+    "pochteca": dict(nombre="Pochteca", mujer=False, piel=PIEL, pelo=NEGRO_PELO, peinado="corto", banda=AZUL,
+                     arriba="camisa", c_arriba="#e8d8b8", bordado=AZUL, abajo="maxtlatl", c_abajo=BLANCO, colgajo=AZUL,
+                     capa="#c8a878", capa_borde=AZUL, mano="baston", ojos="#3a2418", ancho=1.12),
+})
 
 # ------------------------------------------------------------------ esqueleto
 class Pose:
@@ -295,8 +352,8 @@ class Pose:
 
 
 # ------------------------------------------------------------------ dibujo
-def dibujar(pid, vista, cuadro=0, espejo=False, accion=None, accion_cuadro=0, detalle=False, sin_objeto=False):
-    p = PERSONAJES[pid]
+def dibujar(pid, vista, cuadro=0, espejo=False, accion=None, accion_cuadro=0, detalle=False, sin_objeto=False, expresion="normal"):
+    p = dict(PERSONAJES[pid], expresion=expresion)
     if sin_objeto:
         p = dict(p, mano=None)
     L = Lienzo()
@@ -507,7 +564,7 @@ def cabeza_frente(L, p, po, detalle):
     cx, b = po.cx, po.bob
     hy = po.cab[1] + b
     rx, ry = po.rx, po.ry
-    piel = p["piel"]
+    piel = p.get("cara", p["piel"])
     L.parte(capsula((cx, po.cuello + b - 6), (cx, po.cuello + b + 5), 4.4, 4.8), piel, desp=(1.2, -2))
     for k in (-1, 1):  # orejas
         L.parte(elipse(cx + k * (rx - 0.6), hy + 2, 2.6, 3.6), piel, lw=1.2)
@@ -563,24 +620,72 @@ def cara_rasgos(L, p, cx, hy, rx, ry, detalle, perfil=False):
 
 def ojos_tiernos(L, p, cx, ey, ojos, perfil):
     mujer, anc = p["mujer"], p.get("anciano")
+    ex = p.get("expresion", "normal")
+    OSC = "#2a1a14"
     for ox in ojos:
-        if anc:  # ojitos cerrados y sonrientes
-            L.trazo(f"M{ox - 3.4},{ey + 0.8} Q{ox},{ey - 3} {ox + 3.4},{ey + 0.8}", "#2a1a14", 1.6)
+        dentro = 1 if ox < cx else -1          # hacia la nariz
+        w, h = (3.9, 5.2) if mujer else (3.6, 4.8)
+        if anc or ex == "feliz":                # ojitos cerrados y sonrientes
+            L.trazo(f"M{ox - 3.4},{ey + 0.8} Q{ox},{ey - 3} {ox + 3.4},{ey + 0.8}", OSC, 1.6)
+        elif ex == "enojado":
+            L.plano(elipse(ox, ey + 0.8, w, h * 0.78), OSC)
+            L.plano(elipse(ox, ey + h * 0.45, w * 0.7, h * 0.36), p["ojos"], op=0.9)
+            L.plano(elipse(ox + w * 0.3, ey - h * 0.05, w * 0.32, w * 0.32), "#ffffff")
+            # párpado recto que tapa la parte de arriba
+            L.plano(poli([(ox - w - 1, ey - h - 1), (ox + w + 1, ey - h - 1), (ox + w + 1, ey - h * 0.35 + dentro * -1.6),
+                          (ox - w - 1, ey - h * 0.35 + dentro * 1.6)]), p.get("cara", p["piel"]))
+        elif ex == "sorprendido":
+            L.plano(elipse(ox, ey - 0.4, w * 1.05, h * 1.08), "#fbf7f0", linea=True, lw=1.0)
+            L.plano(elipse(ox, ey, w * 0.5, h * 0.55), OSC)
+            L.plano(elipse(ox + 0.6, ey - 1.0, 0.8, 0.8), "#ffffff")
         else:
-            w, h = (3.9, 5.2) if mujer else (3.6, 4.8)
-            L.plano(elipse(ox, ey, w, h), "#2a1a14")
-            L.plano(elipse(ox, ey + h * 0.35, w * 0.72, h * 0.5), p["ojos"], op=0.9)
-            L.plano(elipse(ox + w * 0.32, ey - h * 0.38, w * 0.42, w * 0.42), "#ffffff")
-            L.plano(elipse(ox - w * 0.38, ey + h * 0.42, w * 0.18, w * 0.18), "#ffffff", op=0.9)
+            mira = 1.0 if ex == "apenado" else 0.0
+            L.plano(elipse(ox + mira, ey, w, h), OSC)
+            L.plano(elipse(ox + mira, ey + h * 0.35, w * 0.72, h * 0.5), p["ojos"], op=0.9)
+            L.plano(elipse(ox + mira + w * 0.32, ey - h * 0.38, w * 0.42, w * 0.42), "#ffffff")
+            L.plano(elipse(ox + mira - w * 0.38, ey + h * 0.42, w * 0.18, w * 0.18), "#ffffff", op=0.9)
+            if ex == "triste":
+                L.plano(elipse(ox + mira, ey + h * 0.15, w * 0.95, h * 0.5), "#7ab8e8", op=0.25)
             if mujer:
                 sg = 1 if (perfil or ox > cx) else -1
-                L.trazo(f"M{ox + sg * (w - 0.6)},{ey - h * 0.55} l{sg * 2},-1.4", "#2a1a14", 1.2)
+                L.trazo(f"M{ox + sg * (w - 0.6)},{ey - h * 0.55} l{sg * 2},-1.4", OSC, 1.2)
+        # cejas según la expresión
         cy_ = ey - (9.0 if mujer else 7.8)
-        L.trazo(f"M{ox - 2.4},{cy_ + 0.4} Q{ox},{cy_ - 1.0} {ox + 2.4},{cy_ + 0.4}",
-                p["pelo"] if not anc else "#bdb6aa", 1.3)
-        L.plano(elipse(ox + (1.5 if perfil else 0) + (0 if perfil else (-1 if ox < cx else 1)), ey + 5.6, 3.2, 1.7), "#ec7a6e", op=0.5)
+        col_ceja = p["pelo"] if not anc else "#bdb6aa"
+        if ex == "enojado":
+            L.trazo(f"M{ox - dentro * 2.8},{cy_ - 0.6} L{ox + dentro * 2.6},{cy_ + 2.2}", col_ceja, 1.6)
+        elif ex == "triste":
+            L.trazo(f"M{ox - dentro * 2.6},{cy_ + 1.0} L{ox + dentro * 2.6},{cy_ - 1.2}", col_ceja, 1.4)
+        elif ex == "sorprendido":
+            L.trazo(f"M{ox - 2.4},{cy_ - 1.0} Q{ox},{cy_ - 2.8} {ox + 2.4},{cy_ - 1.0}", col_ceja, 1.3)
+        else:
+            L.trazo(f"M{ox - 2.4},{cy_ + 0.4} Q{ox},{cy_ - 1.0} {ox + 2.4},{cy_ + 0.4}", col_ceja, 1.3)
+        rub = (3.8, 2.2, 0.75) if ex == "apenado" else (3.2, 1.7, 0.5)
+        L.plano(elipse(ox + (1.5 if perfil else 0) + (0 if perfil else (-1 if ox < cx else 1)), ey + 5.6, rub[0], rub[1]), "#ec7a6e", op=rub[2])
+        if ex == "apenado" and not perfil:
+            for j in range(3):
+                x0 = ox - 2 + j * 1.6
+                L.trazo(f"M{x0},{ey + 4.6} l-0.8,1.8", "#c04a3a", 0.6, op=0.8)
     if not perfil:
-        L.trazo(f"M{cx - 2.2},{ey + 7.6} Q{cx - 1.1},{ey + 9} {cx},{ey + 7.8} Q{cx + 1.1},{ey + 9} {cx + 2.2},{ey + 7.6}", "#7a2a1e", 1.1)
+        bx, by = cx, ey + 7.8
+        boca = "#7a2a1e"
+        if ex == "feliz":
+            L.plano(f"M{bx - 3},{by - 0.4} Q{bx},{by + 4.4} {bx + 3},{by - 0.4} Z", boca, linea=False)
+            L.plano(elipse(bx, by + 2.0, 1.4, 0.8), "#e8707a")
+        elif ex == "triste":
+            L.trazo(f"M{bx - 2.2},{by + 1.2} Q{bx},{by - 0.8} {bx + 2.2},{by + 1.2}", boca, 1.1)
+            L.plano(f"M{ojos[0] - 1.6},{ey + 4} q-1.4,2.6 0,3.6 q1.4,-1 0,-3.6 Z", "#8ac8f0", linea=False)
+        elif ex == "enojado":
+            L.trazo(f"M{bx - 2.4},{by + 1.0} L{bx + 2.4},{by + 0.2}", boca, 1.2)
+            L.plano(f"M{cx + 11},{ey - 9} l1.4,1.4 m-2.8,0 l1.4,-1.4 m0,2.8 l1.4,1.4 m-2.8,0 l1.4,-1.4", "none")
+            L.trazo(f"M{cx + 10},{ey - 11} l2.4,2.4 M{cx + 12.4},{ey - 11} l-2.4,2.4", "#d03a2a", 1.0)
+        elif ex == "sorprendido":
+            L.plano(elipse(bx, by + 0.8, 1.6, 2.0), boca)
+        elif ex == "apenado":
+            L.trazo(f"M{bx - 2.4},{by} q0.8,0.8 1.6,0 t1.6,0 t1.6,0", boca, 1.0)
+            L.plano(f"M{cx + 11.5},{ey - 7} q-1.6,3 0,4.2 q1.6,-1.2 0,-4.2 Z", "#9ad0f4", linea=True, lw=0.5)
+        else:
+            L.trazo(f"M{bx - 2.2},{by - 0.2} Q{bx - 1.1},{by + 1.2} {bx},{by} Q{bx + 1.1},{by + 1.2} {bx + 2.2},{by - 0.2}", boca, 1.1)
     if p.get("cicatriz"):
         L.trazo(f"M{cx + 9},{ey - 5} l-3,7", "#a0503a", 0.9)
 
@@ -749,7 +854,11 @@ def lado(L, p, po, accion):
     torso = suave([(cx - 8, y0 + 1), (cx + 3, y0), (cx + pecho, y0 + 8), (cx + pecho - 1, y0 + 22), (cx + 9 + (5 if tipo in ("huipil", "armadura") else 0), hem),
                    (cx - 11 - (5 if tipo in ("huipil", "armadura") else 0), hem), (cx - 10, y0 + 22), (cx - 10, y0 + 6)])
     L.parte(torso, p["c_arriba"])
-    if tipo == "armadura":
+    if p.get("manchas"):
+        for (mx_, my_) in ((cx - 5, y0 + 8), (cx + 4, y0 + 14), (cx - 3, y0 + 22), (cx + 6, y0 + 26), (cx - 8, y0 + 17)):
+            L.plano(elipse(mx_, my_, 2.2, 1.9), "none", linea=True, lw=1.1)
+            L.plano(elipse(mx_, my_, 0.8, 0.8), "#2a2420")
+    if tipo == "armadura" and not p.get("manchas"):
         for k in range(1, 5):
             yy = y0 + k * (hem - y0) / 5
             L.trazo(f"M{cx - 10},{yy} L{cx + 10},{yy}", sombra_de(p["c_arriba"]), 0.9)
@@ -763,7 +872,7 @@ def lado(L, p, po, accion):
         L.parte(poli([(cx + 6, y0 + 9), (cx + 12, y0 + 9), (cx + 13, po.cadera_y + b + 24), (cx + 7, po.cadera_y + b + 24)]), p["mandil"])
     # cabeza de perfil 3/4
     L.ini(tcab(po))
-    piel = p["piel"]
+    piel = p.get("cara", p["piel"])
     L.parte(capsula((cx + 1, po.cuello + b - 6), (cx, po.cuello + b + 5), 4.4, 4.8), piel, desp=(1.2, -2))
     cara = suave([(cx - 13, hy - 2), (cx - 12, hy - 15), (cx, hy - 18), (cx + 11, hy - 14), (cx + 14, hy - 4), (cx + 14.5, hy + 3),
                   (cx + 13, hy + 9), (cx + 8, hy + 15), (cx + 2, hy + 17), (cx - 4, hy + 13), (cx - 11, hy + 8)])
@@ -798,6 +907,7 @@ def lado(L, p, po, accion):
         L.parte(poli([(cx - 14, hy - 11), (cx + 13, hy - 11), (cx + 13, hy - 6), (cx + 12, hy - 6), (cx + 10, hy - 17), (cx + 7, hy - 6), (cx - 14, hy - 6)]), p["diadema"], lw=1.1)
     if p.get("aretes"):
         L.parte(elipse(cx - 3, hy + 7.5, 1.8, 1.8), p["aretes"], lw=0.8)
+    dibujar_casco(L, p, cx, hy)
     L.fin()
     # brazo de adelante
     objeto_mano(L, p, po, "derecha", antes=True)
@@ -875,33 +985,88 @@ def objeto_mano(L, p, po, vista, antes=False):
 
 # ------------------------------------------------------------------ acciones del jugador
 def aplicar_accion(po, vista, accion, k):
-    """cambia la posición de los brazos (2 cuadros por acción)"""
+    """cambia la posición de los brazos (2 cuadros por acción). Las medidas están pensadas para
+    brazos de 47 px y se escalan al largo real del brazo (el estilo acogedor los tiene más cortos)"""
     cx = po.cx
     y = po.hombro_y + po.bob
+    ka = (po.brazo + po.antebrazo) / 47.0
+    def esc(hom, codo, fin):
+        if accion in ("saludar", "comer", "cargar"):  # medidas ya hechas para el cuerpo actual
+            return [hom, codo, fin]
+        return [hom, (hom[0] + (codo[0] - hom[0]) * ka, hom[1] + (codo[1] - hom[1]) * ka),
+                (hom[0] + (fin[0] - hom[0]) * ka, hom[1] + (fin[1] - hom[1]) * ka)]
     if vista == "lado":
         hom = (cx + 1, y)
-        if accion == "arar":
+        un_brazo = accion in ("saludar", "comer")
+        if accion in ("arar", "talar", "picar"):
             fin = [(cx + 6, y - 22), (cx + 20, y + 26)][k]
             codo = [(cx + 4, y - 10), (cx + 14, y + 10)][k]
         elif accion == "regar":
             codo, fin = (cx + 10, y + 12), (cx + 22, y + 14 + k * 3)
+        elif accion == "golpe":
+            codo, fin = (cx + 12, y - 6), (cx + 24, y - 4)
+        elif accion == "saludar":
+            codo, fin = (cx + 9, y - 8), [(cx + 15, y - 26), (cx + 8, y - 28)][k]
+        elif accion == "comer":
+            codo, fin = (cx + 10, y + 10), [(cx + 15, y - 15), (cx + 15, y - 18)][k]
+        elif accion == "pescar":
+            codo, fin = (cx + 10, y + 14), (cx + 22, y + 10 + k * 2)
+        elif accion == "cargar":
+            codo, fin = (cx + 8, y + 12), (cx + 6, y + 4 - k)
         else:  # cosechar
             codo, fin = [(cx + 10, y + 18), (cx + 8, y + 6)][k], [(cx + 22, y + 44), (cx + 18, y + 0)][k]
-        po.brazos = [[hom, codo, fin], [hom, (codo[0] + 1, codo[1]), (fin[0] + 1, fin[1])]]
+        cerca = esc(hom, codo, fin)
+        lejos_ = po.brazos[0] if un_brazo else esc(hom, (codo[0] + 1, codo[1]), (fin[0] + 1, fin[1]))
+        po.brazos = [lejos_, cerca]
     else:
         for i, lado in enumerate((-1, 1)):
             hom = (cx + lado * (po.sw - 3), y)
-            if accion == "arar":
+            if accion in ("arar", "talar", "picar"):
                 fin = [(cx + lado * 4, y - 26), (cx + lado * 4, y + 38)][k]
                 codo = [(cx + lado * 12, y - 10), (cx + lado * 12, y + 16)][k]
-            elif accion == "regar":
+            elif accion in ("regar", "pescar"):
                 fin = (cx + lado * 6, y + 30 + k * 2)
                 codo = (cx + lado * (po.sw + 1), y + 18)
+            elif accion == "saludar":
+                if lado < 0:
+                    continue
+                codo, fin = (cx + po.sw + 8, y - 6), [(cx + po.sw + 13, y - 24), (cx + po.sw + 7, y - 26)][k]
+            elif accion == "comer":
+                if lado < 0:
+                    continue
+                codo, fin = (cx + po.sw + 3, y + 12), [(cx + 3, y - 14), (cx + 2, y - 17)][k]
+            elif accion == "cargar":
+                codo, fin = (cx + lado * (po.sw + 1), y + 13), (cx + lado * 4, y + 6 - k)
             else:
                 fin = [(cx + lado * 8, y + 52), (cx + lado * 10, y + 16)][k]
                 codo = [(cx + lado * (po.sw + 1), y + 26), (cx + lado * (po.sw + 1), y + 12)][k]
-            po.brazos[i] = [hom, codo, fin]
+            po.brazos[i] = esc(hom, codo, fin)
     po.accion_info = (accion, k)
+
+
+def dibujar_casco(L, p, cx, hy):
+    c = p.get("casco")
+    if c == "jaguar":  # cabeza de jaguar sobre el cráneo, la cara asoma por la boca
+        amar = "#e0a830"
+        L.parte(suave([(cx - 16, hy + 6), (cx - 16, hy - 14), (cx - 2, hy - 23), (cx + 12, hy - 19), (cx + 20, hy - 12), (cx + 19, hy - 7),
+                       (cx + 10, hy - 8), (cx + 2, hy - 9), (cx - 6, hy - 4), (cx - 9, hy + 8)]), amar)
+        L.parte(poli([(cx - 6, hy - 19), (cx - 2, hy - 28), (cx + 2, hy - 20)]), amar, lw=1.1)
+        L.plano(elipse(cx + 14, hy - 15, 2.2, 2.4), "#2a1a14")
+        L.plano(elipse(cx + 14.6, hy - 15.8, 0.8, 0.8), "#fff")
+        L.plano(elipse(cx + 19, hy - 11, 1.6, 1.2), "#2a1a14")
+        for k in range(3):
+            L.plano(poli([(cx + 8 - k * 4, hy - 8), (cx + 9.4 - k * 4, hy - 4.6), (cx + 10.6 - k * 4, hy - 8)]), "#fbf7ee", linea=True, lw=0.6)
+        for (mx_, my_) in ((cx - 10, hy - 10), (cx - 3, hy - 16), (cx + 5, hy - 18), (cx - 12, hy)):
+            L.plano(elipse(mx_, my_, 2.2, 1.9), "none", linea=True, lw=1.0)
+    elif c == "aguila":  # cabeza de águila con pico sobre la frente
+        caf = "#7a5a3a"
+        L.parte(suave([(cx - 16, hy + 6), (cx - 16, hy - 14), (cx - 2, hy - 23), (cx + 12, hy - 18), (cx + 15, hy - 10), (cx + 6, hy - 8),
+                       (cx - 6, hy - 4), (cx - 9, hy + 8)]), caf)
+        L.parte(suave([(cx + 10, hy - 17), (cx + 24, hy - 13), (cx + 22, hy - 6), (cx + 12, hy - 8)]), "#e8b030")
+        L.plano(elipse(cx + 9, hy - 14, 2.2, 2.4), "#2a1a14")
+        L.plano(elipse(cx + 9.6, hy - 14.8, 0.8, 0.8), "#fff")
+        for k in range(4):
+            L.parte(capsula((cx - 12 + k * 2, hy - 18 + k), (cx - 22 + k * 3, hy - 30 + k * 4), 1.6, 2.6), ["#f4eee2", "#2a2420"][k % 2], lw=0.8)
 
 
 def herramienta(L, po, vista, accion, k):
@@ -910,6 +1075,50 @@ def herramienta(L, po, vista, accion, k):
     else:
         mano = ((po.brazos[0][2][0] + po.brazos[1][2][0]) / 2, (po.brazos[0][2][1] + po.brazos[1][2][1]) / 2)
     mx, my = mano
+    lat = vista in ("derecha", "izquierda")
+    if accion == "saludar":
+        return
+    if accion == "comer":  # tlaxcalli (tortilla) enrollada, mano encima de la cara
+        mx, my = po.brazos[1][2]
+        L.parte(elipse(mx, my + 2.2, 3.3, 3.7), PIEL, lw=1.2, desp=(1.2, 0.8))
+        L.parte(capsula((mx - 5, my + 1), (mx + 5, my - 1), 2.6, 2.6), "#f2e2b0")
+        L.trazo(f"M{mx - 3},{my} l5,-1", "#d8b870", 0.8)
+        return
+    if accion == "pescar":  # caña de carrizo con hilo
+        tip = (mx + 34, my - 40 + k * 6) if lat else (mx + 26, my - 46 + k * 6)
+        L.parte(capsula((mx, my), tip, 1.4, 0.8), "#c0a060")
+        L.trazo(f"M{tip[0]},{tip[1]} L{tip[0] + 2},{my + 46}", "#f4eee2", 0.7)
+        L.parte(elipse(tip[0] + 2, my + 46, 1.6, 2.2), "#d03a2a", lw=0.6)
+        return
+    if accion == "cargar":  # la carga va en la espalda (se dibuja en dibujar_accion)
+        return
+    if accion in ("talar", "picar"):
+        if lat:
+            punta = [(mx - 22, my - 30), (mx + 18, my + 22)][k]
+        elif vista == "abajo":
+            punta = [(mx, my - 40), (mx, my + 28)][k]
+        else:
+            punta = [(mx, my - 40), (mx, my + 28)][k]
+        L.parte(capsula((mx, my), punta, 1.8, 1.8), "#8a5a32")
+        ang = math.atan2(punta[1] - my, punta[0] - mx)
+        nx, ny = -math.sin(ang), math.cos(ang)
+        if accion == "talar":  # hacha de cobre
+            L.parte(poli([(punta[0] - nx * 2, punta[1] - ny * 2), (punta[0] + nx * 9 + math.cos(ang) * 4, punta[1] + ny * 9 + math.sin(ang) * 4),
+                          (punta[0] + nx * 9 - math.cos(ang) * 4, punta[1] + ny * 9 - math.sin(ang) * 4)]), "#c87a3a", lw=1.0)
+        else:  # pico
+            L.parte(poli([(punta[0] - nx * 11, punta[1] - ny * 11), (punta[0] + math.cos(ang) * 2.4, punta[1] + math.sin(ang) * 2.4),
+                          (punta[0] + nx * 11, punta[1] + ny * 11), (punta[0] - math.cos(ang) * 2.4, punta[1] - math.sin(ang) * 2.4)]), "#7a7a84", lw=1.0)
+        return
+    if accion == "golpe":  # macuahuitl hacia adelante
+        L.parte(poli([(mx - 1, my + 1.6), (mx - 1, my - 2.6), (mx + 30, my - 6), (mx + 30, my - 0.6)]), "#7a4a24")
+        for j in range(7):
+            x = mx + 3 + j * 4
+            for s_ in (-1, 1):
+                yb = my - 2 - j * 0.55 + (s_ * 3.2 if s_ > 0 else -3.4)
+                L.plano(poli([(x, my - 0.5 - j * 0.55 + s_ * 1.6), (x + 1.6, yb), (x + 3, my - 0.5 - j * 0.55 + s_ * 1.6)]), "#1a1820")
+        for j in range(3):
+            L.trazo(f"M{mx + 34 + j * 2},{my - 10 + j * 5} l5,{-1 + j}", "#ffffff", 1.4, op=0.8)
+        return
     if accion == "arar":  # coa: palo con hoja de madera dura
         if vista in ("derecha", "izquierda"):
             ang = [-0.9, 0.75][k]
@@ -940,6 +1149,18 @@ def herramienta(L, po, vista, accion, k):
 DIRS = ["abajo", "izquierda", "derecha", "arriba"]
 
 
+def huacal(L, x, y, w, h, k):
+    """huacal de madera con mercancía, cargado a la espalda con mecapal"""
+    y += -1 if k else 0
+    for j, c in enumerate(("#e0a121", "#3a4fa0", "#c23a2c", "#e0a121", "#7aa84a")):
+        L.parte(elipse(x - w / 2 + 5 + j * (w - 10) / 4, y - h / 2 - 2, 3.6, 4.2), c, lw=0.9)
+    L.parte(poli([(x - w / 2, y - h / 2), (x + w / 2, y - h / 2), (x + w / 2, y + h / 2), (x - w / 2, y + h / 2)]), "#a8743e")
+    for j in range(1, 4):
+        L.trazo(f"M{x - w / 2},{y - h / 2 + j * h / 4} L{x + w / 2},{y - h / 2 + j * h / 4}", "#7a4e24", 1.0)
+    for xx in (x - w / 2 + 3, x + w / 2 - 3):
+        L.trazo(f"M{xx},{y - h / 2 - 1} L{xx},{y + h / 2 + 1}", "#6a4020", 2.0)
+
+
 def dibujar_accion(pid, vista, accion, k):
     p = PERSONAJES[pid]
     L = Lienzo()
@@ -951,12 +1172,19 @@ def dibujar_accion(pid, vista, accion, k):
         po.piernas = [((h[0], h[1] + 10), (r[0] + (6 if lat else (4 if r[0] > 64 else -4)), r[1] + 2), t, lv) for (h, r, t, lv) in po.piernas]
     aplicar_accion(po, "lado" if vista in ("derecha", "izquierda") else "frente", accion, k)
     sombra_suelo(L, po, vista)
+    yh = po.hombro_y + po.bob
+    if accion == "cargar" and vista == "abajo":
+        huacal(L, po.cx, yh - 2, 40, 30, k)
+    if accion == "cargar" and vista in ("derecha", "izquierda"):
+        huacal(L, po.cx - 18, yh + 10, 22, 34, k)
     if vista == "abajo":
         frente(L, p, po, False)
         herramienta(L, po, vista, accion, k)
     elif vista == "arriba":
         herramienta(L, po, vista, accion, k)
         espalda(L, p, po)
+        if accion == "cargar":
+            huacal(L, po.cx, yh + 14, 38, 38, k)
     else:
         lado(L, p, po, accion)
         herramienta(L, po, vista, accion, k)
@@ -964,9 +1192,28 @@ def dibujar_accion(pid, vista, accion, k):
     return L.svg(tr)
 
 
-def retrato(pid):
+def dibujar_dormir(pid, k):
+    """acostado sobre un petate, ojos cerrados; k=1 respira"""
+    s = dibujar(pid, "abajo", 0, accion="quieto", sin_objeto=True, expresion="feliz")
+    cuerpo = s[s.index("</defs>") + 7:s.rindex("</svg>")]
+    cab = s[:s.index("</defs>") + 7]
+    esc = 0.72 + (0.012 if k else 0)
+    petate = ('<rect x="2" y="114" width="124" height="52" rx="5" fill="#d8b56c" stroke="#8e6a32" stroke-width="1.6"/>'
+              + "".join(f'<line x1="{2 + j * 8}" y1="114" x2="{2 + j * 8}" y2="166" stroke="#b8924c" stroke-width="1.4"/>' for j in range(1, 16))
+              + '<rect x="94" y="126" width="28" height="28" rx="11" fill="#f4eee2" stroke="#b8a888" stroke-width="1.4"/>')
+    grupo = f'<g transform="translate(8 140) rotate(90) scale({esc}) translate(-64 -190)">{cuerpo}</g>'
+    manta = '<path d="M4,120 Q46,114 86,122 L86,160 Q46,166 4,160 Z" fill="#c23a2c" stroke="#8f2a1f" stroke-width="1.4"/>'
+    rayas = "".join(f'<rect x="{12 + j * 15}" y="120" width="4" height="40" fill="#2f5fa6" opacity="0.85"/>' for j in range(5))
+    z = "" if not k else '<text x="100" y="108" font-family="sans-serif" font-weight="bold" font-size="16" fill="#5a7ab0">z</text><text x="112" y="96" font-family="sans-serif" font-weight="bold" font-size="12" fill="#5a7ab0">z</text>'
+    return cab + petate + grupo + manta + rayas + z + "</svg>"
+
+
+EXPRESIONES = ["normal", "feliz", "triste", "enojado", "sorprendido", "apenado"]
+
+
+def retrato(pid, expresion="normal"):
     """busto para diálogos: el cuadro de frente en grande, recortado del pecho para arriba"""
-    s = dibujar(pid, "abajo", 0, accion="quieto", detalle=True, sin_objeto=True)
+    s = dibujar(pid, "abajo", 0, accion="quieto", detalle=True, sin_objeto=True, expresion=expresion)
     vb = "36 5 56 56" if ESTILO == "anime" else "24 20 80 80"
     s = s.replace(f'width="{W}" height="{Hh}" viewBox="0 0 {W} {Hh}"', f'width="400" height="400" viewBox="{vb}"')
     return s
@@ -981,11 +1228,18 @@ def generar(out):
                 open(os.path.join(d, f"caminar_{v}_{f}.svg"), "w").write(dibujar(pid, v, f))
             open(os.path.join(d, f"quieto_{v}.svg"), "w").write(dibujar(pid, v, 0, accion="quieto"))
         open(os.path.join(d, "retrato.svg"), "w").write(retrato(pid))
+        if ESTILO == "acogedor":
+            for ex in EXPRESIONES[1:]:
+                open(os.path.join(d, f"retrato_{ex}.svg"), "w").write(retrato(pid, ex))
     d = os.path.join(out, "player")
-    for acc in ("arar", "regar", "cosechar"):
+    acciones = ("arar", "regar", "cosechar") + (("saludar", "comer", "pescar", "talar", "picar", "cargar") if ESTILO == "acogedor" else ())
+    for acc in acciones:
         for v in DIRS:
             for k in range(2):
                 open(os.path.join(d, f"{acc}_{v}_{k}.svg"), "w").write(dibujar_accion("player", v, acc, k))
+    if ESTILO == "acogedor":
+        for k in range(2):
+            open(os.path.join(d, f"dormir_{k}.svg"), "w").write(dibujar_dormir("player", k))
 
 
 def usar_estilo(nombre):
